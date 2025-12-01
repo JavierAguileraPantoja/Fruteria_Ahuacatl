@@ -1,0 +1,651 @@
+
+
+<%- include('layout/header') %>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes | Ahuacatl</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f5f7f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2 {
+            color: #1f8a4c;
+        }
+
+        .report-card {
+            border-radius: 1rem;
+            padding: 25px;
+            background: white;
+            transition: 0.25s;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.7rem 1.1rem rgba(0, 0, 0, 0.12);
+        }
+
+        .fab-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+        }
+
+        .fab-button {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #1f8a4c;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.25);
+        }
+
+        .fab-button:hover {
+            background: #176b3a;
+        }
+
+        .fab-menu {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .fab-menu a {
+            display: block;
+            background: #27ae60;
+            color: white;
+            padding: 10px 14px;
+            margin-bottom: 7px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        thead {
+            background: #1f8a4c;
+            color: white;
+        }
+
+        .search-box input {
+            border-radius: 8px;
+            border: 2px solid #1f8a4c;
+        }
+
+        .ventas-table-wrapper,
+        .utilidades-table-wrapper,
+        .stock-table-wrapper {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    
+
+    <!-- =====================================================
+         BLOQUE SEGURO DE VARIABLES EJS
+    ======================================================= -->
+    <%
+      const ventasLocal    = Array.isArray(ventas)    ? ventas    : [];
+      const datosLocal     = Array.isArray(datos)     ? datos     : [];
+      const productosLocal = Array.isArray(productos) ? productos : [];
+      const mermasLocal    = Array.isArray(mermasMongo) ? mermasMongo : [];
+
+      const bestLocalRaw   = best || null;
+      const bestArrayLocal = Array.isArray(bestLocalRaw)
+                              ? bestLocalRaw
+                              : (bestLocalRaw ? [bestLocalRaw] : []);
+
+      const kpiDiaVal             = (typeof kpi_dia             !== 'undefined') ? kpi_dia             : 0;
+      const kpiSemanaVal          = (typeof kpi_semana          !== 'undefined') ? kpi_semana          : 0;
+      const kpiMesVal             = (typeof kpi_mes             !== 'undefined') ? kpi_mes             : 0;
+      const kpiTotalProductosVal  = (typeof kpi_total_productos !== 'undefined') ? kpi_total_productos : 0;
+      const kpiGananciasVal       = (typeof kpi_ganancias       !== 'undefined') ? kpi_ganancias       : 0;
+      const kpiAlertasVal         = (typeof kpi_alertas         !== 'undefined') ? kpi_alertas         : 0;
+    %>
+
+    <!-- =====================================================
+         NODO OCULTO PARA JS
+    ======================================================= -->
+    <div id="reportes-data"
+         data-kpi-dia="<%= kpiDiaVal %>"
+         data-kpi-semana="<%= kpiSemanaVal %>"
+         data-kpi-mes="<%= kpiMesVal %>"
+         data-kpi-productos="<%= kpiTotalProductosVal %>"
+         data-kpi-ganancias="<%= kpiGananciasVal %>"
+         data-kpi-alertas="<%= kpiAlertasVal %>"
+
+         data-ventas='<%- JSON.stringify(ventasLocal) %>'
+         data-datos='<%- JSON.stringify(datosLocal) %>'
+         data-productos='<%- JSON.stringify(productosLocal) %>'
+         data-best='<%- JSON.stringify(bestArrayLocal) %>'
+         data-mermas='<%- JSON.stringify(mermasLocal) %>'>
+    </div>
+
+    <div class="container py-5">
+
+        <div class="text-center mb-4">
+            <h1 class="fw-bold"><i class="fas fa-chart-pie me-2"></i> Reportes del Sistema</h1>
+            <p class="text-muted mb-1">Dashboard con indicadores clave de Ahuacatl.</p>
+
+            <% if (user) { %>
+              <p class="text-muted">
+                <i class="fas fa-user me-1"></i>
+                <strong>Corte actual:</strong> <%= user.name %> (<%= user.role %>)
+              </p>
+            <% } %>
+        </div>
+
+        <!-- =====================================================
+             FILTROS
+        ======================================================= -->
+        <form class="row g-3 align-items-end mb-5" method="GET" action="/reportes">
+          <div class="col-md-3">
+            <label class="form-label">Periodo</label>
+            <select class="form-select" name="periodo">
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mes</option>
+              <option value="anio">Este año</option>
+              <option value="rango">Rango personalizado</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Desde</label>
+            <input type="date" class="form-control" name="desde">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Hasta</label>
+            <input type="date" class="form-control" name="hasta">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-success w-100" type="submit">
+              <i class="fas fa-filter me-1"></i>Aplicar
+            </button>
+          </div>
+        </form>
+
+        <!-- =====================================================
+             TABLA VENTAS
+        ======================================================= -->
+        <% if (ventasLocal.length > 0) { %>
+        <div class="report-card mb-4">
+
+            <h2><i class="fas fa-receipt me-2"></i> Ventas</h2>
+
+            <div class="search-box mb-3">
+                <input id="searchVentas" type="text" class="form-control" placeholder="Buscar venta...">
+            </div>
+
+            <canvas id="graficaVentas" height="120"></canvas>
+
+            <div class="table-responsive mt-4 ventas-table-wrapper">
+                <table id="tablaVentas" class="table table-hover">
+                    <thead>
+                        <tr>
+                            
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Venta</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% ventasLocal.forEach(v => { %>
+                        <tr>
+                            
+                            <td><%= v.producto %></td>
+                            <td><%= v.cantidad %></td>
+                            <td>$<%= v.precio_venta %></td>
+                            <td><%= v.fecha %></td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <% } %>
+
+        <!-- =====================================================
+             TOP 10
+        ======================================================= -->
+        <% if (bestArrayLocal.length > 0) { 
+             const top10 = bestArrayLocal.slice(0, 10);
+        %>
+
+        <div class="report-card mb-4">
+            <h2><i class="fas fa-trophy text-warning me-2"></i> Top 10 productos más vendidos</h2>
+
+            <div class="table-responsive mt-3">
+              <table class="table table-hover text-center">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Total vendido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% top10.forEach((b, idx) => { %>
+                    <tr>
+                      <td><%= idx + 1 %></td>
+                      <td><%= b.producto %></td>
+                      <td><%= b.total %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+
+            <canvas id="graficaBest" height="100" class="mt-3"></canvas>
+        </div>
+
+        <% } %>
+
+        <!-- =====================================================
+             UTILIDADES
+        ======================================================= -->
+        <% if (datosLocal.length > 0) { %>
+
+        <div class="report-card mb-4">
+
+            <h2><i class="fas fa-chart-line me-2"></i> Utilidades por producto</h2>
+
+            <div class="search-box mb-3">
+                <input id="searchUtilidades" type="text" class="form-control" placeholder="Buscar producto...">
+            </div>
+
+            <canvas id="graficaUtilidades" height="120"></canvas>
+
+            <div class="table-responsive mt-4 utilidades-table-wrapper">
+                <table id="tablaUtilidades" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Total Compra</th>
+                            <th>Total Venta</th>
+                            <th>Ganancia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% datosLocal.forEach(d => { %>
+                        <tr>
+                            <td><%= d.producto %></td>
+                            <td>$<%= d.compra.toFixed(2) %></td>
+                            <td>$<%= d.venta.toFixed(2) %></td>
+                            <td>$<%= d.ganancia.toFixed(2) %></td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <% } %>
+
+        <!-- =====================================================
+             STOCK
+        ======================================================= -->
+        <% if (productosLocal.length > 0) { %>
+
+        <div class="report-card mb-4">
+
+            <h2><i class="fas fa-box-open me-2"></i> Stock</h2>
+
+            <div class="search-box mb-3">
+                <input id="searchStock" type="text" class="form-control" placeholder="Buscar producto...">
+            </div>
+
+            <canvas id="graficaStock" height="120"></canvas>
+
+            <div class="table-responsive mt-4 stock-table-wrapper">
+                <table id="tablaStock" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Stock</th>
+                            <th>Mínimo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% productosLocal.forEach(p => { %>
+                        <tr>
+                            <td><%= p.nombre %></td>
+                            <td><%= p.stock %></td>
+                            <td><%= p.minimo %></td>
+                            <td>
+                            <% if (p.stock <= p.minimo) { %>
+                                <span class="badge bg-danger">ALERTA</span>
+                            <% } else { %>
+                                <span class="badge bg-success">OK</span>
+                            <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <% } %>
+
+        <!-- =====================================================
+             MERMAS (TABLA + GRÁFICA)
+        ======================================================= -->
+        <div class="report-card mb-5">
+
+            <h2 class="text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i> Mermas registradas
+            </h2>
+
+            <% if (mermasLocal.length > 0) { %>
+
+            <!-- Gráfica de mermas por producto -->
+            <canvas id="graficaMermas" height="100" class="mb-4"></canvas>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover align-middle" id="tablaMermas">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Motivo</th>
+                            <th>Fecha</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% mermasLocal.forEach(m => { %>
+                            <tr>
+                                <td><%= m.producto %></td>
+                                <td><%= m.cantidad %></td>
+                                <td><%= m.motivo %></td>
+                                <td><%= m.fecha %></td>
+                                <td><%= m.usuario %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <% } else { %>
+
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                No hay registros de merma.
+            </div>
+
+            <% } %>
+        </div>
+
+    </div> <!-- /container -->
+
+
+        <!-- =====================================================
+            BOTÓN FLOTANTE
+        ====================================================== -->
+        <div class="fab-container">
+            <div class="fab-menu" id="fabMenu">
+
+                <!-- 📂 SECCIÓN: CORTES -->
+                <div class="small text-uppercase fw-bold text-light mb-1" style="background:#1f8a4c; padding:4px 8px; border-radius:6px;">
+                    Cortes
+                </div>
+
+                <!-- Corte diario (ticket general del día) -->
+                <a href="/reportes/diario/ticket" target="_blank">🧾 Corte diario</a>
+
+                <!-- Corte por usuario (por ahora usará mismo controlador, luego lo afinamos solo para el usuario logueado) -->
+                <a href="/reportes/diario/usuario" target="_blank">👤 Corte por usuario</a>
+
+                <!-- Corte por producto (resumen de kilos vendidos por producto) -->
+                <a href="/reportes/productos/ticket" target="_blank">🍉 Por producto</a>
+
+
+                <!-- Corte de stock (para surtido de mercancía) -->
+                <a href="/reportes/stock/ticket" target="_blank">📦 Stock / surtido</a>
+
+                <!-- 📤 SECCIÓN: EXPORTAR -->
+                <div class="small text-uppercase fw-bold text-light mt-2 mb-1" style="background:#1f8a4c; padding:4px 8px; border-radius:6px;">
+                    Exportar
+                </div>
+
+                <a href="/reportes/pdf" target="_blank">📄 PDF</a>
+                <a href="/reportes/excel" target="_blank">📊 Excel</a>
+                <a href="#" id="waShare">💬 WhatsApp</a>
+            </div>
+
+            <div class="fab-button" id="fabBtn">
+                <i class="fas fa-share"></i>
+            </div>
+            </div>
+
+
+        <!-- =====================================================
+            CHART.JS
+        ====================================================== -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- =====================================================
+            JS PRINCIPAL
+        ====================================================== -->
+        <script>
+        const dataEl = document.getElementById("reportes-data");
+
+        let ventasData      = dataEl.dataset.ventas    ? JSON.parse(dataEl.dataset.ventas)    : [];
+        let datosData       = dataEl.dataset.datos     ? JSON.parse(dataEl.dataset.datos)     : [];
+        let productosData   = dataEl.dataset.productos ? JSON.parse(dataEl.dataset.productos) : [];
+        let bestData        = dataEl.dataset.best      ? JSON.parse(dataEl.dataset.best)      : [];
+        let mermasData      = dataEl.dataset.mermas    ? JSON.parse(dataEl.dataset.mermas)    : [];
+
+        if (!Array.isArray(bestData)) bestData = [];
+        if (!Array.isArray(mermasData)) mermasData = [];
+
+        const fabBtn = document.getElementById("fabBtn");
+        const fabMenu = document.getElementById("fabMenu");
+
+        fabBtn.onclick = () => {
+            fabMenu.style.display =
+                fabMenu.style.display === "block" ? "none" : "block";
+        };
+
+        function buscar(inputId, tablaId) {
+            const input = document.getElementById(inputId);
+            const tabla = document.getElementById(tablaId);
+            if (!input || !tabla) return;
+
+            const filas = tabla.getElementsByTagName("tr");
+
+            input.addEventListener("keyup", () => {
+                const filtro = input.value.toLowerCase();
+                for (let i = 1; i < filas.length; i++) {
+                    const texto = filas[i].innerText.toLowerCase();
+                    filas[i].style.display = texto.includes(filtro) ? "" : "none";
+                }
+            });
+        }
+
+        buscar("searchVentas", "tablaVentas");
+        buscar("searchUtilidades", "tablaUtilidades");
+        buscar("searchStock", "tablaStock");
+
+        if (ventasData.length > 0 && document.getElementById("graficaVentas")) {
+            new Chart(document.getElementById("graficaVentas"), {
+                type: "bar",
+                data: {
+                    labels: ventasData.map(v => v.producto),
+                    datasets: [{
+                        label: "Cantidad Vendida",
+                        data: ventasData.map(v => v.cantidad),
+                        backgroundColor: "#1f8a4c"
+                    }]
+                }
+            });
+        }
+
+        if (bestData.length > 0 && document.getElementById("graficaBest")) {
+            const top10 = bestData.slice(0, 10);
+            new Chart(document.getElementById("graficaBest"), {
+                type: "bar",
+                data: {
+                    labels: top10.map(b => b.producto),
+                    datasets: [{
+                        label: "Total vendido",
+                        data: top10.map(b => b.total),
+                        backgroundColor: "#1f8a4c"
+                    }]
+                }
+            });
+        }
+
+        if (datosData.length > 0 && document.getElementById("graficaUtilidades")) {
+            new Chart(document.getElementById("graficaUtilidades"), {
+                type: "line",
+                data: {
+                    labels: datosData.map(d => d.producto),
+                    datasets: [{
+                        label: "Ganancias",
+                        data: datosData.map(d => d.ganancia),
+                        borderColor: "#1f8a4c",
+                        borderWidth: 3
+                    }]
+                }
+            });
+        }
+
+        if (productosData.length > 0 && document.getElementById("graficaStock")) {
+            new Chart(document.getElementById("graficaStock"), {
+                type: "bar",
+                data: {
+                    labels: productosData.map(p => p.nombre),
+                    datasets: [{
+                        label: "Stock",
+                        data: productosData.map(p => p.stock),
+                        backgroundColor: "#1f8a4c"
+                    }]
+                }
+            });
+        }
+
+        // ===========================
+        // 📉 GRÁFICA DE MERMAS
+        // ===========================
+        if (mermasData.length > 0 && document.getElementById("graficaMermas")) {
+            const porProducto = {};
+            mermasData.forEach(m => {
+                const key = m.producto || "Sin nombre";
+                porProducto[key] = (porProducto[key] || 0) + (m.cantidad || 0);
+            });
+
+            const labels = Object.keys(porProducto);
+            const valores = Object.values(porProducto);
+
+            new Chart(document.getElementById("graficaMermas"), {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Kilos en merma",
+                        data: valores,
+                        backgroundColor: "#e74c3c"
+                    }]
+                }
+            });
+        }
+
+        const waShare = document.getElementById("waShare");
+        if (waShare) {
+            const texto =
+                "Reporte Ahuacatl\n\n" +
+                "Ganancia del día: $" + dataEl.dataset.kpiDia + "\n" +
+                "Productos vendidos: " + dataEl.dataset.kpiProductos;
+
+            const url = "https://wa.me/?text=" + encodeURIComponent(texto);
+            waShare.setAttribute("href", url);
+            waShare.setAttribute("target", "_blank");
+        }
+
+    </script>
+
+
+    <script>
+        const linkMensaje = "/whatsapp/enviar?mensaje=" + encodeURIComponent(
+        "Reporte Ahuacatl\nGanancia: $" + dataEl.dataset.kpiDia
+        );
+        // ===============================
+        // 🟢 COMPONER MENSAJE WHATSAPP
+        // ===============================
+        let msg = "📊 *REPORTE AHUACATL*\n\n";
+
+        msg += "🗓 Fecha: " + new Date().toLocaleDateString("es-MX") + "\n\n";
+
+        msg += "💰 *Ganancia del día:* $" + dataEl.dataset.kpiGanancias + "\n";
+        msg += "🛒 *Ventas del día:* $" + dataEl.dataset.kpiDia + "\n";
+        msg += "📦 *Productos vendidos:* " + dataEl.dataset.kpiProductos + " kg\n";
+        msg += "🚨 *Alertas de stock:* " + dataEl.dataset.kpiAlertas + "\n\n";
+
+        // ===============================
+        // PRODUCTOS MÁS VENDIDOS
+        // ===============================
+        msg += "🏆 *Top productos más vendidos:*\n";
+        (bestData || []).slice(0, 5).forEach((p, i) => {
+            msg += `${i + 1}. ${p.producto} — ${p.total} kg\n`;
+        });
+        msg += "\n";
+
+        // ===============================
+        // MERMAS
+        // ===============================
+        msg += "❌ *Mermas detectadas:*\n";
+        if (mermasData.length === 0) {
+            msg += "No hay mermas\n";
+        } else {
+            mermasData.slice(0, 5).forEach(m => {
+                msg += `• ${m.producto} — ${m.cantidad}kg (${m.motivo})\n`;
+            });
+        }
+        msg += "\n";
+
+        // ===============================
+        // COMPONER URL
+        // ===============================
+        const redirectUrl =
+            "/whatsapp/enviar?mensaje=" + encodeURIComponent(msg);
+
+        waShare.setAttribute("href", redirectUrl);
+        waShare.setAttribute("target", "_blank");
+
+
+        </script>
+
+</body>
+</html>
+
+
+
+
+<%- include('layout/footer') %>

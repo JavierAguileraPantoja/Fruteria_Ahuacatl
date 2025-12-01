@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirigiendo a WhatsApp…</title>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "<%= link %>";
+    }, 800); 
+  </script>
+
+</head>
+<body style="font-family: Arial; padding:20px;">
+  <h3>Abriendo WhatsApp Web…</h3>
+  <p>Si no abre, presiona el botón:</p>
+  <a href="<%= link %>" style="padding:10px; background:green; color:white;">Abrir manualmente</a>
+</body>
+</html>

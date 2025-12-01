@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ticket Reporte Diario</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    .ticket {
+      width: 310px; /* aprox. 80mm */
+      margin: 0 auto;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .line {
+      border-top: 1px dashed #000;
+      margin: 4px 0;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .small {
+      font-size: 10px;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+      }
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket">
+  <div class="center">
+     <img src="/Uploads/logo.png" style="width:120px; margin-bottom:5px;">
+    <div class="bold">FRUTERÍA AHUACATL</div>
+    <div>REPORTE DIARIO</div>
+  </div>
+
+  <div class="line"></div>
+
+  <%
+    const fechaObj = fechaCorte ? new Date(fechaCorte) : new Date();
+    const horaObj  = horaCorte  ? new Date(horaCorte)  : new Date();
+
+    const fechaStr = fechaObj.toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+
+    const horaStr = horaObj.toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const nombreUser = (user && user.name) ? user.name : 'ADMIN';
+  %>
+
+  <div>
+    Fecha corte: <%= fechaStr %><br>
+    Hora corte:  <%= horaStr %><br>
+    Generado por: <%= nombreUser %>
+  </div>
+
+  <div class="line"></div>
+
+  <div>
+    Total ventas:       $ <span class="right"><%= (totalVentas || 0).toFixed(2) %></span><br>
+    Artículos vendidos: <span class="right"><%= totalArticulos || 0 %></span><br>
+    Ganancia del día:   $ <span class="right"><%= (gananciaDia || 0).toFixed(2) %></span>
+  </div>
+
+  <div class="line"></div>
+
+  <div class="bold">Productos destacados:</div>
+  <% if (productosDestacados && productosDestacados.length > 0) { %>
+    <% productosDestacados.forEach(p => { %>
+      <div>
+        <%= (p.nombre || 'Producto') %>
+        — <%= (p.cantidad || 0) %> kg
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div>Sin datos de productos.</div>
+  <% } %>
+
+  <div class="line"></div>
+
+  <div class="center small">
+    Gracias por su trabajo<br>
+    Ahuacatl · Calidad y frescura
+  </div>
+</div>
+
+<div class="center no-print" style="margin-top:10px;">
+  <button onclick="window.print()">Imprimir</button>
+</div>
+
+</body>
+</html>

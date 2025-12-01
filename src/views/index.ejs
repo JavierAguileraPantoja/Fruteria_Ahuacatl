@@ -1,0 +1,114 @@
+<%- include('layout/header') %>
+
+<div class="container py-5">
+    <!-- Mensaje de bienvenida -->
+    <div class="alert alert-success text-center shadow-lg mb-5">
+        <h3 class="fw-bold">
+            <i class="fas fa-seedling me-2"></i> ¡Bienvenido a Frutería Ahuacatl!
+        </h3>
+        <p class="lead mb-0">
+            <% if (user && user.name) { %>
+                Hola, <%= user.name %> 👋 — Tu panel de control te espera.
+            <% } else { %>
+                Eres un invitado. Por favor, inicia sesión para continuar.
+            <% } %>
+        </p>
+    </div>
+
+    <!-- Bloques de opciones -->
+    <div class="row justify-content-center g-4">
+
+        <!-- ===================== -->
+        <!-- 👑 ADMIN: USUARIOS -->
+        <!-- ===================== -->
+        <% if (user.role === 'administrador') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/users_list" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Usuarios</h5>
+                        <p class="text-muted small">Administra los usuarios del sistema.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+        <!-- ===================== -->
+        <!-- ADMIN + BODEGUERO: PRODUCTOS -->
+        <!-- ===================== -->
+        <% if ( user.role === 'bodeguero') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/productos" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-apple-alt fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold text-dark">Productos</h5>
+                        <p class="text-muted small">Gestiona frutas, verduras y precios.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+        <!-- ===================== -->
+        <!-- ADMIN + VENDEDOR: VENTAS -->
+        <!-- ===================== -->
+        <% if (user.role === 'administrador' || user.role === 'vendedor') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/ventas" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-cash-register fa-3x text-warning mb-3"></i>
+                        <h5 class="fw-bold text-dark">Punto de Venta</h5>
+                        <p class="text-muted small">Realiza ventas y aplica descuentos.</p>
+                    </div>
+                    <a href="/productos" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-apple-alt fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold text-dark">Productos</h5>
+                        <p class="text-muted small">Gestiona frutas, verduras y precios.</p>
+                    </div>
+                </div>
+            </a>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+        <!-- ===================== -->
+        <!-- SOLO ADMIN: REPORTES -->
+        <!-- ===================== -->
+        <% if (user.role === 'administrador') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/reportes" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
+                        <h5 class="fw-bold text-dark">Reportes</h5>
+                        <p class="text-muted small">Consulta las estadísticas de ventas y stock.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+    </div>
+</div>
+
+<!-- Estilos personalizados -->
+<style>
+    body {
+        background-color: #f7f9f7; /* Fondo suave tipo frutería */
+    }
+    .card-hover {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 1rem;
+    }
+    .card-hover:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 0.8rem 1.2rem rgba(0, 0, 0, 0.15);
+    }
+</style>

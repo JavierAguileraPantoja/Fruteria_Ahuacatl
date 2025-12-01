@@ -1,0 +1,40 @@
+<%- include('layout/header') %>
+
+<div class="container my-4">
+  <div class="card shadow-lg">
+    <div class="card-header bg-warning text-dark">
+      <h4><i class="fas fa-exclamation-triangle me-2"></i>Registrar Merma</h4>
+    </div>
+
+    <div class="card-body">
+
+      <h5 class="fw-bold mb-3">Producto: <%= producto.nombre %></h5>
+
+      <form action="/productos/add-merma/<%= producto._id %>" method="POST">
+
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Cantidad a descontar</label>
+            <input type="number" step="0.01" min="0.01" name="cantidad" required class="form-control">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-bold">Motivo</label>
+            <textarea name="motivo" class="form-control" rows="3" required></textarea>
+          </div>
+
+        </div>
+
+        <div class="text-end mt-4">
+          <a href="/productos" class="btn btn-secondary">Cancelar</a>
+          <button class="btn btn-warning">Registrar Merma</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer') %>

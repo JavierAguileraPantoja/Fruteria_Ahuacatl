@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ticket de venta</title>
+
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .ticket {
+      width: 310px; /* ancho 80 mm */
+      margin: 0 auto;
+    }
+
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+    .line { border-top: 1px dashed #000; margin: 5px 0; }
+
+    @media print {
+      #btnVolver { display: none; }
+    }
+    .boton-volver {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #4CAF50;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      border: 1px solid #3d8b41;
+      transition: 0.2s ease;
+    }
+
+    .boton-volver:hover {
+      background: #45a049;
+      transform: scale(1.03);
+    }
+
+    @media print {
+      .boton-volver {
+        display: none !important;
+      }
+    }
+
+  </style>
+</head>
+
+<body onload="window.print()">
+
+<div class="ticket">
+   <img src="/Uploads/logo.png" style="width:120px; margin-bottom:5px;">
+  <div class="center bold">FRUTERÍA AHUACATL</div>
+  <div class="center">Ticket de venta</div>
+  <div class="center"><%= venta.creadoEn.toLocaleString() %></div>
+
+  <div class="line"></div>
+
+  <p><strong>Cliente:</strong> <%= venta.clienteNombre %> (<%= venta.tipoCliente %>)</p>
+  <% if (venta.clienteTelefono) { %>
+    <p><strong>Teléfono:</strong> <%= venta.clienteTelefono %></p>
+  <% } %>
+
+  <!-- 🔥 Aquí el cambio importante -->
+  <p><strong>Vendedor:</strong> <%= venta.creadoPor || "Sistema" %></p>
+
+  <div class="line"></div>
+
+  <table style="width:100%;">
+    <thead>
+      <tr>
+        <th>Prod.</th>
+        <th class="right">Cant</th>
+        <th class="right">P.Unit</th>
+        <th class="right">Subt.</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% venta.items.forEach(i => { %>
+        <tr>
+          <td><%= i.nombre %></td>
+          <td class="right"><%= i.cantidad.toFixed(2) %></td>
+          <td class="right">$<%= i.precioUnitario.toFixed(2) %></td>
+          <td class="right">$<%= i.subtotal.toFixed(2) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <div class="line"></div>
+
+  <h3 class="right">TOTAL: $ <%= venta.total.toFixed(2) %></h3>
+
+  <div class="center">¡Gracias por su compra!</div>
+
+  <div class="center no-print" style="margin-top:10px;">
+    <a id="btnVolver" href="/ventas" class="boton-volver">⟵ Volver</a>
+  </div>
+</div>
+
+</body>
+</html>

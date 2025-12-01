@@ -1,0 +1,356 @@
+<%- include('layout/header') %>
+
+<div class="container mt-4">
+  <div class="row">
+
+    <!-- IZQUIERDA: CONTROLES DEL VENDEDOR -->
+    <div class="col-md-5 mb-3">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-cash-register me-2"></i>Punto de venta
+          </h5>
+        </div>
+        <div class="card-body">
+
+          <% if (message){ %>
+            <div class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
+              <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
+              <strong><%= message.message %></strong>
+            </div>
+          <% } %>
+
+          <!-- Tipo de cliente -->
+          <div class="mb-3">
+            <label class="form-label">Tipo de cliente</label>
+            <select id="tipoCliente" name="tipoCliente" class="form-select">
+              <option value="general">General / Mostrador</option>
+              <option value="pre-mayoreo">Pre-mayoreo</option>
+              <option value="mayoreo">Mayoreo</option>
+            </select>
+          </div>
+
+          <!-- Datos de cliente (solo para pre-mayoreo / mayoreo) -->
+          <div id="datosCliente" style="display:none;">
+            <div class="mb-3">
+              <label class="form-label">Nombre del cliente</label>
+              <input type="text" id="clienteNombre" class="form-control" placeholder="Nombre del cliente">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="text" id="clienteTelefono" class="form-control" placeholder="Teléfono">
+            </div>
+          </div>
+
+          <!-- Selección de producto -->
+          <div class="mb-3">
+            <label class="form-label">Producto</label>
+            <select id="productoSelect" class="form-select">
+              <% productos.forEach(p => { %>
+                <option 
+                  value="<%= p._id %>"
+                  data-nombre="<%= p.nombre %>"
+                  data-precio="<%= p.precio_venta %>"
+                  data-stock="<%= p.stock %>">
+                  <%= p.nombre %> - $<%= p.precio_venta.toFixed(2) %> / <%= p.unidad %> (Stock: <%= p.stock %>)
+                </option>
+
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Cantidad -->
+          <div class="mb-3">
+            <label class="form-label">Cantidad (<span id="unidadTexto">kg</span>)</label>
+            <input 
+              type="number" 
+              id="cantidad" 
+              class="form-control"
+              min="0.001" step="0.001" value="1.000">
+          </div>
+
+          <!-- Precio calculado -->
+          <div class="mb-3">
+            <label class="form-label">Precio unitario aplicado</label>
+            <input 
+              type="text" 
+              id="precioAplicado"
+              class="form-control"
+              value="$0.00"
+              readonly>
+            <small class="text-muted" id="textoReglaPrecio">
+              Selecciona producto y cantidad.
+            </small>
+          </div>
+
+          <!-- Botón agregar -->
+          <button class="btn btn-success w-100" id="btnAgregar">
+            <i class="fas fa-plus-circle me-1"></i>Agregar a la venta
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- DERECHA: CARRITO / TICKET VISIBLE PARA EL CLIENTE -->
+    <div class="col-md-7 mb-3">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Cuenta del cliente</h5>
+          <span class="badge bg-secondary"><%= user ? user.name : '' %></span>
+        </div>
+        <div class="card-body">
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center" id="tablaVenta">
+              <thead class="table-success">
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <h3 class="text-end mt-3">
+            Total: $ <span id="totalGeneral">0.00</span>
+          </h3>
+
+          <!-- Formulario oculto para enviar la venta -->
+          <form id="formVenta" action="/ventas" method="POST">
+            <input type="hidden" name="tipoCliente" id="inputTipoCliente">
+            <input type="hidden" name="clienteNombre" id="inputClienteNombre">
+            <input type="hidden" name="clienteTelefono" id="inputClienteTelefono">
+            <input type="hidden" name="carrito" id="inputCarrito">
+            <button type="submit" class="btn btn-primary w-100 mt-3" id="btnProcesar">
+              Procesar e imprimir venta
+            </button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================
+     🧠 LÓGICA FRONT DE VENTAS
+============================= -->
+<script>
+  const tipoCliente = document.getElementById('tipoCliente');
+  const datosCliente = document.getElementById('datosCliente');
+  const clienteNombre = document.getElementById('clienteNombre');
+  const clienteTelefono = document.getElementById('clienteTelefono');
+
+  const productoSelect = document.getElementById('productoSelect');
+  const cantidadInput = document.getElementById('cantidad');
+  const precioAplicado = document.getElementById('precioAplicado');
+  const textoReglaPrecio = document.getElementById('textoReglaPrecio');
+
+  const tablaBody = document.querySelector('#tablaVenta tbody');
+  const totalGeneralSpan = document.getElementById('totalGeneral');
+
+  const inputTipoCliente = document.getElementById('inputTipoCliente');
+  const inputClienteNombre = document.getElementById('inputClienteNombre');
+  const inputClienteTelefono = document.getElementById('inputClienteTelefono');
+  const inputCarrito = document.getElementById('inputCarrito');
+  const formVenta = document.getElementById('formVenta');
+  const btnAgregar = document.getElementById('btnAgregar');
+
+  let carrito = [];
+
+  // 💰 Lógica de precio (misma que el backend)
+  function determinarPrecio(precioBase, cantidad, tipoCliente) {
+    const kg = parseFloat(cantidad) || 0;
+    let precioFinal = precioBase;
+
+    // Reglas automáticas por cantidad
+    if (kg >= 20) {
+      precioFinal = precioBase * 0.80; // 20% descuento = mayoreo
+      textoReglaPrecio.textContent = 'Aplicado precio MAYOREO por cantidad (≥ 20 kg).';
+    } else if (kg >= 10) {
+      precioFinal = precioBase * 0.90; // 10% descuento = pre-mayoreo
+      textoReglaPrecio.textContent = 'Aplicado precio PRE-MAYOREO por cantidad (≥ 10 kg).';
+    } else {
+      // Reglas manuales por tipo de cliente
+      if (tipoCliente === 'mayoreo') {
+        precioFinal = precioBase * 0.80;
+        textoReglaPrecio.textContent = 'Aplicado precio MAYOREO por tipo de cliente.';
+      } else if (tipoCliente === 'pre-mayoreo') {
+        precioFinal = precioBase * 0.90;
+        textoReglaPrecio.textContent = 'Aplicado precio PRE-MAYOREO por tipo de cliente.';
+      } else {
+        textoReglaPrecio.textContent = 'Precio GENERAL aplicado.';
+      }
+    }
+
+    return precioFinal;
+  }
+
+  function actualizarPreviewPrecio() {
+    const option = productoSelect.selectedOptions[0];
+    if (!option) return;
+    const precioBase = parseFloat(option.dataset.precio) || 0;
+    const tipo = tipoCliente.value;
+    const cantidad = parseFloat(cantidadInput.value) || 0;
+
+    if (!cantidad || cantidad <= 0) {
+      precioAplicado.value = '$0.00';
+      textoReglaPrecio.textContent = 'Selecciona una cantidad válida.';
+      return;
+    }
+
+    const precioFinal = determinarPrecio(precioBase, cantidad, tipo);
+    precioAplicado.value = '$' + precioFinal.toFixed(2);
+  }
+
+  tipoCliente.addEventListener('change', () => {
+    if (tipoCliente.value === 'general') {
+      datosCliente.style.display = 'none';
+      clienteNombre.value = 'Mostrador';
+      clienteTelefono.value = '';
+    } else {
+      datosCliente.style.display = 'block';
+    }
+    actualizarPreviewPrecio();
+  });
+
+  productoSelect.addEventListener('change', actualizarPreviewPrecio);
+  cantidadInput.addEventListener('input', actualizarPreviewPrecio);
+
+  // 🧮 Render del carrito
+  function renderCarrito() {
+    tablaBody.innerHTML = '';
+    let total = 0;
+
+    carrito.forEach((item, index) => {
+      total += item.subtotal;
+
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${item.nombre}</td>
+        <td>${item.cantidad.toFixed(3)} ${item.unidad}</td>
+        <td>$${item.precioUnitario.toFixed(2)}</td>
+        <td>$${item.subtotal.toFixed(2)}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger" data-index="${index}">
+            <i class="fas fa-times"></i>
+          </button>
+        </td>
+      `;
+
+      tablaBody.appendChild(tr);
+    });
+
+    totalGeneralSpan.textContent = total.toFixed(2);
+    inputCarrito.value = JSON.stringify(carrito);
+  }
+
+  // ❌ Eliminar item del carrito
+  tablaBody.addEventListener('click', (e) => {
+    if (e.target.closest('button')) {
+      const index = e.target.closest('button').dataset.index;
+      carrito.splice(index, 1);
+      renderCarrito();
+    }
+  });
+
+btnAgregar.addEventListener('click', () => {
+  const option = productoSelect.selectedOptions[0];
+  if (!option) return alert('Selecciona un producto');
+
+  const stock = parseFloat(option.dataset.stock);
+  const cantidad = parseFloat(cantidadInput.value);
+
+  if (stock <= 0) {
+    alert(`❌ No hay stock disponible de ${option.dataset.nombre}`);
+    return;
+  }
+
+  if (cantidad > stock) {
+    alert(`❌ Solo hay ${stock} kg disponibles`);
+    return;
+  }
+
+  if (stock <= 3) {
+    alert(`⚠️ Advertencia: El stock de ${option.dataset.nombre} es bajo (${stock} kg)`);
+  }
+
+  const tipo = tipoCliente.value;
+  const precioBase = parseFloat(option.dataset.precio);
+  const precioUnitario = determinarPrecio(precioBase, cantidad, tipo);
+  const subtotal = precioUnitario * cantidad;
+
+  // Revisar si ya existe
+  const index = carrito.findIndex(i => i.productId === option.value);
+
+  if (index >= 0) {
+    // sumar cantidad
+    if (carrito[index].cantidad + cantidad > stock) {
+      alert(`❌ No puedes vender más de lo que hay en stock (${stock} kg).`);
+      return;
+    }
+
+    carrito[index].cantidad += cantidad;
+    carrito[index].precioUnitario = precioUnitario;
+    carrito[index].subtotal = carrito[index].cantidad * precioUnitario;
+
+  } else {
+    carrito.push({
+      productId: option.value,
+      nombre: option.dataset.nombre,
+      cantidad,
+      unidad: "kg",
+      precioUnitario,
+      subtotal
+    });
+  }
+
+  renderCarrito();
+});
+
+
+  // 📤 Enviar venta al backend
+  formVenta.addEventListener('submit', (e) => {
+    if (carrito.length === 0) {
+      e.preventDefault();
+      alert('No hay productos en la venta.');
+      return;
+    }
+
+    inputTipoCliente.value = tipoCliente.value;
+    inputClienteNombre.value = (tipoCliente.value === 'general')
+      ? 'Mostrador'
+      : (clienteNombre.value || 'Cliente sin nombre');
+
+    inputClienteTelefono.value = (tipoCliente.value === 'general')
+      ? ''
+      : (clienteTelefono.value || 'Sin teléfono');
+  });
+
+  // Inicial
+  tipoCliente.dispatchEvent(new Event('change'));
+  actualizarPreviewPrecio();
+</script>
+
+<style>
+  body {
+    background-color: #f8fff9;
+  }
+  .card {
+    background-color: #e9fbe7;
+  }
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<%- include('layout/footer') %>

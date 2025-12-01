@@ -1,0 +1,118 @@
+<%- include('layout/header') %>
+
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-success text-white text-center py-3 rounded-top">
+      <h4 class="mb-0">
+        <i class="fas fa-plus-circle me-2"></i>Agregar o Actualizar Producto
+      </h4>
+    </div>
+
+    <div class="card-body p-4">
+      <form action="/productos/add" method="POST" enctype="multipart/form-data">
+
+        <div class="row g-4">
+
+          <!-- Nombre -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
+          </div>
+
+          <!-- Categoría -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Categoría</label>
+            <input type="text" id="categoria" name="categoria" class="form-control" required>
+          </div>
+
+          <!-- Precio compra -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Precio compra</label>
+            <input type="number" id="precio_compra" name="precio_compra" class="form-control" step="0.01" required>
+            <small id="precio_compra_actual" class="text-muted"></small>
+          </div>
+
+          <!-- Precio venta -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Precio venta</label>
+            <input type="number" id="precio_venta" name="precio_venta" class="form-control" step="0.01" required>
+            <small id="precio_venta_actual" class="text-muted"></small>
+          </div>
+
+          <!-- Stock -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold" id="labelStock">Stock inicial</label>
+            <input type="number" id="stock" name="stock" class="form-control" min="0" required>
+            <small id="stock_actual" class="text-muted"></small>
+          </div>
+
+          <!-- Unidad -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Unidad</label>
+            <select id="unidad" name="unidad" class="form-select">
+              <option value="kg">Kilogramos</option>
+              <option value="pieza">Piezas</option>
+              <option value="caja">Cajas</option>
+              <option value="paquete">Paquetes</option>
+            </select>
+          </div>
+
+          <!-- Imagen -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Imagen</label>
+            <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
+          </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success px-4 shadow-sm me-2">
+            <i class="fas fa-save me-1"></i>Guardar
+          </button>
+          <a href="/productos" class="btn btn-secondary px-4">
+            <i class="fas fa-arrow-left me-1"></i>Regresar
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 🟢 Detectar producto existente automáticamente
+  const inputNombre = document.getElementById("nombre");
+
+  inputNombre.addEventListener("blur", async () => {
+    const nombre = inputNombre.value.trim();
+    if (!nombre) return;
+
+    const res = await fetch(`/api/producto/${nombre}`);
+    if (!res.ok) return;
+
+    const prod = await res.json();
+    if (!prod) return;
+
+    document.getElementById("categoria").value = prod.categoria;
+    document.getElementById("precio_compra").value = prod.precio_compra;
+    document.getElementById("precio_venta").value = prod.precio_venta;
+
+    document.getElementById("precio_compra_actual").innerText =
+      `Actual: $${prod.precio_compra}`;
+
+    document.getElementById("precio_venta_actual").innerText =
+      `Actual: $${prod.precio_venta}`;
+
+    document.getElementById("labelStock").innerText = "Agregar al stock";
+    document.getElementById("stock_actual").innerText =
+      `Stock actual: ${prod.stock} ${prod.unidad}`;
+  });
+</script>
+
+<style>
+  body { background-color: #f8fff9; }
+  .card { background-color: #e9fbe7; }
+  .form-label { color: #1b5e20; }
+</style>
+
+<%- include('layout/footer') %>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/Uploads/aguacate.png">
+  <title>Frutería Ahuacatl</title>
+
+  <!-- Bootstrap y FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.datatables.net/v/bs5/dt-2.3.3/datatables.min.css" rel="stylesheet" integrity="sha384-CoUEazvx+MklR7+tLlL048g8FXNPCgFr7HP39p0DQojPC16bnlchqDSzQK3Td1BU" crossorigin="anonymous">
+
+  <script>
+    $(document).ready(function() {
+      $("table").DataTable({
+        order: [0, 'desc']
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <img src="/Uploads/aguacate.png" alt="Icono de mi sitio" class="site-icon" width="30">
+      <a href="/" class="navbar-brand">Ahuacatl</a>
+
+      <button class="navbar-toggler" data-bs-target="#my-nav"
+        data-bs-toggle="collapse" aria-controls="my-nav" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="my-nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+
+          
+          
+
+          <ul class="navbar-nav ms-auto">
+
+            <% if (!user) { %>
+              <!-- Visitante -->
+              <li class="nav-item">
+                <a class="nav-link" href="/signin">Iniciar sesión</a>
+              </li>
+
+            <% } else { %>
+
+              <!-- 🧑‍💼 ADMINISTRADOR -->
+              <% if (user.role === 'administrador') { %>
+                <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/users_list">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/ventas">Ventas</a></li>
+
+              <!-- 🧍‍♂️ VENDEDOR -->
+              <% } else if (user.role === 'vendedor') { %>
+                <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/ventas">Ventas</a></li>
+                
+
+              <!-- 📦 BODEGUERO -->
+              <% } else if (user.role === 'bodeguero') { %>
+                <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+              <% } %>
+
+              <!-- PERFIL Y SALIR -->
+              <li class="nav-item"><a class="nav-link" href="/profile">Perfil</a></li>
+              <li class="nav-item"><a class="nav-link" href="/logout">Salir</a></li>
+
+            <% } %>
+            
+          </ul>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- FIN NAVBAR -->

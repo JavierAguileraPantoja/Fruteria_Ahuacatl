@@ -1,0 +1,15 @@
+router.get("/ventas/imprimir/:id", async (req, res) => {
+  const { VentaMongo } = require("../models/venta");
+
+  try {
+    const venta = await VentaMongo.findById(req.params.id);
+
+    if (!venta) return res.send("Venta no encontrada.");
+
+    res.render("ticket", { venta });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Error al generar ticket.");
+  }
+});

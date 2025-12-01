@@ -1,0 +1,88 @@
+<%- include('layout/header') %>
+
+<div class="container py-4">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-success">
+            <i class="fas fa-exclamation-circle"></i> Producto Duplicado
+        </h1>
+        <p class="text-muted">Se encontraron productos similares. ¿Qué deseas hacer?</p>
+    </div>
+
+    <div class="row">
+
+        <!-- NUEVO PRODUCTO -->
+        <div class="col-md-6">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>Nuevo producto</h4>
+                </div>
+
+                <div class="card-body text-center">
+                    <img src="/Uploads/<%= nuevoProducto.imagen %>" style="max-height:150px" class="img-fluid mb-3 rounded">
+
+                    <h5 class="fw-bold"><%= nuevoProducto.nombre %></h5>
+                    <p><strong>Variante:</strong> <%= nuevoProducto.variante || 'N/A' %></p>
+                    <p><strong>Categoría:</strong> <%= nuevoProducto.categoria %></p>
+                    <p><strong>Unidad:</strong> <%= nuevoProducto.unidad %></p>
+                    <p><strong>Nuevo stock:</strong> <%= nuevoProducto.stock %></p>
+
+                    <form action="/productos/create-new" method="POST">
+                        <% for (let k in nuevoProducto) { %>
+                            <input type="hidden" name="<%= k %>" value="<%= nuevoProducto[k] %>">
+                        <% } %>
+
+                        <button class="btn btn-primary w-100 mt-3">
+                            Crear como producto nuevo
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- PRODUCTOS EXISTENTES -->
+        <div class="col-md-6">
+            <div class="card shadow border-warning">
+
+                <div class="card-header bg-warning text-dark text-center">
+                    <h4>Coincidencias encontradas</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <% productos.forEach(p => { %>
+                        <div class="p-3 mb-3 border rounded">
+                            <div class="text-center">
+                                <img src="/Uploads/<%= p.imagen %>" style="max-height:120px" class="img-fluid rounded mb-2">
+                            </div>
+
+                            <h5 class="fw-bold text-center"><%= p.nombre %></h5>
+                            <p><strong>Variante:</strong> <%= p.variante || 'N/A' %></p>
+                            <p><strong>Categoría:</strong> <%= p.categoria %></p>
+                            <p><strong>Unidad:</strong> <%= p.unidad %></p>
+                            <p><strong>Stock actual:</strong> <%= p.stock %></p>
+
+                            <form action="/productos/merge" method="POST">
+                                <input type="hidden" name="idExistente" value="<%= p._id %>">
+                                
+                                <% for (let k in nuevoProducto) { %>
+                                    <input type="hidden" name="<%= k %>" value="<%= nuevoProducto[k] %>">
+                                <% } %>
+
+                                <button class="btn btn-warning w-100 mt-2">
+                                    Sumar al producto existente
+                                </button>
+                            </form>
+
+                        </div>
+                    <% }) %>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<%- include('layout/footer') %>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ticket de Merma</title>
+
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .ticket {
+      width: 310px; /* 80 mm */
+      margin: 0 auto;
+    }
+
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+    .line { border-top: 1px dashed #000; margin: 6px 0; }
+
+    /* Ocultar botones en modo print */
+    @media print {
+      .no-print { display: none !important; }
+    }
+
+    /* ===== BOTÓN VERDE (MISMO ESTILO DEL TICKET DE VENTA) ===== */
+    .boton-volver {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #4CAF50;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      border: 1px solid #3d8b41;
+      transition: 0.2s ease;
+    }
+
+    .boton-volver:hover {
+      background: #45a049;
+      transform: scale(1.03);
+    }
+
+    /* ===== BOTÓN REIMPRIMIR (MISMO ESTILO PERO AZUL) ===== */
+    .boton-reimprimir {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #3498db;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      border: 1px solid #2c80b4;
+      transition: 0.2s ease;
+      margin-left: 10px;
+    }
+
+    .boton-reimprimir:hover {
+      background: #2980b9;
+      transform: scale(1.03);
+    }
+
+  </style>
+</head>
+
+<body onload="window.print()">
+
+<div class="ticket">
+
+  <img src="/Uploads/logo.png" style="width:120px; margin-bottom:5px;">
+  
+  <div class="center bold">FRUTERÍA AHUACATL</div>
+  <div class="center">Reporte de Merma</div>
+
+  <div class="line"></div>
+
+  <%
+    const fechaObj = new Date();
+    const fechaStr = fechaObj.toLocaleDateString("es-MX", {
+      year: "numeric", month: "2-digit", day: "2-digit"
+    });
+    const horaStr = fechaObj.toLocaleTimeString("es-MX", {
+      hour: "2-digit", minute: "2-digit"
+    });
+
+    const usuario = user?.name || "Admin";
+  %>
+
+  <div>
+    Fecha: <%= fechaStr %><br>
+    Hora: <%= horaStr %><br>
+    Registrado por: <%= usuario %>
+  </div>
+
+  <div class="line"></div>
+
+  <div class="bold">Detalles de la Merma:</div>
+
+  <% if (producto && cantidad && motivo) { %>
+    
+    <p><strong>Producto:</strong> <%= producto.nombre %></p>
+    <p><strong>Cantidad:</strong> <%= cantidad %> <%= producto.unidad %></p>
+    <p><strong>Motivo:</strong> <%= motivo %></p>
+
+  <% } else { %>
+    <p>No hay información de merma disponible.</p>
+  <% } %>
+
+  <div class="line"></div>
+
+  <div class="center">
+    Gracias por su trabajo<br>
+    Ahuacatl · Calidad y frescura
+  </div>
+
+  <!-- ===========================
+       BOTONES (NO PRINT)
+       =========================== -->
+  <div class="center no-print" style="margin-top:12px;">
+    
+    <!-- BOTÓN VERDE VOLVER -->
+    <a href="/productos" class="boton-volver">⟵ Volver</a>
+
+    <!-- BOTÓN REIMPRIMIR -->
+    <a onclick="window.print()" class="boton-reimprimir">🖨 Reimprimir</a>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<%- include('layout/header') %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6 mx-auto mt-4">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+          <h5>Registrar Nuevo Usuario</h5>
+        </div>
+        <div class="card-body p-4">
+         <!-- Mensajes de error o éxito -->
+          <% if (message && message.signupMessage && message.signupMessage.length) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= message.signupMessage[0] %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          <% } %>
+
+          <% if (message && message.success && message.success.length) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= message.success[0] %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          <% } %>
+
+          <form action="/signup" method="post" id="signup-form" enctype="multipart/form-data">
+            
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre completo</label>
+              <input type="text" name="name" class="form-control form-control-lg" placeholder="Ej. Juan Pérez" required />
+            </div>
+
+            <!-- Correo -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input type="email" name="email" class="form-control form-control-lg" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" name="password" class="form-control form-control-lg" placeholder="Mínimo 6 caracteres" minlength="6" required />
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="phone" class="form-label">Teléfono</label>
+              <input type="tel" name="phone" class="form-control form-control-lg" placeholder="Ej. 3312345678" required />
+            </div>
+
+            <!-- Imagen -->
+            <div class="mb-3">
+              <label for="image" class="form-label">Selecciona una imagen</label>
+              <input type="file" name="image" class="form-control form-control-lg" accept="image/*" required />
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="role" class="form-label">Rol del usuario</label>
+              <select name="role" id="role" class="form-select form-select-lg" required>
+                <option value="vendedor">Vendedor</option>
+                <option value="bodeguero">Bodeguero</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+
+            <!-- Botón -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                Registrar Usuario
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer') %>

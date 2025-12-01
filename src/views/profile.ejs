@@ -1,0 +1,73 @@
+<%- include('layout/header') %>
+
+<div class="container my-4">
+  <div class="card shadow-lg border-0 rounded-4">
+    
+    <div class="card-header bg-success text-white text-center py-3">
+      <h3 class="mb-0">
+        <i class="fas fa-user-circle me-2"></i>Mi Perfil
+      </h3>
+    </div>
+
+    <div class="card-body p-4">
+
+      <div class="row g-4 align-items-center">
+
+        <!-- FOTO -->
+        <div class="col-12 col-md-4 text-center">
+          <img 
+            src="/Uploads/<%= user.image %>" 
+            alt="Foto de perfil" 
+            class="img-thumbnail rounded-circle shadow"
+            style="width: 180px; height: 180px; object-fit: cover;"
+          >
+        </div>
+
+        <!-- INFORMACIÓN -->
+        <div class="col-12 col-md-8">
+          <h4 class="fw-bold text-success text-capitalize"><%= user.name %></h4>
+
+          <p class="mb-2">
+            <i class="fas fa-envelope me-2"></i>
+            <strong>Correo:</strong> <%= user.email %>
+          </p>
+
+          <p class="mb-2">
+            <i class="fas fa-phone me-2"></i>
+            <strong>Teléfono:</strong> <%= user.phone %>
+          </p>
+
+          <p class="mb-2">
+            <i class="fas fa-id-badge me-2"></i>
+            <strong>Rol:</strong> 
+            <span class="badge bg-success text-light text-uppercase">
+              <%= user.role %>
+            </span>
+          </p>
+
+          <hr>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="/" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-1"></i> Volver al inicio
+            </a>
+
+            <a href="/logout" class="btn btn-danger">
+              <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background-color: #f8fff9;
+  }
+</style>
+
+<%- include('layout/footer') %>
