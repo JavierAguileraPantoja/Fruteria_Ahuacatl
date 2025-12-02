@@ -40,7 +40,7 @@ async function syncProductsToSQLite(isOnlineParam = null) {
         creadoEn: p.creadoEn
       };
 
-      await ProductSQLite.upsert(data);
+      await ProductSQLite.upsert(data);//se supone que actualisa el producto 
       count++;
     }
 
