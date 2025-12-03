@@ -19,7 +19,8 @@ const {
   isAuthenticated,
   isAdmin,
   isVendedor,
-  isBodeguero
+  isBodeguero,
+  isAdminOrBodeguero
 } = require("../middlewares/authRoles");
 
 const ProductMongoLocalFix =
@@ -29,7 +30,7 @@ const ProductMongoLocalFix =
     new mongoose.Schema({}, { strict: false, collection: "products" })
   );
 
-// 🔌 Estado de internet para saber si estamos ONLINE/OFFLINE
+//  Estado de internet para saber si estamos ONLINE/OFFLINE
 const { getEstadoInternet } = require("../databases/mongoPrincipal");
 
 // Modelos dinámicos
@@ -46,7 +47,7 @@ const {
 const reportes = require("../models/reportesController");
 
 // =======================================================
-// 🔧 MULTER PARA SUBIDA DE IMÁGENES
+//  MULTER PARA SUBIDA DE IMÁGENES
 // =======================================================
 const storage = multer.diskStorage({
   destination: (req, file, cb) =>
@@ -68,7 +69,7 @@ router.use((req, res, next) => {
 
 
 // =======================================================
-// 🔹 MOSTRAR FORMULARIO DE REGISTRO
+//  MOSTRAR FORMULARIO DE REGISTRO
 // =======================================================
 router.get("/signup", (req, res) => {
   res.render("signup", { user: req.user || null });
@@ -76,7 +77,7 @@ router.get("/signup", (req, res) => {
 
 
 // =======================================================
-// 🏠 RUTA PRINCIPAL
+//  RUTA PRINCIPAL
 // =======================================================
 router.get("/", isAuthenticated, (req, res) => {
   res.render("index", {
@@ -88,7 +89,7 @@ router.get("/", isAuthenticated, (req, res) => {
 });
 
 // =======================================================
-// 👤 PERFIL
+//  PERFIL
 // =======================================================
 router.get("/profile", isAuthenticated, (req, res) => {
   res.render("profile", {
@@ -98,7 +99,7 @@ router.get("/profile", isAuthenticated, (req, res) => {
 });
 
 // =======================================================
-// 👥 CRUD USUARIOS
+//  CRUD USUARIOS
 // =======================================================
 router.get("/users_list", isAdmin, async (req, res) => {
   try {
@@ -230,7 +231,7 @@ router.get("/delete/:id", isAdmin, async (req, res) => {
 });
 
 // =======================================================
-// 🔐 AUTENTICACIÓN
+//  AUTENTICACIÓN
 // =======================================================
 router.get("/signin", (req, res) =>
   res.render("signin", { title: "Iniciar sesión" })
@@ -258,7 +259,7 @@ router.get("/logout", (req, res) => {
 });
 
 // =======================================================
-// 💸 VENTAS (ONLINE + OFFLINE AUTOMÁTICO)
+//  VENTAS (ONLINE + OFFLINE AUTOMÁTICO)
 // =======================================================
 router.get("/ventas", isVendedor, async (req, res) => {
   try {
@@ -297,12 +298,12 @@ function determinarPrecioBackend(precioBase, cantidad, tipoCliente) {
 }
 
 // =======================================================
-//  💥 ZONA CRÍTICA (AQUÍ ESTABA TU ERROR)
+//   ZONA CRÍTICA 
 // =======================================================
-// 👉 Toda la lógica de ventas completa, con inicialización correcta
-// 👉 NO se borró nada tuyo
-// 👉 NO se tocó sincronización
-// 👉 Solo corregí inicialización de lotes
+//  Toda la lógica de ventas , con inicialización correcta
+//  NO se borró nada mio
+//  NO se tocó sincronización
+//  Solo corregí inicialización de lotes
 
 router.post("/ventas", isVendedor, async (req, res) => {
   try {
@@ -335,7 +336,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
 
     let mensajeStock = null;
 
-    // ✔ VALIDACIÓN DE STOCK GLOBAL
+    // VALIDACIÓN DE STOCK GLOBAL
     for (const item of items) {
       const prod = mapaProductos[item.productId];
       if (!prod) {
@@ -366,7 +367,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
 
     if (mensajeStock) req.session.message = mensajeStock;
 
-    // ✔ PROCESAR ITEMS
+    // PROCESAR ITEMS
     let total = 0;
     const itemsProcesados = items.map((i) => {
       const p = mapaProductos[i.productId];
@@ -396,14 +397,14 @@ router.post("/ventas", isVendedor, async (req, res) => {
       };
     });
     // ============================================================
-    // 🟦 BLOQUE OFICIAL — FIFO + SQLite + Mongo Local
+    //  BLOQUE OFICIAL — FIFO + SQLite + Mongo Local
     // ============================================================
 
     for (let item of itemsProcesados) {
       const p = mapaProductos[item.productId.toString()];
       let cantidad = item.cantidad;
 
-      // ⭐ Inicialización correcta de lotes
+      //Inicialización correcta de lotes
       if (
         (p.stock_precio_viejo == null && p.stock_precio_nuevo == null) ||
         (p.stock > 0 && (p.stock_precio_viejo + p.stock_precio_nuevo) === 0)
@@ -425,7 +426,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
       if (p.stock_precio_viejo == null) p.stock_precio_viejo = 0;
       if (p.stock_precio_nuevo == null) p.stock_precio_nuevo = 0;
 
-      // ⭐ FIFO
+      // FIFO
       if (p.stock_precio_viejo > 0) {
         const desdeViejo = Math.min(p.stock_precio_viejo, cantidad);
         p.stock_precio_viejo -= desdeViejo;
@@ -453,54 +454,59 @@ router.post("/ventas", isVendedor, async (req, res) => {
           p.precio_compra_pendiente = 0;
         }
       }
-
+      
       // ============================================================
-      // 🟧 ACTUALIZAR SQLITE SIEMPRE
+      // ACTUALIZAR SQLITE (UPSERT REAL SIN update())
       // ============================================================
       try {
-        const [updated] = await ProductSQLite.update(
-          { 
-            stock: p.stock,
-            precio_actual: p.precio_actual,
-            precio_viejo: p.precio_viejo,
-            precio_nuevo: p.precio_nuevo,
-            precio_compra_pendiente: p.precio_compra_pendiente
-          },
-          { where: { id_global: p.id_global } } // 🔥 LLAVE REAL — MATCH 100% EXACTO
+        await ProductSQLite.sequelize.query(
+          `
+          INSERT INTO productos (
+            id_global, nombre, categoria,
+            precio_compra, precio_venta, precio_compra_pendiente,
+            stock, unidad, imagen,
+            precio_actual, precio_viejo, precio_nuevo
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id_global) DO UPDATE SET
+            stock = excluded.stock,
+            precio_actual = excluded.precio_actual,
+            precio_viejo = excluded.precio_viejo,
+            precio_nuevo = excluded.precio_nuevo,
+            precio_compra_pendiente = excluded.precio_compra_pendiente;
+          `,
+          {
+            replacements: [
+              p.id_global,
+              p.nombre,
+              p.categoria,
+              p.precio_compra,
+              p.precio_venta,
+              p.precio_compra_pendiente,
+              p.stock,
+              p.unidad,
+              p.imagen,
+              p.precio_actual,
+              p.precio_viejo,
+              p.precio_nuevo
+            ]
+          }
         );
-
-        // Si NO lo encontró, lo recreo limpio (no falla nunca)
-        if (updated === 0) {
-          await ProductSQLite.create({
-            id_global: p.id_global,
-            nombre: p.nombre,
-            categoria: p.categoria,
-            precio_compra: p.precio_compra,
-            precio_venta: p.precio_venta,
-            precio_compra_pendiente: p.precio_compra_pendiente,
-            stock: p.stock,
-            unidad: p.unidad,
-            imagen: p.imagen,
-            creadoPor: p.creadoPor,
-            creadoEn: p.creadoEn,
-            precio_actual: p.precio_actual,
-            precio_viejo: p.precio_viejo,
-            precio_nuevo: p.precio_nuevo
-          });
-        }
 
         console.log("📦 SQLite actualizado:", p.nombre, p.stock);
 
       } catch (err) {
-        console.log("❌ Error SQLite:", err.message);
+        console.log("❌ Error SQLite (UPSERT):", err.message);
       }
+
+
       // ============================================================
-      // 💾 GUARDAR PRODUCTO EN LA BD PRINCIPAL (Atlas o Local)
+      // GUARDAR PRODUCTO EN LA BD PRINCIPAL (Atlas o Local)
       // ============================================================
       await p.save();
 
       // ============================================================
-      // 🟩 ESPEJO EN MONGO LOCAL (solo ONLINE)
+      // ESPEJO EN MONGO LOCAL (solo ONLINE)
       // ============================================================
       if (online) {
         // FORZAR actualización real en Mongo Local
@@ -534,7 +540,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
 
 
     // ============================================================
-    // 🧾 GUARDAR VENTA (Atlas / Local)
+    // GUARDAR VENTA (Atlas / Local)
     // ============================================================
     const venta = new Venta({
       tipoCliente,
@@ -550,7 +556,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
     await venta.save();
 
     // ============================================================
-    // 🟧 COPIA EN SQLITE
+    // COPIA EN SQLITE
     // ============================================================
     try {
       const vSQLite = await VentaSQLite.create({
@@ -604,11 +610,11 @@ router.get("/ventas/ticket/:id", isVendedor, async (req, res) => {
 });
 
 // =======================================================
-// 📦 PRODUCTOS (importamos el router ya final)
+// PRODUCTOS (importamos el router ya final)
 // =======================================================
 router.use("/", require("./products"));
 
-// 📊 REPORTES
+// REPORTES
 router.get("/reportes", isAdmin, async (req, res) => {
   try {
     await reportes.verReportes(req, res);
@@ -640,7 +646,7 @@ router.get("/reportes/stock/ticket", isAdmin, async (req, res) => {
   }
 });
 
-// 📦 Ticket por producto (kilos vendidos)
+// Ticket por producto (kilos vendidos)
 router.get(
   "/reportes/productos/ticket",
   isAuthenticated,
@@ -649,7 +655,7 @@ router.get(
 
 
 // =======================================================
-// 📩 REDIRECCIÓN SEGURA A WHATSAPP
+// REDIRECCIÓN SEGURA A WHATSAPP
 // =======================================================
 router.get("/whatsapp/enviar", (req, res) => {
     const telefono = "524451581765";  // Tu número
@@ -702,7 +708,7 @@ router.get("/fix/missing-product/:id_global", async (req, res) => {
     delete plain._id;
     plain.updatedAt = new Date();
 
-    // 🚫 YA NO CREA NADA NUEVO
+    // YA NO CREA NADA NUEVO
     // SOLO ACTUALIZA PRODUCTOS QUE YA EXISTEN
     const result = await localModel.updateOne(
       { id_global },

@@ -1,6 +1,6 @@
 // src/models/users.js
 // =======================================
-// 📘 MODELO DE USUARIO (Atlas + Local)
+//  MODELO DE USUARIO (Atlas + Local)
 // Funcionando OFFLINE / ONLINE sin romper sesión
 // =======================================
 
@@ -13,7 +13,7 @@ const {
 } = require("../databases/mongoPrincipal");
 
 // ---------------------------------------
-// 🔹 Esquema único compartido
+//  Esquema único compartido
 // ---------------------------------------
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // ---------------------------------------
-// 🔐 Métodos de usuario
+// Métodos de usuario
 // ---------------------------------------
 UserSchema.statics.encryptPassword = async function (password) {
   const salt = await bcrypt.genSalt(10);
@@ -42,7 +42,7 @@ UserSchema.methods.comparePassword = async function (password) {
 };
 
 // ---------------------------------------
-// 🧠 Modelos Atlas y Local
+//  Modelos Atlas y Local
 // ---------------------------------------
 const UserAtlas =
   atlasConnection.models.User || atlasConnection.model("User", UserSchema);
@@ -55,7 +55,7 @@ const UserLocal =
 // y puede causar problemas OFFLINE.
 
 // ---------------------------------------
-// 🏆 Selector automático según internet
+// Selector automático según internet
 // ---------------------------------------
 function getUserModel() {
   const online = getEstadoInternet();

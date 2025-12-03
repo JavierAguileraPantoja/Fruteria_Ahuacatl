@@ -1,6 +1,6 @@
 // src/models/venta.js
 // ======================================
-// 💸 MODELO DE VENTAS (Atlas + Local + SQLite)
+// MODELO DE VENTAS (Atlas + Local + SQLite)
 // ======================================
 
 const mongoose = require('mongoose');
@@ -10,7 +10,7 @@ const { atlasConnection, localConnection } = require('../databases/mongoPrincipa
 const getDBConnection = require('../databases/dbSelector');
 
 // ======================================
-// 🟦 SCHEMA MONGODB (VENTAS)
+// SCHEMA MONGODB (VENTAS)
 // ======================================
 const itemSchema = new mongoose.Schema(
   {
@@ -52,21 +52,21 @@ const ventaSchema = new mongoose.Schema(
 );
 
 // ======================================
-// 🌎 VENTAS EN ATLAS (PRINCIPAL ONLINE)
+// VENTAS EN ATLAS (PRINCIPAL ONLINE)
 // ======================================
 const VentaAtlas =
   atlasConnection.models.Venta ||
   atlasConnection.model('Venta', ventaSchema);
 
 // ======================================
-// 🖥️ VENTAS EN MONGO LOCAL (OFFLINE)
+// VENTAS EN MONGO LOCAL (OFFLINE)
 // ======================================
 const VentaLocal =
   localConnection.models.Venta ||
   localConnection.model('Venta', ventaSchema);
 
 // ======================================
-// 🧠 SELECTOR INTELIGENTE (Atlas / Local)
+// SELECTOR INTELIGENTE (Atlas / Local)
 // ======================================
 function getVentaModel() {
   // Usa el mismo selector que productos:
@@ -79,7 +79,7 @@ function getVentaModel() {
 const VentaMongo = VentaAtlas;
 
 // ======================================
-// 🟧 SQLITE — TABLAS DE RESPALDO
+// SQLITE — TABLAS DE RESPALDO
 // ======================================
 const VentaSQLite = sqliteDB.define(
   'ventas',
@@ -117,7 +117,7 @@ VentaSQLite.hasMany(VentaDetalleSQLite, { foreignKey: 'ventaId' });
 VentaDetalleSQLite.belongsTo(VentaSQLite, { foreignKey: 'ventaId' });
 
 // ======================================
-// 🟩 FUNCIONES KPI PARA REPORTES
+// FUNCIONES KPI PARA REPORTES
 // ======================================
 const db = sqliteDB; // atajo
 
@@ -193,12 +193,12 @@ module.exports = {
   VentaMongo,          // Atlas (para reportes y sync)
   VentaSQLite,
   VentaDetalleSQLite,
-  getVentaModel,       // 👈 ESTE se usa en las rutas de ventas (ONLINE/OFFLINE)
+  getVentaModel,       //  ESTE se usa en las rutas de ventas (ONLINE/OFFLINE)
   VentaAtlas,
   VentaLocal
 };
 // ===============================================
-// 🛠️ FORZAR CREACIÓN DE TABLAS EN SQLITE
+// FORZAR CREACIÓN DE TABLAS EN SQLITE
 // ===============================================
 (async () => {
   try {

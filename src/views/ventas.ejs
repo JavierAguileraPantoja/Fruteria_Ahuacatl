@@ -139,7 +139,7 @@
 </div>
 
 <!-- ============================
-     🧠 LÓGICA FRONT DE VENTAS
+      LÓGICA FRONT DE VENTAS
 ============================= -->
 <script>
   const tipoCliente = document.getElementById('tipoCliente');
@@ -164,7 +164,7 @@
 
   let carrito = [];
 
-  // 💰 Lógica de precio (misma que el backend)
+  //  Lógica de precio (misma que el backend)
   function determinarPrecio(precioBase, cantidad, tipoCliente) {
     const kg = parseFloat(cantidad) || 0;
     let precioFinal = precioBase;
@@ -223,7 +223,7 @@
   productoSelect.addEventListener('change', actualizarPreviewPrecio);
   cantidadInput.addEventListener('input', actualizarPreviewPrecio);
 
-  // 🧮 Render del carrito
+  // Render del carrito
   function renderCarrito() {
     tablaBody.innerHTML = '';
     let total = 0;
@@ -252,7 +252,7 @@
     inputCarrito.value = JSON.stringify(carrito);
   }
 
-  // ❌ Eliminar item del carrito
+  //  Eliminar item del carrito
   tablaBody.addEventListener('click', (e) => {
     if (e.target.closest('button')) {
       const index = e.target.closest('button').dataset.index;
@@ -316,7 +316,7 @@ btnAgregar.addEventListener('click', () => {
 });
 
 
-  // 📤 Enviar venta al backend
+  //  Enviar venta al backend
   formVenta.addEventListener('submit', (e) => {
     if (carrito.length === 0) {
       e.preventDefault();

@@ -1,11 +1,11 @@
 // src/utils/syncAtlasToLocal.js
 // ======================================================
-// 🔄 AHUACATL — SINCRONIZACIÓN ATLAS → MONGO LOCAL
-//   ✔ Atlas manda solo el CATÁLOGO
-//   ❌ NO baja stock
-//   ❌ NO baja mermas
-//   ❌ NO baja lotes
-//   ✔ No destruye ventas offline
+// AHUACATL — SINCRONIZACIÓN ATLAS → MONGO LOCAL
+//    Atlas manda solo el CATÁLOGO
+//    NO baja stock
+//    NO baja mermas
+//    NO baja lotes
+//    No destruye ventas offline
 // ======================================================
 
 const { ProductMongo, ProductMongoLocal } = require("../models/product");
@@ -26,7 +26,7 @@ async function syncAtlasToLocal() {
     for (const p of productosAtlas) {
       if (!p.id_global) continue;
 
-      // 🔐 Campos permitidos desde Atlas (SOLO CATÁLOGO)
+      // Campos permitidos desde Atlas (SOLO CATÁLOGO)
       const plain = {
         id_global: p.id_global,
         nombre: p.nombre,
@@ -41,15 +41,7 @@ async function syncAtlasToLocal() {
         updatedAt: new Date()
       };
 
-      // ⚠️ NO ACTUALIZAMOS:
-      //    stock
-      //    stock_precio_viejo
-      //    stock_precio_nuevo
-      //    precio_actual
-      //    lotes
-      //    mermas
-      //    precio_nuevo
-      //    precio_viejo
+
 
       await ProductMongoLocal.updateOne(
         { id_global: p.id_global },

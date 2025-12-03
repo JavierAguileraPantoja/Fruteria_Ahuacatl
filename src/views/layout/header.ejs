@@ -49,21 +49,21 @@
 
             <% } else { %>
 
-              <!-- 🧑‍💼 ADMINISTRADOR -->
+              <!--  ADMINISTRADOR -->
               <% if (user.role === 'administrador') { %>
                 <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link" href="/users_list">Usuarios</a></li>
                 <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
                 <li class="nav-item"><a class="nav-link" href="/ventas">Ventas</a></li>
 
-              <!-- 🧍‍♂️ VENDEDOR -->
+              <!--  VENDEDOR -->
               <% } else if (user.role === 'vendedor') { %>
                 <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
                 <li class="nav-item"><a class="nav-link" href="/ventas">Ventas</a></li>
                 
 
-              <!-- 📦 BODEGUERO -->
+              <!--  BODEGUERO -->
               <% } else if (user.role === 'bodeguero') { %>
                 <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>

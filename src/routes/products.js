@@ -9,7 +9,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { isAdmin, isBodeguero, isAuthenticated } = require("../middlewares/authRoles");
+const { isAdmin, isBodeguero, isAuthenticated,isAdminOrBodeguero } = require("../middlewares/authRoles");
 const { getProductModel } = require("../models/product");
 
 // 🔥 SINCRONIZACIÓN POR EVENTOS
@@ -329,7 +329,7 @@ router.post("/productos/edit/:id",
 // ====================================================
 // 📄 FORMULARIO DE MERMA
 // ====================================================
-router.get("/productos/add-merma/:id", isAdmin||isBodeguero, async (req, res) => {
+router.get("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
     const producto = await Product.findById(req.params.id);
@@ -351,7 +351,7 @@ router.get("/productos/add-merma/:id", isAdmin||isBodeguero, async (req, res) =>
 // ====================================================
 // 🟧 REGISTRAR MERMA (CORREGIDO)
 // ====================================================
-router.post("/productos/add-merma/:id", isAdmin||isBodeguero, async (req, res) => {
+router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
     const producto = await Product.findById(req.params.id);

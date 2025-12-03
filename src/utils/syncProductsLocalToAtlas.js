@@ -1,10 +1,10 @@
 // src/utils/syncProductsLocalToAtlas.js
 // =======================================================
 //   Local → Atlas (VERSIÓN FINAL ACTUALIZADA 2025)
-//   🟢 SOLO sube stock + mermas
-//   🟢 NO toca catálogo (Atlas manda)
-//   🟢 NO toca precios (Atlas manda)
-//   🟢 Anti-loop real
+//    SOLO sube stock + mermas
+//    NO toca catálogo (Atlas manda)
+//    NO toca precios (Atlas manda)
+//    Anti-loop real
 // =======================================================
 
 const mongoose = require("mongoose");

@@ -1,6 +1,6 @@
 // src/utils/pushProductChange.js
 // =======================================================
-// 🚀 SINCRONIZACIÓN POR EVENTOS (Local → Atlas)
+// SINCRONIZACIÓN POR EVENTOS (Local → Atlas)
 //  - Se ejecuta cuando se modifica 1 SOLO producto
 //  - Evita fullSync completo
 //  - Usa id_global como llave universal

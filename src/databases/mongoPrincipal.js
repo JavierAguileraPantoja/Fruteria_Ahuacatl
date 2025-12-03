@@ -14,21 +14,21 @@ async function hayInternet() {
 }
 
 // ==============================
-// 🌎 Conexión Atlas
+// Conexión Atlas
 // ==============================
 const atlasConnection = mongoose.createConnection(atlasURI, {
   serverSelectionTimeoutMS: 5000
 });
 
 // ==============================
-// 🏠 Conexión Mongo LOCAL (Docker con AUTH)
+// Conexión Mongo LOCAL (Docker con AUTH)
 // ==============================
 const localConnection = mongoose.createConnection(localURI, {
   serverSelectionTimeoutMS: 3000
 });
 
 // ==============================
-// 📌 Eventos conexión Atlas
+// Eventos conexión Atlas
 // ==============================
 atlasConnection.on("connected", () => {
   console.log("🟢 Atlas conectado como BD principal");
@@ -38,7 +38,7 @@ atlasConnection.on("error", (err) => {
 });
 
 // ==============================
-// 📌 Eventos conexión Local
+// Eventos conexión Local
 // ==============================
 localConnection.on("connected", () => {
   console.log("🏠 Mongo Local conectado (Docker)");
@@ -48,7 +48,7 @@ localConnection.on("error", (err) => {
 });
 
 // ==============================
-// 📡 Verificación de red
+// Verificación de red
 // ==============================
 setInterval(async () => {
   const online = await hayInternet();
@@ -63,7 +63,7 @@ setInterval(async () => {
 }, 10000);
 
 // ==============================
-// 🔁 Estado inicial
+// Estado inicial
 // ==============================
 (async () => {
   const online = await hayInternet();
@@ -72,7 +72,7 @@ setInterval(async () => {
 })();
 
 // ==============================
-// 📦 Exportar conexiones
+// Exportar conexiones
 // ==============================
 module.exports = {
   atlasConnection,

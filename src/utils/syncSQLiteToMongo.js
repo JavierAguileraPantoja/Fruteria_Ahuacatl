@@ -1,9 +1,9 @@
 // src/utils/syncSQLiteToMongo.js
 // =======================================================
-// 🗂 SQLITE → MONGO LOCAL (SOLO USUARIOS, 100% SEGURO)
-// - No sincroniza productos (prohibido)
-// - Whitelist de campos permitidos
-// - Evita que SQLite sobrescriba datos críticos
+// SQLITE → MONGO LOCAL (SOLO USUARIOS, 100% SEGURO)
+// No sincroniza productos (prohibido)
+// Whitelist de campos permitidos
+// Evita que SQLite sobrescriba datos críticos
 // =======================================================
 
 const { UserLocal } = require("../databases/mongoSecundario");
@@ -19,7 +19,7 @@ async function syncSQLiteToMongo() {
       const json = u.toJSON();
 
       // =======================================================
-      // 🛡️ WHITELIST: Solo campos permitidos
+      //  WHITELIST: Solo campos permitidos
       // (SQLite JAMÁS debe poder modificar otros)
       // =======================================================
       const safeUser = {

@@ -1,6 +1,6 @@
 // src/utils/syncAtlasToSQLite.js
 // =======================================================
-// 🚀 AHUACATL — Sync Atlas → SQLite (Catálogo Seguro)
+// AHUACATL — Sync Atlas → SQLite (Catálogo Seguro)
 //   • NO pisa stock si Local y Atlas no coinciden
 //   • Solo catálogo (nombres, precios, unidad, imagen)
 // =======================================================
@@ -23,7 +23,7 @@ async function syncAtlasToSQLite() {
       if (!p.id_global) continue;
 
       // -----------------------------------
-      // 🛡 NO sincronizar si Local y Atlas difieren en stock
+      //  NO sincronizar si Local y Atlas difieren en stock
       // -----------------------------------
       const local = await ProductMongoLocal.findOne({ id_global: p.id_global });
 

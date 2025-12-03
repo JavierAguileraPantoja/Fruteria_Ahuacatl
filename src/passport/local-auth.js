@@ -13,14 +13,14 @@ const { UserAtlas, UserLocal, getUserModel } = require('../models/users');
 const { getEstadoInternet } = require('../databases/mongoPrincipal');
 
 // =====================================================
-// 🔐 SERIALIZACIÓN — guardamos EMAIL, NO ID
+//  SERIALIZACIÓN — guardamos EMAIL, NO ID
 // =====================================================
 passport.serializeUser((user, done) => {
   done(null, user.email); // <--- FIX DEFINITIVO
 });
 
 // =====================================================
-// 🔐 DESERIALIZACIÓN — carga usuario por email
+//  DESERIALIZACIÓN — carga usuario por email
 // =====================================================
 passport.deserializeUser(async (email, done) => {
   try {
@@ -55,7 +55,7 @@ passport.deserializeUser(async (email, done) => {
 });
 
 // =====================================================
-// 🧩 REGISTRO — siempre en Atlas
+//  REGISTRO — siempre en Atlas
 // =====================================================
 passport.use(
   'local-signup',
@@ -93,7 +93,7 @@ passport.use(
 );
 
 // =====================================================
-// 🔑 LOGIN — Usando BD dinámica (Atlas/Local)
+//  LOGIN — Usando BD dinámica (Atlas/Local)
 // =====================================================
 passport.use(
   'local-signin',

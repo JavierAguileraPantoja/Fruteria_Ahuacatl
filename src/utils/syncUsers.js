@@ -9,11 +9,11 @@ async function syncUsersToSQLite() {
     // Obtenemos los usuarios desde Mongo Local
     const users = await User.find();
 
-    // 🧹 1️⃣ Limpiar tabla SQLite antes de insertar
+    // Limpiar tabla SQLite antes de insertar
     await UserSQLite.destroy({ where: {} });
     console.log('🧹 Tabla UserSQLite limpiada antes de sincronizar.');
 
-    // 🧩 2️⃣ Insertar usuarios actualizados
+    // Insertar usuarios actualizados
     for (const u of users) {
       await UserSQLite.upsert({
         name: u.name || 'Sin nombre',

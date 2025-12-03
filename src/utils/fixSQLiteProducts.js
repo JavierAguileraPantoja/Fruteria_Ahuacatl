@@ -73,7 +73,7 @@ const ProductSQLite = sqlite.define(
     creadoPor: DataTypes.STRING,
     creadoEn: DataTypes.DATE,
 
-    // ⇩⇩ NUEVAS COLUMNAS (si no existen las agregamos)
+    //  NUEVAS COLUMNAS (si no existen las agregamos)
     precio_actual: DataTypes.FLOAT,
     precio_viejo: DataTypes.FLOAT,
     precio_nuevo: DataTypes.FLOAT,

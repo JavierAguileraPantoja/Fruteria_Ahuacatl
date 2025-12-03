@@ -19,7 +19,7 @@ const { getEstadoInternet } = require("../databases/mongoPrincipal");
 let syncing = false;
 
 // ====================================================
-// 🔄 SINCRONIZACIÓN COMPLETA
+// SINCRONIZACIÓN COMPLETA
 // ====================================================
 async function fullSync(origen = "manual") {
   if (syncing) {
@@ -70,7 +70,7 @@ async function fullSync(origen = "manual") {
 }
 
 // ====================================================
-// ❌ WATCHER DESACTIVADO (solo runSync.js controla internet)
+//  WATCHER DESACTIVADO (solo runSync.js controla internet)
 // ====================================================
 function startSyncWatcher() {
   console.log("⚠️ SyncWatcher de syncManager DESACTIVADO — runSync.js controla internet.");

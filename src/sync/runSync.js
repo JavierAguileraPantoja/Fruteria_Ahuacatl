@@ -1,9 +1,6 @@
 // src/sync/runSync.js
 // =======================================================
-// 🔄 AHUACATL — FULL SYNC ORQUESTADOR OFICIAL (VERSIÓN FINAL)
-// ONLINE : Atlas → Local → SQLite + Local → Atlas
-// OFFLINE: Local ↔ SQLite (solo lectura / espejo)
-// RECONEXIÓN: cuando pasa de OFFLINE → ONLINE se lanza fullSync()
+// AHUACATL — FULL SYNC ORQUESTADOR OFICIAL (VERSIÓN FINAL)
 // =======================================================
 
 const { getEstadoInternet } = require("../databases/mongoPrincipal");
@@ -17,10 +14,8 @@ const syncSQLiteToMongo = require("../utils/syncSQLiteToMongo");
 const syncProductsLocalToAtlas = require("../utils/syncProductsLocalToAtlas");
 const syncVentasLocalToAtlas = require("../utils/syncVentasLocalToAtlas");
 
-// --- Sync Atlas → Local (usuarios + ventas) ---
+// --- Sync Atlas → Local ---
 const syncAtlasToLocal = require("../utils/syncAtlasToLocal");
-
-// --- Sync Atlas → Local (solo productos, sin stock/lotes/mermas) ---
 const syncAtlasProductsToLocal = require("../utils/syncAtlasProductsToLocal");
 
 let syncInProgress = false;
@@ -28,7 +23,7 @@ let watcherRunning = false;
 let lastInternetState = null;
 
 // =======================================================
-// 🔁 FULL SYNC PRINCIPAL (ORDEN CORRECTO)
+// FULL SYNC CORREGIDO — ORDEN REAL OFFLINE-FIRST
 // =======================================================
 async function fullSync(reason = "manual") {
   if (syncInProgress) {
@@ -44,39 +39,41 @@ async function fullSync(reason = "manual") {
   );
 
   try {
-    // ===========================================================
-    // 1) ONLINE → BAJAR *TODO* DESDE ATLAS (primero datos puros)
-    // ===========================================================
+
+    // ======================================================
+    // 1) SI HAY INTERNET: SUBIR PRIMERO LO LOCAL → ATLAS
+    // ======================================================
+    if (snapshotOnline) {
+      console.log("⬆ Subiendo cambios locales → Atlas…");
+
+      await syncProductsLocalToAtlas();  // stock + mermas
+      await syncVentasLocalToAtlas();    // ventas offline
+
+      console.log("🟢 Cambios locales subidos a Atlas.");
+    }
+
+    // ======================================================
+    // 2) AHORA SÍ BAJAR ATLAS → LOCAL (SIN STOCK)
+    // ======================================================
     if (snapshotOnline) {
       console.log("🌐 Sync Atlas → Local…");
-      await syncAtlasToLocal();          // usuarios + ventas
-      await syncAtlasProductsToLocal();  // catálogo limpio SIN stock
+      await syncAtlasToLocal();            // usuarios + ventas históricas
+      await syncAtlasProductsToLocal();    // solo catálogo SIN stock
     }
 
-    // ===========================================================
-    // 2) Usuarios y productos → SQLite (solo espejo)
-    // ===========================================================
+    // ======================================================
+    // 3) Usuarios + catálogo → SQLite
+    // ======================================================
     await syncUsersToSQLite();
-    await syncProductsToSQLite(snapshotOnline); // Solo si ONLINE
+    await syncProductsToSQLite(snapshotOnline);
 
-    // ===========================================================
-    // 3) SQLite → Mongo Local (solo usuarios)
-    // ===========================================================
+    // ======================================================
+    // 4) SQLite → Mongo Local (solo usuarios)
+    // ======================================================
     await syncSQLiteToMongo();
 
-    // ===========================================================
-    // 4) SOLO SI ONLINE → subir cambios locales REALES
-    // ===========================================================
-    if (snapshotOnline) {
-
-      // Subir SOLO stock y mermas (versión protegida)
-      await syncProductsLocalToAtlas();
-
-      // Subir ventas locales (idempotente)
-      await syncVentasLocalToAtlas();
-    }
-
     console.log("🟢 FULL SYNC COMPLETADO");
+
   } catch (err) {
     console.error("❌ Error en fullSync:", err);
   } finally {
@@ -85,7 +82,7 @@ async function fullSync(reason = "manual") {
 }
 
 // =======================================================
-// 👁️ WATCHER — SOLO reacciona OFFLINE → ONLINE
+// WATCHER (solo OFFLINE → ONLINE)
 // =======================================================
 function startSyncWatcher() {
   if (watcherRunning) return;
@@ -98,7 +95,7 @@ function startSyncWatcher() {
   setInterval(async () => {
     const now = getEstadoInternet();
 
-    // SOLO dispara cuando pasa de offline → online
+    // Solo dispara cuando pasa de offline → online
     if (now && !lastInternetState) {
       console.log("🌐 Internet restaurado → Lanzando FULL SYNC");
       await fullSync("internet_restaurado");

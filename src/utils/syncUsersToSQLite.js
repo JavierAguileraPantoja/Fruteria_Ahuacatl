@@ -1,6 +1,6 @@
 // src/utils/syncUsersToSQLite.js
 // =======================================================
-// 👥 USUARIOS Atlas → SQLite + Local (Versión Profesional)
+// USUARIOS Atlas → SQLite + Local (Versión Profesional)
 // =======================================================
 
 const { UserAtlas } = require("../models/users");
@@ -14,7 +14,7 @@ async function syncUsersToSQLite() {
     const usuariosAtlas = await UserAtlas.find();
 
     // =======================================================
-    // 1️⃣ SQLite ESPEJO DE ATLAS
+    // SQLite ESPEJO DE ATLAS
     // =======================================================
     await UserSQLite.destroy({ where: {} });
 
@@ -31,7 +31,7 @@ async function syncUsersToSQLite() {
     }
 
     // =======================================================
-    // 2️⃣ Mongo Local ESPEJO de ATLAS (solo usuarios)
+    // Mongo Local ESPEJO de ATLAS (solo usuarios)
     // =======================================================
     for (const u of usuariosAtlas) {
       const safeUser = {

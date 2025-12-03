@@ -23,7 +23,7 @@ require("./databases/sqliteLocal");
 require("./passport/local-auth");
 
 // ============================
-// 🔄 FULL SYNC + WATCHER OFICIAL
+//  FULL SYNC + WATCHER OFICIAL
 // ============================
 const { startSyncWatcher, fullSync } = require("./sync/runSync");
 
@@ -31,7 +31,7 @@ const { startSyncWatcher, fullSync } = require("./sync/runSync");
 startSyncWatcher();
 
 // =========================================
-// 🖥️ EXPRESS CONFIG
+//  EXPRESS CONFIG
 // =========================================
 const express = require("express");
 const engine = require("ejs-mate");
@@ -50,7 +50,7 @@ app.use(
 );
 
 // =========================================
-// ⚙️ Configuración del servidor
+//  Configuración del servidor
 // =========================================
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", engine);
@@ -58,7 +58,7 @@ app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 
 // =========================================
-// 🧩 Middlewares
+//  Middlewares
 // =========================================
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
@@ -77,7 +77,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // =========================================
-// 🛡️ FIX: NO PERMITIR QUE CAMBIO ONLINE/OFFLINE CIERRE LA SESIÓN
+//  FIX: NO PERMITIR QUE CAMBIO ONLINE/OFFLINE CIERRE LA SESIÓN
 // =========================================
 const { getEstadoInternet } = require("./databases/mongoPrincipal");
 
@@ -93,7 +93,7 @@ setInterval(() => {
 app.use(flash());
 
 // =========================================
-// 🌍 Variables globales
+// Variables globales
 // =========================================
 app.use((req, res, next) => {
   res.locals.message = {
@@ -107,17 +107,17 @@ app.use((req, res, next) => {
 });
 
 // =========================================
-// 📁 Archivos estáticos
+//  Archivos estáticos
 // =========================================
 app.use("/Uploads", express.static(path.join(__dirname, "Uploads")));
 
 // =========================================
-// 📌 Rutas principales
+//  Rutas principales
 // =========================================
 app.use("/", require("./routes/routes.js"));
 
 // =========================================
-// 👁️ LOGS INFORMATIVOS (watchers desactivados)
+//  LOGS INFORMATIVOS (watchers desactivados)
 // =========================================
 setTimeout(() => {
   try {
@@ -136,14 +136,14 @@ setTimeout(() => {
 }, 1500);
 
 // =========================================
-// 🚀 FULL SYNC INICIAL
+//  FULL SYNC INICIAL
 // =========================================
 setTimeout(() => {
   fullSync("inicio_servidor");
 }, 2500);
 
 // =========================================
-// 🚀 INICIAR SERVIDOR
+//  INICIAR SERVIDOR
 // =========================================
 app.listen(app.get("port"), () => {
   console.log("🚀 SERVIDOR EN PUERTO", app.get("port"));

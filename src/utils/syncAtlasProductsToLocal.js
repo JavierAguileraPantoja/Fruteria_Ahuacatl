@@ -1,9 +1,9 @@
 // src/utils/syncAtlasProductsToLocal.js
 // =======================================================
 //   Atlas → Local (Productos)
-//   ✅ Colección: "products"
-//   ✅ SIN tocar stock, lotes ni mermas
-//   ✅ SIN duplicados (usa id_global + nombre/categoría/unidad)
+//    Colección: "products"
+//    SIN tocar stock, lotes ni mermas
+//    SIN duplicados (usa id_global + nombre/categoría/unidad)
 // =======================================================
 
 const mongoose = require("mongoose");
@@ -30,7 +30,7 @@ async function syncAtlasProductsToLocal() {
     for (const p of atlasProducts) {
       const plain = p.toObject();
 
-      // 🔑 Asegurar id_global en ATLAS
+      //  Asegurar id_global en ATLAS
       if (!plain.id_global) {
         plain.id_global = uuidv4();
         p.id_global = plain.id_global;
@@ -40,7 +40,7 @@ async function syncAtlasProductsToLocal() {
 
       const globalId = plain.id_global;
 
-      // ❌ Campos que NO quiero sobrescribir desde Atlas
+      //  Campos que NO quiero sobrescribir desde Atlas
       delete plain.stock;
       delete plain.stock_precio_viejo;
       delete plain.stock_precio_nuevo;

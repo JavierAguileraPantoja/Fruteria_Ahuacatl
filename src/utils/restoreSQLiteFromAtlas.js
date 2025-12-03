@@ -67,7 +67,7 @@ const ProductSQLite = sequelize.define(
 );
 
 // =======================================================
-// 3️⃣ Restaurar catálogo
+// 3️ Restaurar catálogo
 // =======================================================
 async function restoreSQLite() {
   try {

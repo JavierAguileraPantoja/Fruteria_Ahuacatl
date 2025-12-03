@@ -1,9 +1,9 @@
 // src/utils/syncVentasLocalToAtlas.js
 // =======================================================
-// 💸 VENTAS LOCAL → ATLAS (FINAL, SIN SQLITE, SIN DUPLICADOS)
-//  - Copia ventas de Mongo Local (Docker) a Atlas
-//  - Usa llave (creadoEn + total) para evitar duplicados
-//  - No toca productos ni stock (eso ya lo maneja Atlas → Local)
+//  VENTAS LOCAL → ATLAS (FINAL, SIN SQLITE, SIN DUPLICADOS)
+//  Copia ventas de Mongo Local (Docker) a Atlas
+//  Usa llave (creadoEn + total) para evitar duplicados
+//  No toca productos ni stock (eso ya lo maneja Atlas → Local)
 // =======================================================
 
 const { VentaMongo } = require("../models/venta");

@@ -1,11 +1,5 @@
 // src/utils/syncProductsToSQLite.js
 // =======================================================
-// 🚀 AHUACATL — Productos → SQLite (Catálogo Seguro)
-//   • SOLO copia catálogo (NO lotes detallados, NO mermas)
-//   • id_global obligatorio
-//   • SQLite jamás sobreescribe Local/Mongo
-//   • Solo actúa en modo ONLINE (Atlas manda)
-// =======================================================
 
 const { ProductMongo, ProductSQLite } = require("../models/product");
 const { getEstadoInternet } = require("../databases/mongoPrincipal");
@@ -13,7 +7,6 @@ const { getEstadoInternet } = require("../databases/mongoPrincipal");
 async function syncProductsToSQLite(isOnlineParam = null) {
   try {
     const isOnline = isOnlineParam ?? getEstadoInternet();
-
     if (!isOnline) {
       console.log("⛔ NO se sincroniza SQLite (offline).");
       return;
@@ -25,28 +18,26 @@ async function syncProductsToSQLite(isOnlineParam = null) {
     let count = 0;
 
     for (const p of productosAtlas) {
-      if (!p.id_global) continue; // seguridad máxima
+      if (!p.id_global) continue;
 
-      const data = {
+      await ProductSQLite.upsert({
         id_global: p.id_global,
         nombre: p.nombre,
         categoria: p.categoria,
         precio_compra: p.precio_compra,
         precio_venta: p.precio_venta,
-        stock: p.stock,
+        precio_compra_pendiente: p.precio_compra_pendiente ?? 0,
+        stock: p.stock ?? 0,
         unidad: p.unidad,
-        imagen: p.imagen,
-        creadoPor: p.creadoPor,
-        creadoEn: p.creadoEn
-      };
+        imagen: p.imagen
+      });
 
-      await ProductSQLite.upsert(data);//se supone que actualisa el producto 
       count++;
     }
 
     console.log(`🟢 SQLite actualizado: ${count} productos sincronizados.`);
   } catch (err) {
-    console.error("❌ Error en syncProductsToSQLite:", err.message);
+    console.error("❌ Error en syncProductsToSQLite:", err);
   }
 }
 

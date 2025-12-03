@@ -12,7 +12,7 @@ function isAuthenticated(req, res, next) {
   res.redirect('/signin');
 }
 
-// Verificar si el usuario es dueño o administrador
+// Verificar si el usuario es administrador (o dueño)
 function isAdmin(req, res, next) {
   if (req.isAuthenticated() && (req.user.role === 'administrador' || req.user.role === 'dueno')) {
     return next();
@@ -48,9 +48,34 @@ function isBodeguero(req, res, next) {
   res.redirect('/');
 }
 
+// NUEVO — SOLO ADMIN o BODEGUERO
+function isAdminOrBodeguero(req, res, next) {
+  if (!req.isAuthenticated()) {
+    req.session.message = {
+      type:'warning',
+      message:'Debes iniciar sesión para acceder.'
+    };
+    return res.redirect('/signin');
+  }
+
+  const role = req.user.role?.trim().toLowerCase();
+
+  if (role === 'administrador' || role === 'bodeguero') {
+    return next();
+  }
+
+  req.session.message = {
+    type:'danger',
+    message:'No tienes permisos para acceder a esta sección.'
+  };
+
+  return res.redirect('/');
+}
+
 module.exports = {
   isAuthenticated,
   isAdmin,
   isVendedor,
-  isBodeguero
+  isBodeguero,
+  isAdminOrBodeguero
 };
