@@ -13,6 +13,9 @@ const syncSQLiteToMongo = require("../utils/syncSQLiteToMongo");
 // --- Syncs Local → Atlas ---
 const syncProductsLocalToAtlas = require("../utils/syncProductsLocalToAtlas");
 const syncVentasLocalToAtlas = require("../utils/syncVentasLocalToAtlas");
+const syncUsersLocalToAtlas = require("../utils/syncUsersLocalToAtlas");
+const syncClientsLocalToAtlas = require("../utils/syncClientsLocalToAtlas");
+
 
 // --- Sync Atlas → Local ---
 const syncAtlasToLocal = require("../utils/syncAtlasToLocal");
@@ -48,6 +51,8 @@ async function fullSync(reason = "manual") {
 
       await syncProductsLocalToAtlas();  // stock + mermas
       await syncVentasLocalToAtlas();    // ventas offline
+      await syncUsersLocalToAtlas();
+      await syncClientsLocalToAtlas();   // clientes offline
 
       console.log("🟢 Cambios locales subidos a Atlas.");
     }

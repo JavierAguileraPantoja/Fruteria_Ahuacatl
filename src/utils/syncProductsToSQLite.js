@@ -1,43 +1,36 @@
 // src/utils/syncProductsToSQLite.js
-// =======================================================
-
 const { ProductMongo, ProductSQLite } = require("../models/product");
 const { getEstadoInternet } = require("../databases/mongoPrincipal");
 
 async function syncProductsToSQLite(isOnlineParam = null) {
   try {
     const isOnline = isOnlineParam ?? getEstadoInternet();
-    if (!isOnline) {
-      console.log("⛔ NO se sincroniza SQLite (offline).");
-      return;
-    }
+    if (!isOnline) return;
 
-    console.log("📦 Sync Productos → SQLite (catálogo)…");
+    console.log("📦 Sincronizando Catálogo Atlas → SQLite (Motor Nativo)…");
 
     const productosAtlas = await ProductMongo.find();
     let count = 0;
 
     for (const p of productosAtlas) {
-      if (!p.id_global) continue;
-
+      // Usamos el método .upsert que definiste en models/product.js
       await ProductSQLite.upsert({
         id_global: p.id_global,
         nombre: p.nombre,
         categoria: p.categoria,
         precio_compra: p.precio_compra,
         precio_venta: p.precio_venta,
-        precio_compra_pendiente: p.precio_compra_pendiente ?? 0,
-        stock: p.stock ?? 0,
+        precio_compra_pendiente: p.precio_compra_pendiente,
+        stock: p.stock,
         unidad: p.unidad,
         imagen: p.imagen
       });
-
       count++;
     }
 
     console.log(`🟢 SQLite actualizado: ${count} productos sincronizados.`);
   } catch (err) {
-    console.error("❌ Error en syncProductsToSQLite:", err);
+    console.error("❌ Error en syncProductsToSQLite:", err.message);
   }
 }
 

@@ -57,6 +57,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage }).single("image");
 
+//Registro de clientes
 
 
 // BLOQUEA CACHÉ EN TODAS LAS VISTAS
@@ -230,6 +231,32 @@ router.get("/delete/:id", isAdmin, async (req, res) => {
   }
 });
 
+
+// =======================================================
+//  GESTIÓN DE CLIENTES
+// =======================================================
+router.get("/clientes", isAdmin, async (req, res) => {
+  try {
+    // Importamos el modelo dinámico que creamos
+    const { getClientModel } = require("../models/client");
+    const Client = getClientModel();
+
+    // Buscamos todos los clientes y los ordenamos por nombre
+    const clients = await Client.find().sort({ name: 1 });
+
+    res.render("clientes", {
+      title: "Lista de Clientes",
+      clients,
+      user: req.user,
+      message: req.session.message
+    });
+
+    req.session.message = null; // Limpiamos mensajes después de mostrar
+  } catch (err) {
+    console.error("❌ Error al cargar clientes:", err);
+    res.redirect("/");
+  }
+});
 // =======================================================
 //  AUTENTICACIÓN
 // =======================================================
@@ -296,6 +323,9 @@ function determinarPrecioBackend(precioBase, cantidad, tipoCliente) {
 
   return precioBase;
 }
+
+
+
 
 // =======================================================
 //   ZONA CRÍTICA 
@@ -396,6 +426,27 @@ router.post("/ventas", isVendedor, async (req, res) => {
         subtotal
       };
     });
+
+
+    // ============================================================
+    // 👤 NUEVO: REGISTRO/ACTUALIZACIÓN DE CLIENTE (TU ESTILO)
+    // ============================================================
+    if (clienteTelefono) {
+        // Importamos tu modelo dinámico (asegúrate de tener creado src/models/client.js)
+        const { getClientModel } = require("../models/client");
+        const Client = getClientModel(); 
+
+        await Client.findOneAndUpdate(
+            { phone: clienteTelefono }, 
+            { 
+                name: clienteNombre || "Cliente General", 
+                $inc: { totalSpent: total }, // Sumamos el gasto al histórico del cliente
+                lastPurchase: new Date() 
+            }, 
+            { upsert: true } // Si no existe, lo crea automáticamente
+        );
+        console.log("✅ Cliente procesado en la base de datos.");
+    }    
     // ============================================================
     //  BLOQUE OFICIAL — FIFO + SQLite + Mongo Local
     // ============================================================
@@ -456,49 +507,17 @@ router.post("/ventas", isVendedor, async (req, res) => {
       }
       
       // ============================================================
-      // ACTUALIZAR SQLITE (UPSERT REAL SIN update())
+      // ACTUALIZAR SQLITE (USANDO EL NUEVO MOTOR NATIVO)
       // ============================================================
       try {
-        await ProductSQLite.sequelize.query(
-          `
-          INSERT INTO productos (
-            id_global, nombre, categoria,
-            precio_compra, precio_venta, precio_compra_pendiente,
-            stock, unidad, imagen,
-            precio_actual, precio_viejo, precio_nuevo
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          ON CONFLICT(id_global) DO UPDATE SET
-            stock = excluded.stock,
-            precio_actual = excluded.precio_actual,
-            precio_viejo = excluded.precio_viejo,
-            precio_nuevo = excluded.precio_nuevo,
-            precio_compra_pendiente = excluded.precio_compra_pendiente;
-          `,
-          {
-            replacements: [
-              p.id_global,
-              p.nombre,
-              p.categoria,
-              p.precio_compra,
-              p.precio_venta,
-              p.precio_compra_pendiente,
-              p.stock,
-              p.unidad,
-              p.imagen,
-              p.precio_actual,
-              p.precio_viejo,
-              p.precio_nuevo
-            ]
-          }
-        );
+        // En lugar de SQL manual largo, usamos la función que ya creamos en el modelo
+        await ProductSQLite.upsert(p.toObject()); 
 
-        console.log("📦 SQLite actualizado:", p.nombre, p.stock);
+        console.log("📦 Bodega SQLite actualizada nativamente:", p.nombre, p.stock);
 
       } catch (err) {
-        console.log("❌ Error SQLite (UPSERT):", err.message);
+        console.log("❌ Error SQLite (UPSERT Nativo):", err.message);
       }
-
 
       // ============================================================
       // GUARDAR PRODUCTO EN LA BD PRINCIPAL (Atlas o Local)

@@ -1,3 +1,5 @@
 .env
 docker-compose.yml
 /src/data/*.sqlite 
+# Librerías (Render las instala solo)
+node_modules/

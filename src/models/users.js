@@ -13,17 +13,19 @@ const {
 } = require("../databases/mongoPrincipal");
 
 // ---------------------------------------
-//  Esquema único compartido
+//  Esquema único compartido (CORREGIDO)
 // ---------------------------------------
 const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  // Cambiamos required a false para que registros viejos o incompletos no bloqueen el SYNC
+  name: { type: String, required: false, default: "Usuario sin nombre" }, 
   email: { type: String, required: true }, // unique lo controla Atlas
-  phone: { type: String, required: true },
-  image: { type: String, required: true },
+  phone: { type: String, required: false, default: "0000000000" },
+  image: { type: String, required: false, default: "default.png" }, 
   password: { type: String, required: true },
   role: {
     type: String,
-    enum: ["administrador", "dueno", "vendedor", "bodeguero"],
+    // AGREGAMOS "cleaner" a la lista para que Atlas lo acepte
+    enum: ["administrador", "dueno", "vendedor", "bodeguero", "cleaner"], 
     default: "vendedor"
   },
   created: { type: Date, default: Date.now }
@@ -50,9 +52,6 @@ const UserAtlas =
 const UserLocal =
   localConnection.models.User ||
   localConnection.model("User", UserSchema);
-// OJO: usamos el mismo nombre del modelo (“User”)
-// Si usas “UserLocal” como nombre, mongoose creará OTRA colección
-// y puede causar problemas OFFLINE.
 
 // ---------------------------------------
 // Selector automático según internet
@@ -69,11 +68,9 @@ function getUserModel() {
   }
 }
 
-// ---------------------------------------
-// EXPORTAMOS TODO
-// ---------------------------------------
 module.exports = {
   UserAtlas,
   UserLocal,
   getUserModel
 };
+
