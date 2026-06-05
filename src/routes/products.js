@@ -1,37 +1,37 @@
 // src/routes/products.js
 // =======================================================
-// 📦 RUTAS DE PRODUCTOS — AHUACATL (OFFLINE READY)
+// 📦 RUTAS DE PRODUCTOS — AHUACATL (BASE64 DB STORAGE — FIXED IMAGES)
 // =======================================================
 const { v4: uuidv4 } = require("uuid");
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
 
-const { isAdmin, isBodeguero, isAuthenticated,isAdminOrBodeguero } = require("../middlewares/authRoles");
+const { isAdmin, isBodeguero, isAuthenticated, isAdminOrBodeguero } = require("../middlewares/authRoles");
 const { getProductModel } = require("../models/product");
 
 // 🔥 SINCRONIZACIÓN POR EVENTOS
 const pushProductChange = require("../utils/pushProductChange");
 
-// -------------------------------
-// ⚙️ MULTER CONFIG
-// -------------------------------
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "..", "Uploads"));
-  },
-  filename: (req, file, cb) => {
-    cb(null, "image_" + Date.now() + "_" + file.originalname);
-  }
-});
+// ----------------------------------------------------
+// ⚙️ MULTER CONFIG (¡AHORA EN MEMORIA RECIÉN ENTRADA!)
+// ----------------------------------------------------
+// Cambiado a memoryStorage para que la foto no se escriba en el disco duro efímero de Render
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Pequeña utilidad para parsear números
 function toNumber(value, fallback = 0) {
   const n = parseFloat(value);
   return isNaN(n) ? fallback : n;
+}
+
+// Helper para convertir el buffer de la imagen a string Base64 válido para la etiqueta <img>
+function convertToBase64(file) {
+  if (!file) return null;
+  const base64Image = file.buffer.toString("base64");
+  return `data:${file.mimetype};base64,${base64Image}`;
 }
 
 // ====================================================
@@ -93,7 +93,8 @@ router.post(
         unidad
       } = req.body;
 
-      const imagen = req.file ? req.file.filename : "default.png";
+      // Si subió foto se convierte a Base64, si no se le asigna la de por defecto
+      const imagenData = req.file ? convertToBase64(req.file) : "default.png";
 
       // 📌 Buscar producto POR id_global si viene desde edición
       let existente = null;
@@ -102,20 +103,16 @@ router.post(
         existente = await Product.findOne({ id_global: req.body.id_global });
       }
 
-      // 📌 Si no viene id_global (producto nuevo desde formulario manual)
-      // → Buscar por nombre PERO asegurando id_global válido
       if (!existente) {
         existente = await Product.findOne({
           nombre: nombre.trim()
         });
       }
 
-      // 📌 Si se encuentra por nombre pero NO tiene id_global → repararlo
       if (existente && !existente.id_global) {
         existente.id_global = uuidv4();
         await existente.save();
       }
-
 
       // =====================================================
       // 🟢 SI EXISTE → LÓGICA FIFO (lotes)
@@ -125,18 +122,16 @@ router.post(
         const precioCompraNuevo = toNumber(precio_compra, existente.precio_compra || 0);
         const precioVentaNuevo = toNumber(precio_venta, existente.precio_venta || 0);
 
-        // Inicialización segura de campos de lotes
         existente.precio_actual = existente.precio_actual || existente.precio_venta || 0;
         existente.precio_viejo =
           existente.precio_viejo || existente.precio_actual || precioVentaNuevo;
         existente.precio_nuevo = existente.precio_nuevo || 0;
 
         if (existente.stock_precio_viejo == null) {
-          existente.stock_precio_viejo = existente.stock || 0;
+          existing.stock_precio_viejo = existente.stock || 0;
         }
         existente.stock_precio_nuevo = existente.stock_precio_nuevo || 0;
 
-        // Sumar stock total
         existente.stock = (existente.stock || 0) + cantidadNueva;
 
         // SUBE precio
@@ -179,16 +174,9 @@ router.post(
           existente.precio_actual = precioVentaNuevo;
         }
 
-        // Imagen
+        // Imagen en Base64 (Ya no borra archivos locales porque no existen)
         if (req.file) {
-          try {
-            if (existente.imagen && existente.imagen !== "default.png") {
-              fs.unlinkSync(
-                path.join(__dirname, "..", "Uploads", existente.imagen)
-              );
-            }
-          } catch {}
-          existente.imagen = imagen;
+          existente.imagen = imagenData;
         }
 
         await existente.save();
@@ -216,7 +204,7 @@ router.post(
         precio_venta: precioVentaInicial,
         stock: stockInicial,
         unidad,
-        imagen,
+        imagen: imagenData, // Se guarda la cadena de texto base64
         creadoPor: req.user.email,
         creadoEn: new Date(),
         precio_actual: precioVentaInicial,
@@ -281,22 +269,14 @@ router.post("/productos/edit/:id",
       const precioVenta = toNumber(req.body.precio_venta, producto.precio_venta);
       const nuevoStock = req.body.stock !== undefined ? toNumber(req.body.stock, producto.stock) : null;
 
-      // Imagen
+      // Imagen en Base64
       if (req.file) {
-        try {
-          if (producto.imagen && producto.imagen !== "default.png") {
-            fs.unlinkSync(
-              path.join(__dirname, "..", "Uploads", producto.imagen)
-            );
-          }
-        } catch {}
-        producto.imagen = req.file.filename;
+        producto.imagen = convertToBase64(req.file);
       }
 
       producto.precio_compra = precioCompra;
       producto.precio_venta = precioVenta;
 
-      // Sync lotes si corrigen stock manual
       if (nuevoStock !== null) {
         producto.stock = nuevoStock;
         producto.stock_precio_viejo = nuevoStock;
@@ -349,7 +329,7 @@ router.get("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
 });
 
 // ====================================================
-// 🟧 REGISTRAR MERMA (CORREGIDO)
+// 🟧 REGISTRAR MERMA
 // ====================================================
 router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
@@ -382,13 +362,9 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
       return res.redirect("/productos");
     }
 
-    // ⭐ Stock antes (para ticket)
     const stockAntes = producto.stock;
-
-    // Descontar stock total
     producto.stock -= cantidad;
 
-    // Descontar lotes respetando FIFO
     let restante = cantidad;
 
     if (producto.stock_precio_viejo >= restante) {
@@ -406,19 +382,16 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
 
     const stockDespues = producto.stock;
 
-    // 🔥 Registrar merma dentro del producto
     producto.mermas.push({
-      cantidad,
+      amount: cantidad,
       motivo: req.body.motivo,
       fecha: new Date(),
-      registradoPor: req.user.name   // ⭐ AHORA SE GUARDA EL NOMBRE
+      registradoPor: req.user.name
     });
 
     await producto.save();
     await pushProductChange(producto);
 
-    // ⭐ En vez de redirigir a productos…
-    // enviamos datos al ticket de merma
     return res.render("report_mermas", {
       producto,
       cantidad,
@@ -438,9 +411,8 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
   }
 });
 
-
 //=====================================================
-// 🧾 REPORTE DE MERMAS (SIN MODELO EXTRA)
+// 🧾 REPORTE DE MERMAS
 //=====================================================
 router.get("/reportes/mermas", isAdmin, async (req, res) => {
   try {
@@ -463,7 +435,6 @@ router.get("/reportes/mermas", isAdmin, async (req, res) => {
       }
     });
 
-    // Ordenar por fecha descendente
     mermas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.render("report_mermas", {
@@ -484,13 +455,7 @@ router.get("/reportes/mermas", isAdmin, async (req, res) => {
 router.get("/productos/delete/:id", isAdmin, async (req, res) => {
   try {
     const Product = getProductModel();
-    const prod = await Product.findByIdAndDelete(req.params.id);
-
-    if (prod && prod.imagen && prod.imagen !== "default.png") {
-      try {
-        fs.unlinkSync(path.join(__dirname, "..", "Uploads", prod.imagen));
-      } catch {}
-    }
+    await Product.findByIdAndDelete(req.params.id);
 
     req.session.message = {
       type: "success",
