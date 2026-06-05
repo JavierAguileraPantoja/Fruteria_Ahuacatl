@@ -6,7 +6,6 @@ const { v4: uuidv4 } = require("uuid");
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
 const cloudinary = require("cloudinary").v2;
 
 const { isAdmin, isBodeguero, isAuthenticated, isAdminOrBodeguero } = require("../middlewares/authRoles");
@@ -150,7 +149,7 @@ router.post(
           existente.precio_venta = existente.precio_actual;
         } else {
           if (existente.stock_precio_nuevo > 0 && existente.precio_nuevo === precioVentaNuevo && existente.precio_nuevo > 0) {
-            existente.stock_precio_nuevo += cantidadNueva;
+            existing.stock_precio_nuevo += cantidadNueva;
           } else {
             existente.stock_precio_viejo = (existente.stock_precio_viejo || 0) + cantidadNueva;
           }
