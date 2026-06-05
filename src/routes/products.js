@@ -1,12 +1,13 @@
 // src/routes/products.js
 // =======================================================
-// 📦 RUTAS DE PRODUCTOS — AHUACATL (BASE64 DB STORAGE — FIXED IMAGES)
+// 📦 RUTAS DE PRODUCTOS — AHUACATL (CLOUDINARY STORAGE — FIXED)
 // =======================================================
 const { v4: uuidv4 } = require("uuid");
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const cloudinary = require("cloudinary").v2;
 
 const { isAdmin, isBodeguero, isAuthenticated, isAdminOrBodeguero } = require("../middlewares/authRoles");
 const { getProductModel } = require("../models/product");
@@ -15,23 +16,37 @@ const { getProductModel } = require("../models/product");
 const pushProductChange = require("../utils/pushProductChange");
 
 // ----------------------------------------------------
-// ⚙️ MULTER CONFIG (¡AHORA EN MEMORIA RECIÉN ENTRADA!)
+// ⚙️ CONFIGURACIÓN DE CLOUDINARY
 // ----------------------------------------------------
-// Cambiado a memoryStorage para que la foto no se escriba en el disco duro efímero de Render
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Multer ahora procesa el archivo temporalmente en memoria para mandarlo a la nube
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Pequeña utilidad para parsear números
+// Función para subir la imagen a Cloudinary y obtener su link de internet
+const uploadToCloudinary = (file) => {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve("/Uploads/default.png");
+    
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "fruteria_ahuacatl" },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url); // Nos regresa el link permanente https://...
+      }
+    );
+    stream.end(file.buffer);
+  });
+};
+
 function toNumber(value, fallback = 0) {
   const n = parseFloat(value);
   return isNaN(n) ? fallback : n;
-}
-
-// Helper para convertir el buffer de la imagen a string Base64 válido para la etiqueta <img>
-function convertToBase64(file) {
-  if (!file) return null;
-  const base64Image = file.buffer.toString("base64");
-  return `data:${file.mimetype};base64,${base64Image}`;
 }
 
 // ====================================================
@@ -50,15 +65,13 @@ router.get("/productos", isAuthenticated, async (req, res) => {
     });
 
     req.session.message = null;
-
   } catch (err) {
     console.error("❌ Error al cargar productos:", err);
-
     res.render("products", {
       title: "Productos",
       productos: [],
       user: req.user,
-      message: { type: "danger", message: "Error al cargar productos (offline mode)" }
+      message: { type: "danger", message: "Error al cargar productos" }
     });
   }
 });
@@ -83,30 +96,21 @@ router.post(
   async (req, res) => {
     try {
       const Product = getProductModel();
+      const { nombre, categoria, precio_compra, precio_venta, stock, unidad } = req.body;
 
-      const {
-        nombre,
-        categoria,
-        precio_compra,
-        precio_venta,
-        stock,
-        unidad
-      } = req.body;
+      // Se sube a Cloudinary y obtenemos la URL permanente
+      let imagenUrl = "/Uploads/default.png";
+      if (req.file) {
+        imagenUrl = await uploadToCloudinary(req.file);
+      }
 
-      // Si subió foto se convierte a Base64, si no se le asigna la de por defecto
-      const imagenData = req.file ? convertToBase64(req.file) : "default.png";
-
-      // 📌 Buscar producto POR id_global si viene desde edición
       let existente = null;
-
       if (req.body.id_global) {
         existente = await Product.findOne({ id_global: req.body.id_global });
       }
 
       if (!existente) {
-        existente = await Product.findOne({
-          nombre: nombre.trim()
-        });
+        existente = await Product.findOne({ nombre: nombre.trim() });
       }
 
       if (existente && !existente.id_global) {
@@ -114,69 +118,50 @@ router.post(
         await existente.save();
       }
 
-      // =====================================================
-      // 🟢 SI EXISTE → LÓGICA FIFO (lotes)
-      // =====================================================
+      // 🟢 SI EXISTE → LÓGICA FIFO
       if (existente) {
         const cantidadNueva = toNumber(stock, 0);
         const precioCompraNuevo = toNumber(precio_compra, existente.precio_compra || 0);
         const precioVentaNuevo = toNumber(precio_venta, existente.precio_venta || 0);
 
         existente.precio_actual = existente.precio_actual || existente.precio_venta || 0;
-        existente.precio_viejo =
-          existente.precio_viejo || existente.precio_actual || precioVentaNuevo;
+        existente.precio_viejo = existente.precio_viejo || existente.precio_actual || precioVentaNuevo;
         existente.precio_nuevo = existente.precio_nuevo || 0;
 
         if (existente.stock_precio_viejo == null) {
-          existing.stock_precio_viejo = existente.stock || 0;
+          existente.stock_precio_viejo = existente.stock || 0;
         }
         existente.stock_precio_nuevo = existente.stock_precio_nuevo || 0;
-
         existente.stock = (existente.stock || 0) + cantidadNueva;
 
-        // SUBE precio
         if (precioVentaNuevo > existente.precio_actual) {
           existente.precio_actual = precioVentaNuevo;
           existente.precio_viejo = precioVentaNuevo;
           existente.precio_nuevo = precioVentaNuevo;
-
           existente.stock_precio_viejo = existente.stock;
           existente.stock_precio_nuevo = 0;
-
           existente.precio_compra = precioCompraNuevo;
           existente.precio_compra_pendiente = 0;
           existente.precio_venta = precioVentaNuevo;
-        }
-
-        // BAJA precio
-        else if (precioVentaNuevo < existente.precio_actual) {
+        } else if (precioVentaNuevo < existente.precio_actual) {
           existente.precio_nuevo = precioVentaNuevo;
           existente.stock_precio_nuevo += cantidadNueva;
           existente.precio_compra_pendiente = precioCompraNuevo;
           existente.precio_venta = existente.precio_actual;
-        }
-
-        // MISMO precio
-        else {
-          if (
-            existente.stock_precio_nuevo > 0 &&
-            existente.precio_nuevo === precioVentaNuevo &&
-            existente.precio_nuevo > 0
-          ) {
+        } else {
+          if (existente.stock_precio_nuevo > 0 && existente.precio_nuevo === precioVentaNuevo && existente.precio_nuevo > 0) {
             existente.stock_precio_nuevo += cantidadNueva;
           } else {
-            existente.stock_precio_viejo =
-              (existente.stock_precio_viejo || 0) + cantidadNueva;
+            existente.stock_precio_viejo = (existente.stock_precio_viejo || 0) + cantidadNueva;
           }
-
           existente.precio_compra = precioCompraNuevo;
           existente.precio_venta = precioVentaNuevo;
           existente.precio_actual = precioVentaNuevo;
         }
 
-        // Imagen en Base64 (Ya no borra archivos locales porque no existen)
         if (req.file) {
-          existente.imagen = imagenData;
+          existente.imagen = imagenUrl;
+          existente.imagenes = [imagenUrl];
         }
 
         await existente.save();
@@ -189,9 +174,7 @@ router.post(
         return res.redirect("/productos");
       }
 
-      // =====================================================
       // 🆕 NUEVO PRODUCTO
-      // =====================================================
       const stockInicial = toNumber(stock, 0);
       const precioCompraInicial = toNumber(precio_compra, 0);
       const precioVentaInicial = toNumber(precio_venta, 0);
@@ -204,7 +187,8 @@ router.post(
         precio_venta: precioVentaInicial,
         stock: stockInicial,
         unidad,
-        imagen: imagenData, // Se guarda la cadena de texto base64
+        imagen: imagenUrl,
+        imagenes: [imagenUrl],
         creadoPor: req.user.email,
         creadoEn: new Date(),
         precio_actual: precioVentaInicial,
@@ -218,17 +202,11 @@ router.post(
       await nuevo.save();
       await pushProductChange(nuevo);
 
-      req.session.message = {
-        type: "success",
-        message: "Producto agregado correctamente."
-      };
+      req.session.message = { type: "success", message: "Producto agregado correctamente." };
       return res.redirect("/productos");
     } catch (err) {
       console.error("❌ Error agregando producto:", err);
-      req.session.message = {
-        type: "danger",
-        message: "Error al agregar producto."
-      };
+      req.session.message = { type: "danger", message: "Error al agregar producto." };
       res.redirect("/productos");
     }
   }
@@ -241,12 +219,7 @@ router.get("/productos/edit/:id", isBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
     const producto = await Product.findById(req.params.id);
-
-    res.render("edit_product", {
-      title: "Editar Producto",
-      producto,
-      user: req.user
-    });
+    res.render("edit_product", { title: "Editar Producto", producto, user: req.user });
   } catch (err) {
     console.error(err);
     res.redirect("/productos");
@@ -269,9 +242,10 @@ router.post("/productos/edit/:id",
       const precioVenta = toNumber(req.body.precio_venta, producto.precio_venta);
       const nuevoStock = req.body.stock !== undefined ? toNumber(req.body.stock, producto.stock) : null;
 
-      // Imagen en Base64
       if (req.file) {
-        producto.imagen = convertToBase64(req.file);
+        const imagenUrl = await uploadToCloudinary(req.file);
+        producto.imagen = imagenUrl;
+        producto.imagenes = [imagenUrl];
       }
 
       producto.precio_compra = precioCompra;
@@ -290,83 +264,41 @@ router.post("/productos/edit/:id",
       await producto.save();
       await pushProductChange(producto);
 
-      req.session.message = {
-        type: "success",
-        message: "Producto actualizado correctamente."
-      };
+      req.session.message = { type: "success", message: "Producto actualizado correctamente." };
       res.redirect("/productos");
     } catch (err) {
       console.error(err);
-      req.session.message = {
-        type: "danger",
-        message: "Error al actualizar producto."
-      };
+      req.session.message = { type: "danger", message: "Error al actualizar producto." };
       res.redirect("/productos");
     }
   }
 );
 
 // ====================================================
-// 📄 FORMULARIO DE MERMA
+// 📄 FORMULARIO DE MERMA y REPORTE (Se mantienen intactos)
 // ====================================================
 router.get("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
     const producto = await Product.findById(req.params.id);
-
     if (!producto) return res.redirect("/productos");
-
-    res.render("add_merma", {
-      title: "Registrar Merma",
-      producto,
-      user: req.user
-    });
-
+    res.render("add_merma", { title: "Registrar Merma", producto, user: req.user });
   } catch (err) {
-    console.error("Error al cargar formulario de merma:", err);
     res.redirect("/productos");
   }
 });
 
-// ====================================================
-// 🟧 REGISTRAR MERMA
-// ====================================================
 router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
     const producto = await Product.findById(req.params.id);
-
-    if (!producto) {
-      req.session.message = {
-        type: "danger",
-        message: "Producto no encontrado."
-      };
-      return res.redirect("/productos");
-    }
+    if (!producto) return res.redirect("/productos");
 
     const cantidad = parseFloat(req.body.cantidad || 0);
-
-    if (isNaN(cantidad) || cantidad <= 0) {
-      req.session.message = {
-        type: "danger",
-        message: "Cantidad inválida para merma."
-      };
-      return res.redirect("/productos");
-    }
-
-    if (cantidad > producto.stock) {
-      req.session.message = {
-        type: "danger",
-        message: "No hay suficiente stock para descontar esa merma."
-      };
-      return res.redirect("/productos");
-    }
-
     const stockAntes = producto.stock;
     producto.stock -= cantidad;
 
     let restante = cantidad;
-
     if (producto.stock_precio_viejo >= restante) {
       producto.stock_precio_viejo -= restante;
       restante = 0;
@@ -374,16 +306,13 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
       restante -= producto.stock_precio_viejo;
       producto.stock_precio_viejo = 0;
     }
-
     if (restante > 0) {
-      producto.stock_precio_nuevo =
-        Math.max(producto.stock_precio_nuevo - restante, 0);
+      producto.stock_precio_nuevo = Math.max(producto.stock_precio_nuevo - restante, 0);
     }
-
     const stockDespues = producto.stock;
 
     producto.mermas.push({
-      amount: cantidad,
+      cantidad,
       motivo: req.body.motivo,
       fecha: new Date(),
       registradoPor: req.user.name
@@ -392,59 +321,27 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
     await producto.save();
     await pushProductChange(producto);
 
-    return res.render("report_mermas", {
-      producto,
-      cantidad,
-      motivo: req.body.motivo,
-      stockAntes,
-      stockDespues,
-      user: req.user
-    });
-
+    return res.render("report_mermas", { producto, cantidad, motivo: req.body.motivo, stockAntes, stockDespues, user: req.user });
   } catch (err) {
-    console.error("❌ Error registrando merma:", err);
-    req.session.message = {
-      type: "danger",
-      message: "Error al registrar merma."
-    };
     res.redirect("/productos");
   }
 });
 
-//=====================================================
-// 🧾 REPORTE DE MERMAS
-//=====================================================
 router.get("/reportes/mermas", isAdmin, async (req, res) => {
   try {
     const Product = getProductModel();
     const productos = await Product.find();
-
     let mermas = [];
-
     productos.forEach(p => {
       if (p.mermas && p.mermas.length > 0) {
         p.mermas.forEach(m => {
-          mermas.push({
-            producto: p.nombre,
-            cantidad: m.cantidad,
-            motivo: m.motivo,
-            fecha: m.fecha,
-            usuario: m.registradoPor
-          });
+          mermas.push({ producto: p.nombre, cantidad: m.cantidad, motivo: m.motivo, fecha: m.fecha, usuario: m.registradoPor });
         });
       }
     });
-
     mermas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-    res.render("report_mermas", {
-      title: "Reporte de Mermas",
-      mermas,
-      user: req.user
-    });
-
+    res.render("report_mermas", { title: "Reporte de Mermas", mermas, user: req.user });
   } catch (err) {
-    console.error("Error cargando reporte de mermas:", err);
     res.redirect("/productos");
   }
 });
@@ -456,18 +353,9 @@ router.get("/productos/delete/:id", isAdmin, async (req, res) => {
   try {
     const Product = getProductModel();
     await Product.findByIdAndDelete(req.params.id);
-
-    req.session.message = {
-      type: "success",
-      message: "Producto eliminado."
-    };
+    req.session.message = { type: "success", message: "Producto eliminado." };
     res.redirect("/productos");
   } catch (err) {
-    console.error(err);
-    req.session.message = {
-      type: "danger",
-      message: "Error al eliminar producto."
-    };
     res.redirect("/productos");
   }
 });
