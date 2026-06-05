@@ -1,6 +1,6 @@
 // src/models/product.js
 // ======================================================
-// 🥑 MODELO DE PRODUCTOS AHUACATL (VERSIÓN FINAL)
+// 🥑 MODELO DE PRODUCTOS AHUACATL (VERSIÓN INTEGRAL — URLS FLEXIBLES)
 //   Mongo Atlas + Mongo Local + SQLite (catálogo) + Lotes
 // ======================================================
 
@@ -16,7 +16,7 @@ const {
 } = require("../databases/mongoPrincipal");
 
 // ======================================================
-// 1)  ESQUEMA MONGO (COMPLETO)
+// 1)  ESQUEMA MONGO (AHORA CON ARREGLO DE IMÁGENES FLEXIBLE)
 // ======================================================
 
 const productSchema = new mongoose.Schema(
@@ -37,7 +37,11 @@ const productSchema = new mongoose.Schema(
 
     stock: { type: Number, default: 0 },
     unidad: { type: String, default: "kg" },
-    imagen: { type: String, default: "default.png" },
+    
+    // 🌟 CAMBIO MAESTRO: Ahora es "imagenes" en plural, acepta un arreglo de textos (URLs de internet o rutas)
+    imagenes: { type: [String], default: ["/Uploads/default.png"] },
+    // Mantengo este por compatibilidad con tus vistas actuales del sistema
+    imagen: { type: String, default: "/Uploads/default.png" },
 
     creadoPor: String,
     creadoEn: { type: Date, default: Date.now },
@@ -160,13 +164,12 @@ async function aplicarVentaEnLotes(producto, cantidadVendida) {
 }
 
 // ======================================================
-// 5)  SQLITE — CATÁLOGO (NUEVO MOTOR SIN SEQUELIZE)
+// 5)  SQLITE — CATÁLOGO (ACTUALIZADO PARA URLS MÁS LARGAS)
 // ======================================================
 
 const dbPath = path.join(__dirname, "..", "data", "bodega.sqlite");
 const SQLiteDB = new sqlite3.Database(dbPath);
 
-// Crear tabla si no existe
 SQLiteDB.serialize(() => {
   SQLiteDB.run(`
     CREATE TABLE IF NOT EXISTS productos (
@@ -184,10 +187,12 @@ SQLiteDB.serialize(() => {
   `);
 });
 
-// UPSERT SQLite
 const ProductSQLite = {
   upsert: (item) => {
     return new Promise((resolve, reject) => {
+      // Tomamos la primera imagen del arreglo o la ruta directa para guardarla en SQLite de forma ligera
+      const imgPath = Array.isArray(item.imagenes) ? item.imagenes[0] : (item.imagen || "/Uploads/default.png");
+
       SQLiteDB.run(
         `
         INSERT INTO productos (
@@ -216,7 +221,7 @@ const ProductSQLite = {
           item.precio_compra_pendiente,
           item.stock,
           item.unidad,
-          item.imagen
+          imgPath
         ],
         (err) => (err ? reject(err) : resolve(true))
       );
@@ -225,10 +230,10 @@ const ProductSQLite = {
 };
 
 // ======================================================
-// 6) FIX: asegurar que mermas sea arreglo
+// 6) FIX: asegurar que mermas e imágenes sean arreglos válidos
 // ======================================================
 
-async function fixMissingMermasField() {
+async function fixMissingFields() {
   try {
     const modelos = [ProductMongo, ProductMongoLocal];
 
@@ -236,22 +241,29 @@ async function fixMissingMermasField() {
       const productos = await Model.find();
 
       for (const p of productos) {
+        let modificado = false;
+        
         if (!Array.isArray(p.mermas)) {
           p.mermas = [];
+          modificado = true;
+        }
+
+        if (!Array.isArray(p.imagenes)) {
+          p.imagenes = [p.imagen || "/Uploads/default.png"];
+          modificado = true;
+        }
+
+        if (modificado) {
           await p.save();
-          console.log(`🟢 FIX mermas aplicado → ${p.nombre}`);
+          console.log(`🟢 FIX integral aplicado → ${p.nombre}`);
         }
       }
     }
   } catch (err) {
-    console.log("⚠ Error FIX mermas:", err.message);
+    console.log("⚠ Error en reparaciones automáticas del modelo:", err.message);
   }
 }
-fixMissingMermasField();
-
-// ======================================================
-// EXPORTS
-// ======================================================
+fixMissingFields();
 
 module.exports = {
   ProductMongo,
