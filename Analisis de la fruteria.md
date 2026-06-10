@@ -252,3 +252,82 @@ Asimismo, se corrieron conflictos conflictos derivados de modelos duplicados en 
 
 Estas soluciones permitieron garantizar integridad de datos, consistencia eventual controlada y estabilidad del sistema.
 
+necesitamos extraer las dos llaves restantes (`API Key` y `API Secret`) que se acoplarán con el código de backend en Node.js que pegamos en tus rutas.
+
+La finalidad de esto es que cuando la aplicación procese una petición HTTP para guardar o actualizar un producto, el SDK de Cloudinary use estas credenciales para autenticar el flujo de datos y almacenar el archivo binario en el servidor en la nube.
+
+### 🛠️ Instrucciones de Implementación (Extracción y Configuración)
+
+#### Parte A: Obtener las llaves en Cloudinary
+
+1. Observa la esquina inferior derecha de tu pantalla en **image_c59ea0.png**. Verás un botón azul brillante que dice **View API Keys** (tiene el icono de una llave). Haz clic en él.
+2. Al hacer clic, se desplegará una ventana o sección con tus credenciales completas. Copia los valores correspondientes a:
+   - **API Key** (un bloque de números).
+   - **API Secret** (una cadena de letras y números más larga; si está oculta por asteriscos, haz clic en el icono del "ojo" junto a ella para poder copiarla por completo).
+
+#### Parte B: Inyectar las llaves en el Entorno de Render
+
+Ahora que tienes las tres piezas de código de configuración listas, abre tu pestaña de **Render.com**, ingresa a la sección **Environment** de tu Web Service, e introduce las variables con la siguiente sintaxis exacta:
+
+| **Key (Clave)**         | **Value (Valor de tu pantalla)**                             |
+| ----------------------- | ------------------------------------------------------------ |
+| `CLOUDINARY_CLOUD_NAME` | **`dhpwtrydw`** *(este es el tuyo de la imagen)*             |
+| `CLOUDINARY_API_KEY`    | *(El número que copiaste al dar clic en View API Keys)*      |
+| `CLOUDINARY_API_SECRET` | *(La clave secreta que copiaste al dar clic en View API Keys)* |
+
+Haz clic en el botón verde **Save Changes** (Guardar cambios) en la parte inferior de Render.
+
+### 🔍 Documentación del Proceso de Código
+
+Una vez guardadas las variables, tu servidor se reiniciará para que la configuración surta efecto. El fragmento de código que escribimos en el archivo de rutas procesará la autenticación de la siguiente manera:
+
+JavaScript
+
+```
+// El método config() inicializa el módulo de Cloudinary usando tus credenciales de Render
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Tomará: dhpwtrydw
+  api_key: process.env.CLOUDINARY_API_KEY,       // Tomará tu API Key
+  api_secret: process.env.CLOUDINARY_API_SECRET  // Tomará tu API Secret
+});
+```
+
+¿Pudiste visualizar las llaves tras hacer clic en el botón **View API Keys** de tu pantalla?
+
+### 🚨 La Problemática (¿Qué está pasando en tu negocio?)
+
+Tú tienes un sistema excelente para controlar las frutas, los precios y las ventas de **Ahuacatl**. Tu visión de negocio es que tus trabajadores usen sus **celulares** en la calle (en la central de abastos o en ruta) para subir la mercancía con todo y foto, y que tú puedas ver todo al instante en tu **laptop** en el local.
+
+Para lograr esto, el sistema se subió a internet usando un servidor llamado **Render**.
+
+**El problema actual:** Render es como un mostrador que se limpia a manguerazos todas las noches. Cada vez que tu página pasa un rato sin visitas o se va a dormir en la madrugada, **Render borra por completo su memoria interna**.
+
+- Si tu trabajador le toma foto a la Manzana Gala desde su celular, la foto se guarda en la memoria de Render.
+- En la noche, Render se duerme, borra la foto, y al día siguiente tú entras desde tu laptop y **la imagen ya no aparece, te marca error o no hace nada**.
+
+### 💡 La Solución (Cómo lo vamos a arreglar)
+
+Como platicamos hace un momento, no podemos guardar las fotos dentro de tu base de datos de **MongoDB Atlas** porque las imágenes de los celulares son gigantescas, harían que tu página web se vuelva lentísima y Mongo Atlas terminaría bloqueando tu sistema por exceso de peso.
+
+**La jugada maestra es usar un equipo de tres:**
+
+1. **El celular** toma la foto de la fruta.
+2. La foto se manda a guardar a una bodega permanente en internet llamada **Cloudinary** (la cuenta gratuita que acabas de abrir). Cloudinary nunca borra nada.
+3. Cloudinary guarda la foto pesada y te regresa un "ticket de texto" cortito con la dirección de internet de la foto (un link).
+4. Ese link chiquito (que no pesa nada) se guarda en tu **MongoDB Atlas** (junto al precio de la manzana que vimos en tu foto).
+
+Así, cuando Render se reinicie en la noche, no importa. Al día siguiente tu laptop lee el link desde Mongo Atlas, jala la foto desde Cloudinary y te la muestra perfecta. **¡Las fotos ya no se van a borrar jamás!**
+
+### 🏁 ¿En dónde nos quedamos exactamente ahorita?
+
+Ya hicimos casi todo el trabajo duro. El código nuevo ya lo pegamos en tu GitHub (Paso 2). Ahora estamos en el **último jalón (Paso 3)**, que es conectar tu cuenta de Cloudinary con tu servidor de Render para que se pasen las fotos.
+
+En tu laptop tienes abierta la pantalla de **Cloudinary** donde te quedaste (la del Quick Start que me mandaste en la foto anterior).
+
+**Haz exactamente esto ahorita mismo:**
+
+1. En esa pantalla de Cloudinary, busca abajo a la derecha un botón azul brillante que dice **"View API Keys"** (tiene el icono de una llave) y dale clic.
+2. Te van a aparecer tres datos en la pantalla. Anótalos o déjalos ahí a la vista:
+   - **Cloud Name** (que en tu caso es `dhpwtrydw`)
+   - **API Key** (una serie de números)
+   - **API Secret** (una clave más larga)

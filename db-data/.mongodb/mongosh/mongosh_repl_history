@@ -1,0 +1,10 @@
+db.users.find().pretty()
+use users
+show collections
+show collection
+use fruteria_local
+exit
+ex
+use collection
+use fruteria_local
+show dbs

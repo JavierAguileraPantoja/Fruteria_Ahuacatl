@@ -163,3 +163,13 @@ Para ejecutar el sistema desde el cliente.
 
  
 
+## Datos para levantar el codigo en github
+
+![image-20260513222906341](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260513222906341.png)
+
+![image-20260513224515515](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260513224515515.png)
+
+![image-20260513224535806](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260513224535806.png)
+
+![image-20260513224558505](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260513224558505.png)
+
