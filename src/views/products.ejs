@@ -73,7 +73,11 @@
                 <td><%= index + 1 %></td>
 
                 <td>
-                  <img src="<%= (producto.imagen && producto.imagen.indexOf('http') === 0) ? producto.imagen : '/Uploads/' + (producto.imagen || 'default.png') %>" width="120" class="rounded shadow-sm border">
+                  <img 
+                    src="/Uploads/<%= p.imagen %>" 
+                    width="60" 
+                    class="rounded shadow-sm border border-light"
+                    alt="Imagen de <%= p.nombre %>">
                 </td>
 
                 <td class="fw-semibold nombre text-capitalize">
