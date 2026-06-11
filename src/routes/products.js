@@ -149,7 +149,7 @@ router.post(
           existente.precio_venta = existente.precio_actual;
         } else {
           if (existente.stock_precio_nuevo > 0 && existente.precio_nuevo === precioVentaNuevo && existente.precio_nuevo > 0) {
-            existing.stock_precio_nuevo += cantidadNueva;
+            existente.stock_precio_nuevo += cantidadNueva;
           } else {
             existente.stock_precio_viejo = (existente.stock_precio_viejo || 0) + cantidadNueva;
           }
