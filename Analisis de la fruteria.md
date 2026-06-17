@@ -331,3 +331,19 @@ En tu laptop tienes abierta la pantalla de **Cloudinary** donde te quedaste (la 
    - **Cloud Name** (que en tu caso es `dhpwtrydw`)
    - **API Key** (una serie de números)
    - **API Secret** (una clave más larga)
+
+
+
+
+
+llaves secretas de cloudin
+![image-20260610150028522](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260610150028522.png)
+![image-20260610150222897](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260610150222897.png)
+
+cloudynary esta registrado con el correo de javieraguilerapantoja@gmail,com
+Qve53DB34Vpi4OQ613QDa0mPFpk 
+esta fue la lalve por esta vez.
+
+Todas las claves se agregan y debería de uncionar
+
+![image-20260610153735526](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260610153735526.png)

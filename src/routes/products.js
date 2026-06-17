@@ -49,16 +49,36 @@ function toNumber(value, fallback = 0) {
 }
 
 // ====================================================
-// 📋 LISTAR PRODUCTOS
+// 📋 LISTAR PRODUCTOS (FORMATEO DE IMÁGENES SEGURO)
 // ====================================================
 router.get("/productos", isAuthenticated, async (req, res) => {
   try {
     const Product = getProductModel();
-    const productos = await Product.find().sort({ nombre: 1 });
+    // 💡 Corrección aquí: 'productosRaw' todo junto
+    const productosRaw = await Product.find().sort({ nombre: 1 });
+
+    // ✨ Formateamos la imagen antes de mandarla al HTML
+    const productos = productosRaw.map(p => {
+      const prod = p.toObject(); // Convertimos el documento de Mongo a objeto limpio
+      
+      if (prod.imagen) {
+        // Si ya es un link de internet de Cloudinary, lo dejamos intacto
+        if (prod.imagen.startsWith('http')) {
+          prod.imagenFormateada = prod.imagen;
+        } else {
+          // Si es un nombre de archivo viejo (ej: 'zanahoria.png'), le agregamos /Uploads/
+          prod.imagenFormateada = `/Uploads/${prod.imagen}`;
+        }
+      } else {
+        // Si por alguna razón está vacío, le ponemos la de por defecto
+        prod.imagenFormateada = '/Uploads/default.png';
+      }
+      return prod;
+    });
 
     res.render("products", {
       title: "Productos",
-      productos,
+      productos, // Mandamos la lista 'productos' que ya está corregida y limpia
       user: req.user,
       message: req.session.message
     });
