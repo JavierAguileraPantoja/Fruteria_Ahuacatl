@@ -7,28 +7,14 @@ require("dotenv").config();
 // ============================
 // 🔌 CARGA Y CONEXIÓN DE BASES
 // ============================
-// 1) Conecta Atlas + Local primero (DB principal)
 require("./databases/mongoPrincipal");
-
-// 2) Carga modelos Local (ventas, usuarios, productos)
 require("./databases/mongoSecundario");
-
-// 3.5) Cargar modelo de productos para aplicar FIX de id_global / mermas
 require("./models/product");
-
-// 3) Carga SQLite (reportes, respaldo)
 require("./databases/sqliteLocal");
-
-// 4) Passport
 require("./passport/local-auth");
 
-// ============================
-//  FULL SYNC + WATCHER OFICIAL
-// ============================
-const { startSyncWatcher, fullSync } = require("./sync/runSync");
-
-// 👉 Levantar Watcher de estado de internet
-startSyncWatcher();
+// 📈 IMPORTACIÓN DEL MÓDULO DE PRECIOS SNIIM
+const { cargarYProcesarDatos } = require("./utils/analizar_datos");
 
 // =========================================
 //  EXPRESS CONFIG
@@ -43,11 +29,6 @@ const flash = require("connect-flash");
 
 const app = express();
 app.disable("etag");
-
-app.use(
-  "/Uploads",
-  express.static(path.join(__dirname, "Uploads"))
-);
 
 // =========================================
 //  Configuración del servidor
@@ -64,6 +45,9 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// Archivos estáticos
+app.use("/Uploads", express.static(path.join(__dirname, "Uploads")));
+
 // Sesión
 app.use(
   session({
@@ -77,10 +61,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // =========================================
-//  FIX: NO PERMITIR QUE CAMBIO ONLINE/OFFLINE CIERRE LA SESIÓN
+//  FIX: SESIÓN E INTERNET
 // =========================================
 const { getEstadoInternet } = require("./databases/mongoPrincipal");
-
 let lastNet = getEstadoInternet();
 setInterval(() => {
   const now = getEstadoInternet();
@@ -107,40 +90,91 @@ app.use((req, res, next) => {
 });
 
 // =========================================
-//  Archivos estáticos
-// =========================================
-app.use("/Uploads", express.static(path.join(__dirname, "Uploads")));
-
-// =========================================
 //  Rutas principales
 // =========================================
 app.use("/", require("./routes/routes.js"));
 
 // =========================================
-//  LOGS INFORMATIVOS (watchers desactivados)
+// 📊 ENDPOINT API: OBTENER TODOS LOS PRECIOS SNIIM
 // =========================================
+app.get("/api/precios", (req, res) => {
+  try {
+    const rawData = cargarYProcesarDatos();
+
+    // Si rawData ya es un objeto procesado
+    let listaRaw = [];
+    let datosGrafica = {};
+
+    if (rawData && rawData.listaProductos) {
+      listaRaw = rawData.listaProductos;
+      datosGrafica = rawData.datosGrafica || {};
+    } else if (Array.isArray(rawData)) {
+      // Si devuelve un arreglo de registros simples
+      rawData.forEach(item => {
+        const prod = item.producto || item.nombre;
+        if (prod) {
+          if (!datosGrafica[prod]) datosGrafica[prod] = [];
+          datosGrafica[prod].push(item);
+        }
+      });
+      listaRaw = Object.keys(datosGrafica);
+    } else {
+      datosGrafica = rawData || {};
+      listaRaw = Object.keys(datosGrafica);
+    }
+
+    // Filtro de limpieza para descartar textos de encabezados o páginas
+    const listaLimpia = listaRaw.filter(nombre => {
+      if (!nombre || typeof nombre !== 'string') return false;
+      const n = nombre.toLowerCase().trim();
+      return !(
+        n.includes("página") ||
+        n.includes("mercados") ||
+        n.includes("fecha") ||
+        n.includes("encuesta") ||
+        n.includes("registros") ||
+        n.includes("pesos") ||
+        n.length > 40
+      );
+    }).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+
+    res.json({
+      success: true,
+      total: listaLimpia.length,
+      listaProductos: listaLimpia,
+      datosGrafica: datosGrafica
+    });
+
+  } catch (error) {
+    console.error("❌ Error al procesar datos de precios:", error.message);
+    res.status(500).json({ error: "No se pudieron obtener los datos de precios." });
+  }
+});
+
+// =========================================
+//  LOGS Y FULL SYNC
+// =========================================
+const { startSyncWatcher, fullSync } = require("./sync/runSync");
+startSyncWatcher();
+
 setTimeout(() => {
   try {
     console.log("⏳ Iniciando watcher Atlas y Local…");
-
-    console.log("⚠️ Watcher Atlas DESACTIVADO: el cluster no soporta changeStream.");
-    console.log("⚠️ Sincronización Atlas → Local funciona vía fullSync y syncAtlasProductsToLocal.");
-
-    console.log("⚠️ Watcher Local DESACTIVADO (Mongo Local no soporta changeStream).");
-    console.log("⚠️ La sincronización Local → Atlas se hace via pushProductChange() en tiempo real.");
-
     console.log("🟢 Watchers informativos cargados.");
   } catch (err) {
     console.log("❌ Error cargando watchers:", err.message);
   }
 }, 1500);
 
-// =========================================
-//  FULL SYNC INICIAL
-// =========================================
 setTimeout(() => {
   fullSync("inicio_servidor");
 }, 2500);
+
+// =========================================
+// SCHEDULER AUTOMÁTICO SNIIM
+// =========================================
+require("./scripts/sniimScheduler");
+
 
 // =========================================
 //  INICIAR SERVIDOR

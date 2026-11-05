@@ -23,7 +23,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Multer ahora procesa el archivo temporalmente en memoria para mandarlo a la nube
+// Multer procesa el archivo temporalmente en memoria para mandarlo a la nube
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -36,7 +36,7 @@ const uploadToCloudinary = (file) => {
       { folder: "fruteria_ahuacatl" },
       (error, result) => {
         if (error) return reject(error);
-        resolve(result.secure_url); // Nos regresa el link permanente https://...
+        resolve(result.secure_url); // Link permanente https://...
       }
     );
     stream.end(file.buffer);
@@ -54,23 +54,18 @@ function toNumber(value, fallback = 0) {
 router.get("/productos", isAuthenticated, async (req, res) => {
   try {
     const Product = getProductModel();
-    // 💡 Corrección aquí: 'productosRaw' todo junto
     const productosRaw = await Product.find().sort({ nombre: 1 });
 
-    // ✨ Formateamos la imagen antes de mandarla al HTML
     const productos = productosRaw.map(p => {
-      const prod = p.toObject(); // Convertimos el documento de Mongo a objeto limpio
+      const prod = p.toObject();
       
       if (prod.imagen) {
-        // Si ya es un link de internet de Cloudinary, lo dejamos intacto
         if (prod.imagen.startsWith('http')) {
           prod.imagenFormateada = prod.imagen;
         } else {
-          // Si es un nombre de archivo viejo (ej: 'zanahoria.png'), le agregamos /Uploads/
           prod.imagenFormateada = `/Uploads/${prod.imagen}`;
         }
       } else {
-        // Si por alguna razón está vacío, le ponemos la de por defecto
         prod.imagenFormateada = '/Uploads/default.png';
       }
       return prod;
@@ -78,7 +73,7 @@ router.get("/productos", isAuthenticated, async (req, res) => {
 
     res.render("products", {
       title: "Productos",
-      productos, // Mandamos la lista 'productos' que ya está corregida y limpia
+      productos,
       user: req.user,
       message: req.session.message
     });
@@ -106,7 +101,7 @@ router.get("/productos/add", isBodeguero, (req, res) => {
 });
 
 // ====================================================
-// ➕ AGREGAR / ACTUALIZAR PRODUCTO (FIFO + SYNC)
+// ➕ AGREGAR / ACTUALIZAR PRODUCTO (FIFO + SYNC ROBUSTO)
 // ====================================================
 router.post(
   "/productos/add",
@@ -117,27 +112,35 @@ router.post(
       const Product = getProductModel();
       const { nombre, categoria, precio_compra, precio_venta, stock, unidad } = req.body;
 
-      // Se sube a Cloudinary y obtenemos la URL permanente
+      if (!nombre) {
+        req.session.message = { type: "danger", message: "El nombre del producto es obligatorio." };
+        return res.redirect("/productos");
+      }
+
+      const nombreLimpio = nombre.trim();
+
       let imagenUrl = "/Uploads/default.png";
       if (req.file) {
         imagenUrl = await uploadToCloudinary(req.file);
       }
 
       let existente = null;
+
       if (req.body.id_global) {
         existente = await Product.findOne({ id_global: req.body.id_global });
       }
 
       if (!existente) {
-        existente = await Product.findOne({ nombre: nombre.trim() });
+        existente = await Product.findOne({ 
+          nombre: { $regex: new RegExp(`^${nombreLimpio}$`, "i") } 
+        });
       }
 
       if (existente && !existente.id_global) {
         existente.id_global = uuidv4();
-        await existente.save();
       }
 
-      // 🟢 SI EXISTE → LÓGICA FIFO
+      // 🟢 SI EL PRODUCTO EXISTE → APLICAR LÓGICA FIFO Y SUMAR STOCK
       if (existente) {
         const cantidadNueva = toNumber(stock, 0);
         const precioCompraNuevo = toNumber(precio_compra, existente.precio_compra || 0);
@@ -183,12 +186,17 @@ router.post(
           existente.imagenes = [imagenUrl];
         }
 
+        if (categoria) {
+          existente.categoria = categoria.trim();
+        }
+
+        existente.updatedAt = new Date();
         await existente.save();
         await pushProductChange(existente);
 
         req.session.message = {
           type: "success",
-          message: `Stock actualizado: ${existente.stock} ${existente.unidad}`
+          message: `Stock actualizado para ${existente.nombre}: Total ${existente.stock} ${existente.unidad || ''}`
         };
         return res.redirect("/productos");
       }
@@ -200,16 +208,17 @@ router.post(
 
       const nuevo = new Product({
         id_global: uuidv4(),
-        nombre,
-        categoria,
+        nombre: nombreLimpio,
+        categoria: categoria ? categoria.trim() : "General",
         precio_compra: precioCompraInicial,
         precio_venta: precioVentaInicial,
         stock: stockInicial,
-        unidad,
+        unidad: unidad || "kg",
         imagen: imagenUrl,
         imagenes: [imagenUrl],
-        creadoPor: req.user.email,
+        creadoPor: req.user ? req.user.email : "sistema",
         creadoEn: new Date(),
+        updatedAt: new Date(),
         precio_actual: precioVentaInicial,
         precio_viejo: precioVentaInicial,
         precio_nuevo: precioVentaInicial,
@@ -232,21 +241,34 @@ router.post(
 );
 
 // ====================================================
-// ✏️ EDITAR PRODUCTO
+// ✏️ VISTA EDITAR PRODUCTO
 // ====================================================
 router.get("/productos/edit/:id", isBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
-    const producto = await Product.findById(req.params.id);
+    let producto = null;
+
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      producto = await Product.findById(req.params.id);
+    }
+    if (!producto) {
+      producto = await Product.findOne({ id_global: req.params.id });
+    }
+
+    if (!producto) {
+      req.session.message = { type: "danger", message: "Producto no encontrado." };
+      return res.redirect("/productos");
+    }
+
     res.render("edit_product", { title: "Editar Producto", producto, user: req.user });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error al cargar vista de edición:", err);
     res.redirect("/productos");
   }
 });
 
 // ====================================================
-// ✏️ ACTUALIZAR PRODUCTO
+// ✏️ PROCESAR ACTUALIZACIÓN DE PRODUCTO (ÚNICA Y UNIFICADA)
 // ====================================================
 router.post("/productos/edit/:id",
   isBodeguero,
@@ -254,12 +276,30 @@ router.post("/productos/edit/:id",
   async (req, res) => {
     try {
       const Product = getProductModel();
-      const producto = await Product.findById(req.params.id);
-      if (!producto) throw "Producto no encontrado";
+      let producto = null;
 
+      if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        producto = await Product.findById(req.params.id);
+      }
+      if (!producto) {
+        producto = await Product.findOne({ id_global: req.params.id });
+      }
+
+      if (!producto) {
+        req.session.message = { type: "danger", message: "Producto no encontrado para actualizar." };
+        return res.redirect("/productos");
+      }
+
+      const { nombre, categoria, unidad } = req.body;
       const precioCompra = toNumber(req.body.precio_compra, producto.precio_compra);
       const precioVenta = toNumber(req.body.precio_venta, producto.precio_venta);
-      const nuevoStock = req.body.stock !== undefined ? toNumber(req.body.stock, producto.stock) : null;
+      const nuevoStock = (req.body.stock !== undefined && req.body.stock !== "") 
+        ? toNumber(req.body.stock, producto.stock) 
+        : producto.stock;
+
+      if (nombre) producto.nombre = nombre.trim();
+      if (categoria) producto.categoria = categoria.trim(); // 👈 Aquí se actualiza correctamente de Fruta a Chiles
+      if (unidad) producto.unidad = unidad;
 
       if (req.file) {
         const imagenUrl = await uploadToCloudinary(req.file);
@@ -269,16 +309,10 @@ router.post("/productos/edit/:id",
 
       producto.precio_compra = precioCompra;
       producto.precio_venta = precioVenta;
+      producto.stock = nuevoStock;
 
-      if (nuevoStock !== null) {
-        producto.stock = nuevoStock;
-        producto.stock_precio_viejo = nuevoStock;
-        producto.stock_precio_nuevo = 0;
-        producto.precio_actual = precioVenta;
-        producto.precio_viejo = precioVenta;
-        producto.precio_nuevo = precioVenta;
-        producto.precio_compra_pendiente = 0;
-      }
+      // Actualizamos la marca de tiempo para el sistema de sincronización
+      producto.updatedAt = new Date();
 
       await producto.save();
       await pushProductChange(producto);
@@ -286,7 +320,7 @@ router.post("/productos/edit/:id",
       req.session.message = { type: "success", message: "Producto actualizado correctamente." };
       res.redirect("/productos");
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error al actualizar producto:", err);
       req.session.message = { type: "danger", message: "Error al actualizar producto." };
       res.redirect("/productos");
     }
@@ -294,12 +328,18 @@ router.post("/productos/edit/:id",
 );
 
 // ====================================================
-// 📄 FORMULARIO DE MERMA y REPORTE (Se mantienen intactos)
+// 📄 FORMULARIO DE MERMA y REPORTE
 // ====================================================
 router.get("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
-    const producto = await Product.findById(req.params.id);
+    let producto = null;
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      producto = await Product.findById(req.params.id);
+    }
+    if (!producto) {
+      producto = await Product.findOne({ id_global: req.params.id });
+    }
     if (!producto) return res.redirect("/productos");
     res.render("add_merma", { title: "Registrar Merma", producto, user: req.user });
   } catch (err) {
@@ -310,7 +350,13 @@ router.get("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
 router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => {
   try {
     const Product = getProductModel();
-    const producto = await Product.findById(req.params.id);
+    let producto = null;
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      producto = await Product.findById(req.params.id);
+    }
+    if (!producto) {
+      producto = await Product.findOne({ id_global: req.params.id });
+    }
     if (!producto) return res.redirect("/productos");
 
     const cantidad = parseFloat(req.body.cantidad || 0);
@@ -337,6 +383,7 @@ router.post("/productos/add-merma/:id", isAdminOrBodeguero, async (req, res) => 
       registradoPor: req.user.name
     });
 
+    producto.updatedAt = new Date();
     await producto.save();
     await pushProductChange(producto);
 
@@ -366,15 +413,39 @@ router.get("/reportes/mermas", isAdmin, async (req, res) => {
 });
 
 // ====================================================
-// 🗑 ELIMINAR PRODUCTO
+// 🗑 ELIMINAR PRODUCTO (EN AMBAS BASES DE DATOS)
 // ====================================================
 router.get("/productos/delete/:id", isAdmin, async (req, res) => {
   try {
     const Product = getProductModel();
-    await Product.findByIdAndDelete(req.params.id);
-    req.session.message = { type: "success", message: "Producto eliminado." };
+    let productoAEliminar = null;
+
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      productoAEliminar = await Product.findById(req.params.id);
+    }
+    if (!productoAEliminar) {
+      productoAEliminar = await Product.findOne({ id_global: req.params.id });
+    }
+
+    if (productoAEliminar && productoAEliminar.id_global) {
+      const idGlobal = productoAEliminar.id_global;
+
+      const { ProductMongo } = require("../models/product");
+      await ProductMongo.deleteOne({ id_global: idGlobal });
+
+      const { ProductMongoLocal } = require("../models/product");
+      await ProductMongoLocal.deleteOne({ id_global: idGlobal });
+
+      console.log(`🗑 Producto eliminado globalmente: ${productoAEliminar.nombre} (${idGlobal})`);
+    } else if (productoAEliminar) {
+      await Product.findByIdAndDelete(productoAEliminar._id);
+    }
+
+    req.session.message = { type: "success", message: "Producto eliminado correctamente de todo el sistema." };
     res.redirect("/productos");
   } catch (err) {
+    console.error("❌ Error al eliminar producto:", err);
+    req.session.message = { type: "danger", message: "Error al eliminar producto." };
     res.redirect("/productos");
   }
 });

@@ -11,6 +11,9 @@
     <div class="card-body p-4">
       <form action="/productos/add" method="POST" enctype="multipart/form-data">
 
+        <!-- 🔑 Campo oculto añadido para enviar el id_global al backend -->
+        <input type="hidden" id="id_global" name="id_global">
+
         <div class="row g-4">
 
           <!-- Nombre -->
@@ -92,6 +95,9 @@
 
     const prod = await res.json();
     if (!prod) return;
+
+    // Asignamos el id_global al campo oculto para que el servidor identifique el producto exacto
+    document.getElementById("id_global").value = prod.id_global || "";
 
     document.getElementById("categoria").value = prod.categoria;
     document.getElementById("precio_compra").value = prod.precio_compra;

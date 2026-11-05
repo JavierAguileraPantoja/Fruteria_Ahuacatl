@@ -173,3 +173,12 @@ Para ejecutar el sistema desde el cliente.
 
 ![image-20260513224558505](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260513224558505.png)
 
+
+
+---
+
+## 🌾 Módulo de Extracción de Precios Agrícolas (SNIIM)
+
+Este proyecto cuenta con un módulo de automatización y extracción de datos (scraping) para obtener los precios históricos de frutas y verduras desde el portal del SNIIM.
+
+👉 **[Haz clic aquí para leer la Documentación Completa del Pipeline de Datos (SNIIM)](./DOCUMENTACION_SNIIM.md)**

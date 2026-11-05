@@ -1,8 +1,6 @@
-// src/utils/syncUsersToSQLite.js
 // =======================================================
 // USUARIOS Atlas → SQLite + Local (Versión Profesional)
 // =======================================================
-
 const { UserAtlas } = require("../models/users");
 const UserSQLite = require("../models/UserSQLite");
 const { UserLocal } = require("../databases/mongoSecundario");
@@ -26,7 +24,8 @@ async function syncUsersToSQLite() {
         image: u.image || "default.png",
         password: u.password,
         role: u.role,
-        created: u.created || new Date()
+        created: u.created || new Date(),
+        activo: u.activo !== false // Registramos si el usuario está activo o borrado lógicamente
       });
     }
 
@@ -41,7 +40,8 @@ async function syncUsersToSQLite() {
         image: u.image || "default.png",
         password: u.password,
         role: u.role,
-        created: u.created || new Date()
+        created: u.created || new Date(),
+        activo: u.activo !== false
       };
 
       await UserLocal.updateOne(

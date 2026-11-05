@@ -1,60 +1,69 @@
 // src/utils/syncAtlasToLocal.js
-// ======================================================
-// AHUACATL — SINCRONIZACIÓN ATLAS → MONGO LOCAL
-//    Atlas manda solo el CATÁLOGO
-//    NO baja stock
-//    NO baja mermas
-//    NO baja lotes
-//    No destruye ventas offline
-// ======================================================
 
 const { ProductMongo, ProductMongoLocal } = require("../models/product");
 const { getEstadoInternet } = require("../databases/mongoPrincipal");
 
 async function syncAtlasToLocal() {
   try {
+
     if (!getEstadoInternet()) {
-      console.log("⛔ No se sincroniza Atlas → Local (offline)");
+      console.log("⛔ No se ejecuta Atlas → Local (sin internet)");
       return;
     }
 
-    console.log("🌐 Sync Atlas → Local…");
+    console.log("🌐 Sync Atlas → Local (solo catálogo)...");
 
     const productosAtlas = await ProductMongo.find();
-    let count = 0;
+
+    let actualizados = 0;
 
     for (const p of productosAtlas) {
+
       if (!p.id_global) continue;
-
-      // Campos permitidos desde Atlas (SOLO CATÁLOGO)
-      const plain = {
-        id_global: p.id_global,
-        nombre: p.nombre,
-        categoria: p.categoria,
-        unidad: p.unidad,
-        imagen: p.imagen,
-
-        // Precios base, NO afectan stock
-        precio_compra: p.precio_compra,
-        precio_venta: p.precio_venta,
-
-        updatedAt: new Date()
-      };
-
-
 
       await ProductMongoLocal.updateOne(
         { id_global: p.id_global },
-        { $set: plain },
-        { upsert: true }
+        {
+          $set: {
+
+            id_global: p.id_global,
+
+            nombre: p.nombre,
+            categoria: p.categoria,
+            unidad: p.unidad,
+
+            imagen: p.imagen,
+            imagenes: p.imagenes || [p.imagen],
+
+            precio_compra: p.precio_compra,
+            precio_venta: p.precio_venta,
+            precio_compra_pendiente: p.precio_compra_pendiente,
+
+            creadoPor: p.creadoPor,
+            creadoEn: p.creadoEn
+
+          }
+        },
+        {
+          upsert: true,
+          timestamps: false
+        }
       );
 
-      count++;
+      actualizados++;
     }
 
-    console.log(`🟢 Sync Atlas → Local COMPLETO (catálogo actualizado: ${count})`);
+    console.log(
+      `🟢 Sync Atlas → Local (catálogo) COMPLETADO: ${actualizados}`
+    );
+
   } catch (err) {
-    console.log("❌ Error en syncAtlasToLocal:", err.message);
+
+    console.error(
+      "❌ Error en syncAtlasToLocal:",
+      err.message
+    );
+
   }
 }
 

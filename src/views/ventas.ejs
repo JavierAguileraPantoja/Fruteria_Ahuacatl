@@ -1,5 +1,43 @@
 <%- include('layout/header') %>
 
+<%
+  const productosLocal = Array.isArray(productos) ? productos : [];
+%>
+
+<style>
+  body {
+    background-color: #f8fff9;
+  }
+
+  .card {
+    background-color: #e9fbe7;
+  }
+
+  .datos-cliente-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .datos-cliente-grid .campo-completo {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.9rem;
+    }
+
+    .datos-cliente-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .datos-cliente-grid .campo-completo {
+      grid-column: auto;
+    }
+  }
+</style>
+
 <div class="container mt-4">
   <div class="row">
 
@@ -11,96 +49,93 @@
             <i class="fas fa-cash-register me-2"></i>Punto de venta
           </h5>
         </div>
-        <div class="card-body">
 
-          <% if (message){ %>
-            <div class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
-              <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
+        <div class="card-body">
+          <% if (message) { %>
+            <div class="alert alert-dismissible fade show alert-<%= message.type || 'info' %>" role="alert">
+              <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Cerrar"></button>
               <strong><%= message.message %></strong>
             </div>
           <% } %>
 
-          <!-- Tipo de cliente -->
           <div class="mb-3">
-            <label class="form-label">Tipo de cliente</label>
-            <select id="tipoCliente" name="tipoCliente" class="form-select">
+            <label for="tipoCliente" class="form-label">Tipo de cliente</label>
+            <select id="tipoCliente" class="form-select">
               <option value="general">General / Mostrador</option>
               <option value="pre-mayoreo">Pre-mayoreo</option>
               <option value="mayoreo">Mayoreo</option>
             </select>
           </div>
 
-          <!-- Datos de cliente (solo para pre-mayoreo / mayoreo) -->
-          <div id="datosCliente" style="display:none;">
-            <div class="mb-3">
-              <label class="form-label">Nombre del cliente</label>
-              <input type="text" id="clienteNombre" class="form-control" placeholder="Nombre del cliente">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Teléfono</label>
-              <input type="text" id="clienteTelefono" class="form-control" placeholder="Teléfono">
+          <div id="datosCliente" class="mb-3" hidden>
+            <div class="datos-cliente-grid">
+              <div class="campo-completo">
+                <label for="clienteNombre" class="form-label">Nombre del cliente</label>
+                <input type="text" id="clienteNombre" class="form-control" placeholder="Ej. Juan Pérez">
+              </div>
+
+              <div>
+                <label for="clienteTelefono" class="form-label">Teléfono</label>
+                <input type="tel" id="clienteTelefono" class="form-control" inputmode="tel" placeholder="Ej. 4451234567">
+              </div>
+
+              <div>
+                <label for="clienteDireccion" class="form-label">Dirección / Entrega</label>
+                <input type="text" id="clienteDireccion" class="form-control" placeholder="Ej. Av. Hidalgo #123, Centro">
+              </div>
             </div>
           </div>
 
-          <!-- Selección de producto -->
           <div class="mb-3">
-            <label class="form-label">Producto</label>
-            <select id="productoSelect" class="form-select">
-              <% productos.forEach(p => { %>
-                <option 
-                  value="<%= p._id %>"
-                  data-nombre="<%= p.nombre %>"
-                  data-precio="<%= p.precio_venta %>"
-                  data-stock="<%= p.stock %>">
-                  <%= p.nombre %> - $<%= p.precio_venta.toFixed(2) %> / <%= p.unidad %> (Stock: <%= p.stock %>)
-                </option>
-
-              <% }) %>
+            <label for="productoSelect" class="form-label">Producto</label>
+            <select id="productoSelect" class="form-select" <%= productosLocal.length ? '' : 'disabled' %>>
+              <% if (productosLocal.length > 0) { %>
+                <% productosLocal.forEach(p => { %>
+                  <option
+                    value="<%= p._id || p.id %>"
+                    data-nombre="<%= p.nombre || 'Sin nombre' %>"
+                    data-precio="<%= Number(p.precio_venta || 0) %>"
+                    data-stock="<%= Number(p.stock || 0) %>"
+                    data-unidad="<%= p.unidad || 'kg' %>"
+                  >
+                    <%= p.nombre || 'Sin nombre' %> - $<%= Number(p.precio_venta || 0).toFixed(2) %> / <%= p.unidad || 'kg' %> (Stock: <%= Number(p.stock || 0) %>)
+                  </option>
+                <% }) %>
+              <% } else { %>
+                <option value="">Sin productos disponibles</option>
+              <% } %>
             </select>
           </div>
 
-          <!-- Cantidad -->
           <div class="mb-3">
-            <label class="form-label">Cantidad (<span id="unidadTexto">kg</span>)</label>
-            <input 
-              type="number" 
-              id="cantidad" 
-              class="form-control"
-              min="0.001" step="0.001" value="1.000">
+            <label for="cantidad" class="form-label">
+              Cantidad (<span id="unidadTexto">kg</span>)
+            </label>
+            <input type="number" id="cantidad" class="form-control" min="0.001" step="0.001" value="1.000">
           </div>
 
-          <!-- Precio calculado -->
           <div class="mb-3">
-            <label class="form-label">Precio unitario aplicado</label>
-            <input 
-              type="text" 
-              id="precioAplicado"
-              class="form-control"
-              value="$0.00"
-              readonly>
-            <small class="text-muted" id="textoReglaPrecio">
-              Selecciona producto y cantidad.
-            </small>
+            <label for="precioAplicado" class="form-label">Precio unitario aplicado</label>
+            <input type="text" id="precioAplicado" class="form-control" value="$0.00" readonly>
+            <small class="text-muted" id="textoReglaPrecio">Selecciona producto y cantidad.</small>
           </div>
 
-          <!-- Botón agregar -->
-          <button class="btn btn-success w-100" id="btnAgregar">
+          <button class="btn btn-success w-100" id="btnAgregar" type="button" <%= productosLocal.length ? '' : 'disabled' %>>
             <i class="fas fa-plus-circle me-1"></i>Agregar a la venta
           </button>
-
         </div>
       </div>
     </div>
 
-    <!-- DERECHA: CARRITO / TICKET VISIBLE PARA EL CLIENTE -->
+    <!-- DERECHA: CARRITO -->
     <div class="col-md-7 mb-3">
       <div class="card shadow-lg border-0 rounded-4">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
           <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Cuenta del cliente</h5>
-          <span class="badge bg-secondary"><%= user ? user.name : '' %></span>
+          <span class="badge bg-secondary"><%= user ? (user.name || user.username || '') : '' %></span>
         </div>
-        <div class="card-body">
 
+        <div class="card-body">
           <div class="table-responsive">
             <table class="table table-hover align-middle text-center" id="tablaVenta">
               <thead class="table-success">
@@ -116,116 +151,167 @@
             </table>
           </div>
 
+          <div id="carritoVacio" class="text-center text-muted py-3">
+            No hay productos agregados.
+          </div>
+
           <h3 class="text-end mt-3">
-            Total: $ <span id="totalGeneral">0.00</span>
+            Total: $<span id="totalGeneral">0.00</span>
           </h3>
 
-          <!-- Formulario oculto para enviar la venta -->
           <form id="formVenta" action="/ventas" method="POST">
             <input type="hidden" name="tipoCliente" id="inputTipoCliente">
             <input type="hidden" name="clienteNombre" id="inputClienteNombre">
             <input type="hidden" name="clienteTelefono" id="inputClienteTelefono">
+            <input type="hidden" name="clienteDireccion" id="inputClienteDireccion">
             <input type="hidden" name="carrito" id="inputCarrito">
-            <button type="submit" class="btn btn-primary w-100 mt-3" id="btnProcesar">
+
+            <button type="submit" class="btn btn-primary w-100 mt-3" id="btnProcesar" disabled>
               Procesar e imprimir venta
             </button>
           </form>
-
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- ============================
-      LÓGICA FRONT DE VENTAS
-============================= -->
 <script>
+document.addEventListener('DOMContentLoaded', () => {
   const tipoCliente = document.getElementById('tipoCliente');
   const datosCliente = document.getElementById('datosCliente');
   const clienteNombre = document.getElementById('clienteNombre');
   const clienteTelefono = document.getElementById('clienteTelefono');
+  const clienteDireccion = document.getElementById('clienteDireccion');
 
   const productoSelect = document.getElementById('productoSelect');
   const cantidadInput = document.getElementById('cantidad');
+  const unidadTexto = document.getElementById('unidadTexto');
   const precioAplicado = document.getElementById('precioAplicado');
   const textoReglaPrecio = document.getElementById('textoReglaPrecio');
+  const btnAgregar = document.getElementById('btnAgregar');
 
   const tablaBody = document.querySelector('#tablaVenta tbody');
+  const carritoVacio = document.getElementById('carritoVacio');
   const totalGeneralSpan = document.getElementById('totalGeneral');
+  const btnProcesar = document.getElementById('btnProcesar');
 
   const inputTipoCliente = document.getElementById('inputTipoCliente');
   const inputClienteNombre = document.getElementById('inputClienteNombre');
   const inputClienteTelefono = document.getElementById('inputClienteTelefono');
+  const inputClienteDireccion = document.getElementById('inputClienteDireccion');
   const inputCarrito = document.getElementById('inputCarrito');
   const formVenta = document.getElementById('formVenta');
-  const btnAgregar = document.getElementById('btnAgregar');
 
   let carrito = [];
 
-  //  Lógica de precio (misma que el backend)
-  function determinarPrecio(precioBase, cantidad, tipoCliente) {
-    const kg = parseFloat(cantidad) || 0;
-    let precioFinal = precioBase;
+  function numeroSeguro(valor) {
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero : 0;
+  }
 
-    // Reglas automáticas por cantidad
-    if (kg >= 20) {
-      precioFinal = precioBase * 0.80; // 20% descuento = mayoreo
-      textoReglaPrecio.textContent = 'Aplicado precio MAYOREO por cantidad (≥ 20 kg).';
-    } else if (kg >= 10) {
-      precioFinal = precioBase * 0.90; // 10% descuento = pre-mayoreo
-      textoReglaPrecio.textContent = 'Aplicado precio PRE-MAYOREO por cantidad (≥ 10 kg).';
-    } else {
-      // Reglas manuales por tipo de cliente
-      if (tipoCliente === 'mayoreo') {
-        precioFinal = precioBase * 0.80;
-        textoReglaPrecio.textContent = 'Aplicado precio MAYOREO por tipo de cliente.';
-      } else if (tipoCliente === 'pre-mayoreo') {
-        precioFinal = precioBase * 0.90;
-        textoReglaPrecio.textContent = 'Aplicado precio PRE-MAYOREO por tipo de cliente.';
-      } else {
-        textoReglaPrecio.textContent = 'Precio GENERAL aplicado.';
-      }
+  function redondearDinero(valor) {
+    return Math.round((numeroSeguro(valor) + Number.EPSILON) * 100) / 100;
+  }
+
+  function obtenerReglaPrecio(precioBase, cantidad, tipoSeleccionado) {
+    const base = numeroSeguro(precioBase);
+    const cantidadNumerica = numeroSeguro(cantidad);
+
+    let multiplicador = 1;
+    let categoria = 'general';
+    let mensaje = 'Precio GENERAL aplicado.';
+
+    // El tipo seleccionado establece el beneficio mínimo del cliente.
+    if (tipoSeleccionado === 'mayoreo') {
+      multiplicador = 0.80;
+      categoria = 'mayoreo';
+      mensaje = 'Precio MAYOREO aplicado por tipo de cliente (20% de descuento).';
+    } else if (tipoSeleccionado === 'pre-mayoreo') {
+      multiplicador = 0.90;
+      categoria = 'pre-mayoreo';
+      mensaje = 'Precio PRE-MAYOREO aplicado por tipo de cliente (10% de descuento).';
     }
 
-    return precioFinal;
+    // La cantidad puede mejorar el precio, pero nunca reducir el beneficio existente.
+    if (cantidadNumerica >= 20 && multiplicador > 0.80) {
+      multiplicador = 0.80;
+      categoria = 'mayoreo';
+      mensaje = 'Precio MAYOREO aplicado por cantidad de 20 o más.';
+    } else if (cantidadNumerica >= 10 && multiplicador > 0.90) {
+      multiplicador = 0.90;
+      categoria = 'pre-mayoreo';
+      mensaje = 'Precio PRE-MAYOREO aplicado por cantidad de 10 a 19.999.';
+    }
+
+    return {
+      precioUnitario: redondearDinero(base * multiplicador),
+      multiplicador,
+      categoria,
+      mensaje
+    };
+  }
+
+  function obtenerOpcionSeleccionada() {
+    return productoSelect && productoSelect.selectedOptions
+      ? productoSelect.selectedOptions[0]
+      : null;
+  }
+
+  function actualizarUnidad() {
+    const option = obtenerOpcionSeleccionada();
+    unidadTexto.textContent = option?.dataset.unidad || 'kg';
   }
 
   function actualizarPreviewPrecio() {
-    const option = productoSelect.selectedOptions[0];
-    if (!option) return;
-    const precioBase = parseFloat(option.dataset.precio) || 0;
-    const tipo = tipoCliente.value;
-    const cantidad = parseFloat(cantidadInput.value) || 0;
+    const option = obtenerOpcionSeleccionada();
 
-    if (!cantidad || cantidad <= 0) {
+    if (!option || !option.value) {
       precioAplicado.value = '$0.00';
-      textoReglaPrecio.textContent = 'Selecciona una cantidad válida.';
+      textoReglaPrecio.textContent = 'No hay un producto válido seleccionado.';
       return;
     }
 
-    const precioFinal = determinarPrecio(precioBase, cantidad, tipo);
-    precioAplicado.value = '$' + precioFinal.toFixed(2);
+    const cantidad = numeroSeguro(cantidadInput.value);
+
+    if (cantidad <= 0) {
+      precioAplicado.value = '$0.00';
+      textoReglaPrecio.textContent = 'Ingresa una cantidad mayor que cero.';
+      return;
+    }
+
+    const regla = obtenerReglaPrecio(
+      option.dataset.precio,
+      cantidad,
+      tipoCliente.value
+    );
+
+    precioAplicado.value = `$${regla.precioUnitario.toFixed(2)}`;
+    textoReglaPrecio.textContent = regla.mensaje;
+    actualizarUnidad();
   }
 
-  tipoCliente.addEventListener('change', () => {
-    if (tipoCliente.value === 'general') {
-      datosCliente.style.display = 'none';
-      clienteNombre.value = 'Mostrador';
-      clienteTelefono.value = '';
-    } else {
-      datosCliente.style.display = 'block';
-    }
-    actualizarPreviewPrecio();
-  });
+  function recalcularCarrito() {
+    carrito = carrito.map(item => {
+      const regla = obtenerReglaPrecio(
+        item.precioBase,
+        item.cantidad,
+        tipoCliente.value
+      );
 
-  productoSelect.addEventListener('change', actualizarPreviewPrecio);
-  cantidadInput.addEventListener('input', actualizarPreviewPrecio);
+      return {
+        ...item,
+        precioUnitario: regla.precioUnitario,
+        categoriaPrecio: regla.categoria,
+        subtotal: redondearDinero(item.cantidad * regla.precioUnitario)
+      };
+    });
 
-  // Render del carrito
+    renderCarrito();
+  }
+
   function renderCarrito() {
-    tablaBody.innerHTML = '';
+    tablaBody.replaceChildren();
     let total = 0;
 
     carrito.forEach((item, index) => {
@@ -233,124 +319,171 @@
 
       const tr = document.createElement('tr');
 
-      tr.innerHTML = `
-        <td>${item.nombre}</td>
-        <td>${item.cantidad.toFixed(3)} ${item.unidad}</td>
-        <td>$${item.precioUnitario.toFixed(2)}</td>
-        <td>$${item.subtotal.toFixed(2)}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-danger" data-index="${index}">
-            <i class="fas fa-times"></i>
-          </button>
-        </td>
-      `;
+      const tdProducto = document.createElement('td');
+      tdProducto.textContent = item.nombre;
 
+      const tdCantidad = document.createElement('td');
+      tdCantidad.textContent = `${item.cantidad.toFixed(3)} ${item.unidad}`;
+
+      const tdPrecio = document.createElement('td');
+      tdPrecio.textContent = `$${item.precioUnitario.toFixed(2)}`;
+
+      const tdSubtotal = document.createElement('td');
+      tdSubtotal.textContent = `$${item.subtotal.toFixed(2)}`;
+
+      const tdAcciones = document.createElement('td');
+      const botonEliminar = document.createElement('button');
+      botonEliminar.type = 'button';
+      botonEliminar.className = 'btn btn-sm btn-outline-danger';
+      botonEliminar.dataset.index = String(index);
+      botonEliminar.setAttribute('aria-label', `Eliminar ${item.nombre}`);
+      botonEliminar.innerHTML = '<i class="fas fa-times"></i>';
+      tdAcciones.appendChild(botonEliminar);
+
+      tr.append(tdProducto, tdCantidad, tdPrecio, tdSubtotal, tdAcciones);
       tablaBody.appendChild(tr);
     });
 
-    totalGeneralSpan.textContent = total.toFixed(2);
+    totalGeneralSpan.textContent = redondearDinero(total).toFixed(2);
     inputCarrito.value = JSON.stringify(carrito);
+    carritoVacio.hidden = carrito.length > 0;
+    btnProcesar.disabled = carrito.length === 0;
   }
 
-  //  Eliminar item del carrito
-  tablaBody.addEventListener('click', (e) => {
-    if (e.target.closest('button')) {
-      const index = e.target.closest('button').dataset.index;
-      carrito.splice(index, 1);
-      renderCarrito();
+  tipoCliente.addEventListener('change', () => {
+    const esGeneral = tipoCliente.value === 'general';
+    datosCliente.hidden = esGeneral;
+
+    if (esGeneral) {
+      clienteNombre.value = 'Mostrador';
+      clienteTelefono.value = '';
+      clienteDireccion.value = '';
+    } else if (clienteNombre.value === 'Mostrador') {
+      clienteNombre.value = '';
     }
+
+    actualizarPreviewPrecio();
+    recalcularCarrito();
   });
 
-btnAgregar.addEventListener('click', () => {
-  const option = productoSelect.selectedOptions[0];
-  if (!option) return alert('Selecciona un producto');
+  productoSelect.addEventListener('change', () => {
+    actualizarUnidad();
+    actualizarPreviewPrecio();
+  });
 
-  const stock = parseFloat(option.dataset.stock);
-  const cantidad = parseFloat(cantidadInput.value);
+  cantidadInput.addEventListener('input', actualizarPreviewPrecio);
 
-  if (stock <= 0) {
-    alert(`❌ No hay stock disponible de ${option.dataset.nombre}`);
-    return;
-  }
+  tablaBody.addEventListener('click', event => {
+    const boton = event.target.closest('button[data-index]');
+    if (!boton) return;
 
-  if (cantidad > stock) {
-    alert(`❌ Solo hay ${stock} kg disponibles`);
-    return;
-  }
+    const index = Number(boton.dataset.index);
+    if (!Number.isInteger(index) || !carrito[index]) return;
 
-  if (stock <= 3) {
-    alert(`⚠️ Advertencia: El stock de ${option.dataset.nombre} es bajo (${stock} kg)`);
-  }
+    carrito.splice(index, 1);
+    renderCarrito();
+  });
 
-  const tipo = tipoCliente.value;
-  const precioBase = parseFloat(option.dataset.precio);
-  const precioUnitario = determinarPrecio(precioBase, cantidad, tipo);
-  const subtotal = precioUnitario * cantidad;
+  btnAgregar.addEventListener('click', () => {
+    const option = obtenerOpcionSeleccionada();
 
-  // Revisar si ya existe
-  const index = carrito.findIndex(i => i.productId === option.value);
-
-  if (index >= 0) {
-    // sumar cantidad
-    if (carrito[index].cantidad + cantidad > stock) {
-      alert(`❌ No puedes vender más de lo que hay en stock (${stock} kg).`);
+    if (!option || !option.value) {
+      alert('Selecciona un producto válido.');
       return;
     }
 
-    carrito[index].cantidad += cantidad;
-    carrito[index].precioUnitario = precioUnitario;
-    carrito[index].subtotal = carrito[index].cantidad * precioUnitario;
+    const stock = numeroSeguro(option.dataset.stock);
+    const cantidadNueva = numeroSeguro(cantidadInput.value);
+    const precioBase = numeroSeguro(option.dataset.precio);
+    const unidad = option.dataset.unidad || 'kg';
+    const nombre = option.dataset.nombre || 'Producto';
 
-  } else {
-    carrito.push({
-      productId: option.value,
-      nombre: option.dataset.nombre,
-      cantidad,
-      unidad: "kg",
-      precioUnitario,
-      subtotal
-    });
-  }
+    if (cantidadNueva <= 0) {
+      alert('Ingresa una cantidad mayor que cero.');
+      cantidadInput.focus();
+      return;
+    }
 
-  renderCarrito();
-});
+    if (stock <= 0) {
+      alert(`❌ No hay stock disponible de ${nombre}.`);
+      return;
+    }
 
+    const index = carrito.findIndex(item => item.productId === option.value);
+    const cantidadExistente = index >= 0 ? carrito[index].cantidad : 0;
+    const cantidadAcumulada = redondearDinero(cantidadExistente + cantidadNueva);
 
-  //  Enviar venta al backend
-  formVenta.addEventListener('submit', (e) => {
+    if (cantidadAcumulada > stock) {
+      alert(`❌ No puedes vender más de lo disponible. Stock: ${stock} ${unidad}. En el carrito: ${cantidadExistente.toFixed(3)} ${unidad}.`);
+      return;
+    }
+
+    const regla = obtenerReglaPrecio(
+      precioBase,
+      cantidadAcumulada,
+      tipoCliente.value
+    );
+
+    if (index >= 0) {
+      carrito[index] = {
+        ...carrito[index],
+        cantidad: cantidadAcumulada,
+        precioBase,
+        precioUnitario: regla.precioUnitario,
+        categoriaPrecio: regla.categoria,
+        subtotal: redondearDinero(cantidadAcumulada * regla.precioUnitario)
+      };
+    } else {
+      carrito.push({
+        productId: option.value,
+        nombre,
+        cantidad: cantidadAcumulada,
+        unidad,
+        precioBase,
+        precioUnitario: regla.precioUnitario,
+        categoriaPrecio: regla.categoria,
+        subtotal: redondearDinero(cantidadAcumulada * regla.precioUnitario)
+      });
+    }
+
+    if (stock - cantidadAcumulada <= 3) {
+      alert(`⚠️ Después de esta venta quedarían ${(stock - cantidadAcumulada).toFixed(3)} ${unidad} de ${nombre}.`);
+    }
+
+    renderCarrito();
+    actualizarPreviewPrecio();
+  });
+
+  formVenta.addEventListener('submit', event => {
     if (carrito.length === 0) {
-      e.preventDefault();
+      event.preventDefault();
       alert('No hay productos en la venta.');
       return;
     }
 
-    inputTipoCliente.value = tipoCliente.value;
-    inputClienteNombre.value = (tipoCliente.value === 'general')
-      ? 'Mostrador'
-      : (clienteNombre.value || 'Cliente sin nombre');
+    const esGeneral = tipoCliente.value === 'general';
 
-    inputClienteTelefono.value = (tipoCliente.value === 'general')
+    inputTipoCliente.value = tipoCliente.value;
+    inputClienteNombre.value = esGeneral
+      ? 'Mostrador'
+      : (clienteNombre.value.trim() || 'Cliente sin nombre');
+    inputClienteTelefono.value = esGeneral
       ? ''
-      : (clienteTelefono.value || 'Sin teléfono');
+      : (clienteTelefono.value.trim() || 'Sin teléfono');
+    inputClienteDireccion.value = esGeneral
+      ? ''
+      : (clienteDireccion.value.trim() || 'Sin dirección');
+    inputCarrito.value = JSON.stringify(carrito);
+
+    btnProcesar.disabled = true;
+    btnProcesar.textContent = 'Procesando venta...';
   });
 
-  // Inicial
   tipoCliente.dispatchEvent(new Event('change'));
+  actualizarUnidad();
   actualizarPreviewPrecio();
+  renderCarrito();
+});
 </script>
-
-<style>
-  body {
-    background-color: #f8fff9;
-  }
-  .card {
-    background-color: #e9fbe7;
-  }
-  @media (max-width: 768px) {
-    table {
-      font-size: 0.9rem;
-    }
-  }
-</style>
 
 <%- include('layout/footer') %>

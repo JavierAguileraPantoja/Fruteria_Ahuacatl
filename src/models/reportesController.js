@@ -512,6 +512,9 @@ exports.verReportes = async (req, res) => {
       productos,
       best,
 
+      // DATOS DE PRECIOS SNIIM
+      preciosSniim: req.preciosSniim || [],
+
       // MERMAS
       mermasMongo,
       totalMermas,
@@ -665,6 +668,7 @@ exports.csvReporteDiario = async (req, res) => {
     res.send("Error generando CSV.");
   }
 };
+
 // ======================================================================
 // 🧾 TICKET POR PRODUCTO (KILOS VENDIDOS DEL PERIODO)
 //    GET /reportes/productos/ticket
@@ -904,16 +908,11 @@ exports.generarExcel = async (req, res) => {
 // 🔁 RUTAS AUXILIARES (usan la misma vista 'reportes')
 // ======================================================================
 
-
-
 // /reportes/diario/usuario
-// Muestra el MISMO ticket que ticketReporteDiario pero para el usuario logueado
 exports.reporteDiarioUsuario = async (req, res) => {
-  // Forzamos periodo "hoy" y reutilizamos la lógica del ticket
   req.query.periodo = "hoy";
   return exports.ticketReporteDiario(req, res);
 };
-
 
 // /reportes/diario
 exports.reporteDiario = async (req, res) => {
@@ -929,7 +928,6 @@ exports.reporteSemanal = async (req, res) => {
 
 // /reportes/producto-mas-vendido
 exports.productoMasVendido = async (req, res) => {
-  // usamos mismo dashboard, ya que ahí se ve el top 10
   return exports.verReportes(req, res);
 };
 

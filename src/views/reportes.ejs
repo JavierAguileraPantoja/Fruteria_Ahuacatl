@@ -1,651 +1,440 @@
-
-
 <%- include('layout/header') %>
 
-<!DOCTYPE html>
-<html lang="es">
+<%
+  const ventasLocal = Array.isArray(ventas) ? ventas : [];
+  const datosLocal = Array.isArray(datos) ? datos : [];
+  const productosLocal = Array.isArray(productos) ? productos : [];
+  const mermasLocal = Array.isArray(mermasMongo) ? mermasMongo : [];
+  const bestRaw = typeof best !== 'undefined' ? best : null;
+  const bestLocal = Array.isArray(bestRaw) ? bestRaw : (bestRaw ? [bestRaw] : []);
 
-<head>
-    <meta charset="UTF-8">
-    <title>Reportes | Ahuacatl</title>
+  const periodoActual = typeof periodo !== 'undefined' ? periodo : 'hoy';
+  const desdeActual = typeof desde !== 'undefined' ? desde : '';
+  const hastaActual = typeof hasta !== 'undefined' ? hasta : '';
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  const jsonSeguro = (valor) => JSON.stringify(valor)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  const dinero = (valor) => {
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero.toFixed(2) : '0.00';
+  };
+%>
 
-    <style>
-        body {
-            background-color: #f5f7f9;
-            font-family: 'Poppins', sans-serif;
-        }
+<style>
+  body { background:#f5f7f9; font-family:'Poppins',sans-serif; }
+  h1,h2 { color:#1f8a4c; }
+  .report-card { border-radius:1rem; padding:25px; background:#fff; transition:.25s; }
+  .report-card:hover { transform:translateY(-3px); box-shadow:0 .7rem 1.1rem rgba(0,0,0,.10); }
+  .fab-container { position:fixed; bottom:25px; right:25px; z-index:1000; }
+  .fab-button { width:65px; height:65px; border:0; border-radius:50%; background:#1f8a4c; color:#fff; display:flex; align-items:center; justify-content:center; font-size:28px; cursor:pointer; box-shadow:0 .6rem 1rem rgba(0,0,0,.25); }
+  .fab-button:hover { background:#176b3a; }
+  .fab-menu { display:none; margin-bottom:10px; min-width:185px; }
+  .fab-menu a { display:block; background:#27ae60; color:#fff; padding:10px 14px; margin-bottom:7px; border-radius:8px; text-decoration:none; }
+  .fab-menu a:hover { background:#1f8a4c; }
+  thead { background:#1f8a4c; color:#fff; }
+  .search-box input { border-radius:8px; border:2px solid #1f8a4c; }
+  .ventas-table-wrapper,.utilidades-table-wrapper,.stock-table-wrapper,.mermas-table-wrapper { max-height:320px; overflow-y:auto; }
+  .chart-wrapper { position:relative; min-height:340px; }
+  .chart-wrapper-sniim { position:relative; min-height:430px; }
+  .metric-card { border:1px solid #e6e9ec; border-radius:12px; padding:16px; height:100%; background:#f8f9fa; }
+  .metric-label { color:#6c757d; font-size:.75rem; font-weight:700; }
+  .metric-value { font-size:1.45rem; font-weight:700; }
+  @media (max-width:767px) {
+    .report-card { padding:18px; }
+    .chart-wrapper,.chart-wrapper-sniim { min-height:320px; }
+  }
+</style>
 
-        h1, h2 {
-            color: #1f8a4c;
-        }
+<script id="ventas-json" type="application/json"><%- jsonSeguro(ventasLocal) %></script>
+<script id="datos-json" type="application/json"><%- jsonSeguro(datosLocal) %></script>
+<script id="productos-json" type="application/json"><%- jsonSeguro(productosLocal) %></script>
+<script id="best-json" type="application/json"><%- jsonSeguro(bestLocal) %></script>
+<script id="mermas-json" type="application/json"><%- jsonSeguro(mermasLocal) %></script>
 
-        .report-card {
-            border-radius: 1rem;
-            padding: 25px;
-            background: white;
-            transition: 0.25s;
-        }
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h1 class="fw-bold"><i class="fas fa-chart-pie me-2"></i>Reportes del Sistema</h1>
+    <p class="text-muted mb-1">Dashboard con indicadores clave de Ahuacatl.</p>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <p class="text-muted"><i class="fas fa-user me-1"></i><strong>Corte actual:</strong> <%= user.name || user.username || 'Usuario' %> (<%= user.role || 'Sin rol' %>)</p>
+    <% } %>
+  </div>
 
-        .report-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.7rem 1.1rem rgba(0, 0, 0, 0.12);
-        }
+  <form class="row g-3 align-items-end mb-5" method="GET" action="/reportes">
+    <div class="col-md-3">
+      <label for="periodo" class="form-label">Periodo</label>
+      <select id="periodo" class="form-select" name="periodo">
+        <option value="hoy" <%= periodoActual === 'hoy' ? 'selected' : '' %>>Hoy</option>
+        <option value="semana" <%= periodoActual === 'semana' ? 'selected' : '' %>>Esta semana</option>
+        <option value="mes" <%= periodoActual === 'mes' ? 'selected' : '' %>>Este mes</option>
+        <option value="anio" <%= periodoActual === 'anio' ? 'selected' : '' %>>Este año</option>
+        <option value="rango" <%= periodoActual === 'rango' ? 'selected' : '' %>>Rango personalizado</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="desde" class="form-label">Desde</label>
+      <input id="desde" type="date" class="form-control" name="desde" value="<%= desdeActual %>">
+    </div>
+    <div class="col-md-3">
+      <label for="hasta" class="form-label">Hasta</label>
+      <input id="hasta" type="date" class="form-control" name="hasta" value="<%= hastaActual %>">
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-success w-100" type="submit"><i class="fas fa-filter me-1"></i>Aplicar</button>
+    </div>
+  </form>
 
-        .fab-container {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 1000;
-        }
+  <% if (ventasLocal.length > 0) { %>
+    <section class="report-card mb-4">
+      <h2><i class="fas fa-receipt me-2"></i>Ventas acumuladas</h2>
+      <div class="search-box mb-3"><input id="searchVentas" type="search" class="form-control" placeholder="Buscar venta en la tabla..."></div>
+      <div class="chart-wrapper"><canvas id="graficaVentas"></canvas></div>
+      <div class="table-responsive mt-4 ventas-table-wrapper">
+        <table id="tablaVentas" class="table table-hover align-middle">
+          <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio venta</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <% ventasLocal.forEach(v => { %>
+              <tr>
+                <td><%= v.producto || v.nombre || 'Sin nombre' %></td>
+                <td><%= Number(v.cantidad ?? v.cant ?? 0) %> kg/pza</td>
+                <td>$<%= dinero(v.precio_venta) %></td>
+                <td><%= v.fecha || 'Hoy' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% } %>
 
-        .fab-button {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: #1f8a4c;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.25);
-        }
+  <% if (bestLocal.length > 0) { const top10 = bestLocal.slice(0,10); %>
+    <section class="report-card mb-4">
+      <h2><i class="fas fa-trophy text-warning me-2"></i>Top 10 productos más vendidos</h2>
+      <div class="table-responsive mt-3">
+        <table class="table table-hover text-center align-middle">
+          <thead><tr><th>#</th><th>Producto</th><th>Total vendido</th></tr></thead>
+          <tbody>
+            <% top10.forEach((b,idx) => { %>
+              <tr><td><%= idx+1 %></td><td><%= b.producto || b.nombre || 'Sin nombre' %></td><td><%= Number(b.total ?? b.cantidad ?? 0) %> kg/pza</td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-wrapper"><canvas id="graficaBest"></canvas></div>
+    </section>
+  <% } %>
 
-        .fab-button:hover {
-            background: #176b3a;
-        }
+  <% if (datosLocal.length > 0) { %>
+    <section class="report-card mb-4">
+      <h2><i class="fas fa-chart-line me-2"></i>Utilidades por producto</h2>
+      <div class="search-box mb-3"><input id="searchUtilidades" type="search" class="form-control" placeholder="Buscar producto..."></div>
+      <div class="chart-wrapper"><canvas id="graficaUtilidades"></canvas></div>
+      <div class="table-responsive mt-4 utilidades-table-wrapper">
+        <table id="tablaUtilidades" class="table table-hover align-middle">
+          <thead><tr><th>Producto</th><th>Total compra</th><th>Total venta</th><th>Ganancia</th></tr></thead>
+          <tbody>
+            <% datosLocal.forEach(d => { %>
+              <tr><td><%= d.producto || 'Sin nombre' %></td><td>$<%= dinero(d.compra) %></td><td>$<%= dinero(d.venta) %></td><td>$<%= dinero(d.ganancia) %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% } %>
 
-        .fab-menu {
-            display: none;
-            margin-bottom: 10px;
-        }
+  <% if (productosLocal.length > 0) { %>
+    <section class="report-card mb-4">
+      <h2><i class="fas fa-box-open me-2"></i>Stock</h2>
+      <div class="search-box mb-3"><input id="searchStock" type="search" class="form-control" placeholder="Buscar producto..."></div>
+      <div class="chart-wrapper"><canvas id="graficaStock"></canvas></div>
+      <div class="table-responsive mt-4 stock-table-wrapper">
+        <table id="tablaStock" class="table table-hover align-middle">
+          <thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead>
+          <tbody>
+            <% productosLocal.forEach(p => { const stock = Number(p.stock ?? p.existencias ?? 0); const minimo = Number(p.minimo ?? 0); %>
+              <tr>
+                <td><%= p.nombre || p.producto || 'Sin nombre' %></td><td><%= stock %></td><td><%= minimo %></td>
+                <td><span class="badge <%= stock <= minimo ? 'bg-danger' : 'bg-success' %>"><%= stock <= minimo ? 'ALERTA' : 'OK' %></span></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% } %>
 
-        .fab-menu a {
-            display: block;
-            background: #27ae60;
-            color: white;
-            padding: 10px 14px;
-            margin-bottom: 7px;
-            border-radius: 8px;
-            text-decoration: none;
-        }
+  <section class="report-card mb-4" id="seccionSniim">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <h2 class="mb-1"><i class="fas fa-chart-line me-2"></i>Tendencia de precios SNIIM</h2>
+        <p class="text-muted small mb-0">Los productos del top de ventas aparecen primero. Los demás productos permanecen disponibles.</p>
+      </div>
+      <div><span id="estadoCargaSniim" class="badge bg-secondary" aria-live="polite">Esperando consulta</span></div>
+    </div>
+    <hr>
+    <div id="alertaSniim" class="alert alert-info py-2 d-none" role="alert"></div>
 
-        thead {
-            background: #1f8a4c;
-            color: white;
-        }
-
-        .search-box input {
-            border-radius: 8px;
-            border: 2px solid #1f8a4c;
-        }
-
-        .ventas-table-wrapper,
-        .utilidades-table-wrapper,
-        .stock-table-wrapper {
-            max-height: 320px;
-            overflow-y: auto;
-        }
-    </style>
-</head>
-
-<body>
-
-    
-
-    <!-- =====================================================
-         BLOQUE SEGURO DE VARIABLES EJS
-    ======================================================= -->
-    <%
-      const ventasLocal    = Array.isArray(ventas)    ? ventas    : [];
-      const datosLocal     = Array.isArray(datos)     ? datos     : [];
-      const productosLocal = Array.isArray(productos) ? productos : [];
-      const mermasLocal    = Array.isArray(mermasMongo) ? mermasMongo : [];
-
-      const bestLocalRaw   = best || null;
-      const bestArrayLocal = Array.isArray(bestLocalRaw)
-                              ? bestLocalRaw
-                              : (bestLocalRaw ? [bestLocalRaw] : []);
-
-      const kpiDiaVal             = (typeof kpi_dia             !== 'undefined') ? kpi_dia             : 0;
-      const kpiSemanaVal          = (typeof kpi_semana          !== 'undefined') ? kpi_semana          : 0;
-      const kpiMesVal             = (typeof kpi_mes             !== 'undefined') ? kpi_mes             : 0;
-      const kpiTotalProductosVal  = (typeof kpi_total_productos !== 'undefined') ? kpi_total_productos : 0;
-      const kpiGananciasVal       = (typeof kpi_ganancias       !== 'undefined') ? kpi_ganancias       : 0;
-      const kpiAlertasVal         = (typeof kpi_alertas         !== 'undefined') ? kpi_alertas         : 0;
-    %>
-
-    <!-- =====================================================
-         NODO OCULTO PARA JS
-    ======================================================= -->
-    <div id="reportes-data"
-         data-kpi-dia="<%= kpiDiaVal %>"
-         data-kpi-semana="<%= kpiSemanaVal %>"
-         data-kpi-mes="<%= kpiMesVal %>"
-         data-kpi-productos="<%= kpiTotalProductosVal %>"
-         data-kpi-ganancias="<%= kpiGananciasVal %>"
-         data-kpi-alertas="<%= kpiAlertasVal %>"
-
-         data-ventas='<%- JSON.stringify(ventasLocal) %>'
-         data-datos='<%- JSON.stringify(datosLocal) %>'
-         data-productos='<%- JSON.stringify(productosLocal) %>'
-         data-best='<%- JSON.stringify(bestArrayLocal) %>'
-         data-mermas='<%- JSON.stringify(mermasLocal) %>'>
+    <div class="row g-3 mb-3">
+      <div class="col-lg-4 col-md-6">
+        <label for="selectProductoSniim" class="form-label text-muted small fw-bold">PRODUCTO</label>
+        <select id="selectProductoSniim" class="form-select border-success" disabled><option value="">Cargando productos...</option></select>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <label for="selectOrigenSniim" class="form-label text-muted small fw-bold">ORIGEN</label>
+        <select id="selectOrigenSniim" class="form-select" disabled><option value="">Todos los orígenes</option></select>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <label for="selectPresentacionSniim" class="form-label text-muted small fw-bold">PRESENTACIÓN</label>
+        <select id="selectPresentacionSniim" class="form-select" disabled><option value="">Todas las presentaciones</option></select>
+      </div>
+      <div class="col-lg-2 col-md-6">
+        <label for="tipoGraficoSniim" class="form-label text-muted small fw-bold">VISUALIZACIÓN</label>
+        <select id="tipoGraficoSniim" class="form-select"><option value="line" selected>Tendencia lineal</option><option value="candlestick">Rango de precios</option></select>
+      </div>
     </div>
 
-    <div class="container py-5">
-
-        <div class="text-center mb-4">
-            <h1 class="fw-bold"><i class="fas fa-chart-pie me-2"></i> Reportes del Sistema</h1>
-            <p class="text-muted mb-1">Dashboard con indicadores clave de Ahuacatl.</p>
-
-            <% if (user) { %>
-              <p class="text-muted">
-                <i class="fas fa-user me-1"></i>
-                <strong>Corte actual:</strong> <%= user.name %> (<%= user.role %>)
-              </p>
-            <% } %>
-        </div>
-
-        <!-- =====================================================
-             FILTROS
-        ======================================================= -->
-        <form class="row g-3 align-items-end mb-5" method="GET" action="/reportes">
-          <div class="col-md-3">
-            <label class="form-label">Periodo</label>
-            <select class="form-select" name="periodo">
-              <option value="hoy">Hoy</option>
-              <option value="semana">Esta semana</option>
-              <option value="mes">Este mes</option>
-              <option value="anio">Este año</option>
-              <option value="rango">Rango personalizado</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Desde</label>
-            <input type="date" class="form-control" name="desde">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Hasta</label>
-            <input type="date" class="form-control" name="hasta">
-          </div>
-          <div class="col-md-3">
-            <button class="btn btn-success w-100" type="submit">
-              <i class="fas fa-filter me-1"></i>Aplicar
-            </button>
-          </div>
-        </form>
-
-        <!-- =====================================================
-             TABLA VENTAS
-        ======================================================= -->
-        <% if (ventasLocal.length > 0) { %>
-        <div class="report-card mb-4">
-
-            <h2><i class="fas fa-receipt me-2"></i> Ventas</h2>
-
-            <div class="search-box mb-3">
-                <input id="searchVentas" type="text" class="form-control" placeholder="Buscar venta...">
-            </div>
-
-            <canvas id="graficaVentas" height="120"></canvas>
-
-            <div class="table-responsive mt-4 ventas-table-wrapper">
-                <table id="tablaVentas" class="table table-hover">
-                    <thead>
-                        <tr>
-                            
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio Venta</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <% ventasLocal.forEach(v => { %>
-                        <tr>
-                            
-                            <td><%= v.producto %></td>
-                            <td><%= v.cantidad %></td>
-                            <td>$<%= v.precio_venta %></td>
-                            <td><%= v.fecha %></td>
-                        </tr>
-                    <% }) %>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-        <% } %>
-
-        <!-- =====================================================
-             TOP 10
-        ======================================================= -->
-        <% if (bestArrayLocal.length > 0) { 
-             const top10 = bestArrayLocal.slice(0, 10);
-        %>
-
-        <div class="report-card mb-4">
-            <h2><i class="fas fa-trophy text-warning me-2"></i> Top 10 productos más vendidos</h2>
-
-            <div class="table-responsive mt-3">
-              <table class="table table-hover text-center">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Producto</th>
-                    <th>Total vendido</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% top10.forEach((b, idx) => { %>
-                    <tr>
-                      <td><%= idx + 1 %></td>
-                      <td><%= b.producto %></td>
-                      <td><%= b.total %></td>
-                    </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-            </div>
-
-            <canvas id="graficaBest" height="100" class="mt-3"></canvas>
-        </div>
-
-        <% } %>
-
-        <!-- =====================================================
-             UTILIDADES
-        ======================================================= -->
-        <% if (datosLocal.length > 0) { %>
-
-        <div class="report-card mb-4">
-
-            <h2><i class="fas fa-chart-line me-2"></i> Utilidades por producto</h2>
-
-            <div class="search-box mb-3">
-                <input id="searchUtilidades" type="text" class="form-control" placeholder="Buscar producto...">
-            </div>
-
-            <canvas id="graficaUtilidades" height="120"></canvas>
-
-            <div class="table-responsive mt-4 utilidades-table-wrapper">
-                <table id="tablaUtilidades" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Total Compra</th>
-                            <th>Total Venta</th>
-                            <th>Ganancia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <% datosLocal.forEach(d => { %>
-                        <tr>
-                            <td><%= d.producto %></td>
-                            <td>$<%= d.compra.toFixed(2) %></td>
-                            <td>$<%= d.venta.toFixed(2) %></td>
-                            <td>$<%= d.ganancia.toFixed(2) %></td>
-                        </tr>
-                    <% }) %>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-
-        <% } %>
-
-        <!-- =====================================================
-             STOCK
-        ======================================================= -->
-        <% if (productosLocal.length > 0) { %>
-
-        <div class="report-card mb-4">
-
-            <h2><i class="fas fa-box-open me-2"></i> Stock</h2>
-
-            <div class="search-box mb-3">
-                <input id="searchStock" type="text" class="form-control" placeholder="Buscar producto...">
-            </div>
-
-            <canvas id="graficaStock" height="120"></canvas>
-
-            <div class="table-responsive mt-4 stock-table-wrapper">
-                <table id="tablaStock" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Stock</th>
-                            <th>Mínimo</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <% productosLocal.forEach(p => { %>
-                        <tr>
-                            <td><%= p.nombre %></td>
-                            <td><%= p.stock %></td>
-                            <td><%= p.minimo %></td>
-                            <td>
-                            <% if (p.stock <= p.minimo) { %>
-                                <span class="badge bg-danger">ALERTA</span>
-                            <% } else { %>
-                                <span class="badge bg-success">OK</span>
-                            <% } %>
-                            </td>
-                        </tr>
-                    <% }) %>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-
-        <% } %>
-
-        <!-- =====================================================
-             MERMAS (TABLA + GRÁFICA)
-        ======================================================= -->
-        <div class="report-card mb-5">
-
-            <h2 class="text-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i> Mermas registradas
-            </h2>
-
-            <% if (mermasLocal.length > 0) { %>
-
-            <!-- Gráfica de mermas por producto -->
-            <canvas id="graficaMermas" height="100" class="mb-4"></canvas>
-
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered table-hover align-middle" id="tablaMermas">
-                    <thead class="table-danger">
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Motivo</th>
-                            <th>Fecha</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <% mermasLocal.forEach(m => { %>
-                            <tr>
-                                <td><%= m.producto %></td>
-                                <td><%= m.cantidad %></td>
-                                <td><%= m.motivo %></td>
-                                <td><%= m.fecha %></td>
-                                <td><%= m.usuario %></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-
-                </table>
-            </div>
-
-            <% } else { %>
-
-            <div class="text-center text-muted py-4">
-                <i class="fas fa-info-circle fa-2x mb-2"></i><br>
-                No hay registros de merma.
-            </div>
-
-            <% } %>
-        </div>
-
-    </div> <!-- /container -->
-
-
-        <!-- =====================================================
-            BOTÓN FLOTANTE
-        ====================================================== -->
-        <div class="fab-container">
-            <div class="fab-menu" id="fabMenu">
-
-                <!-- SECCIÓN: CORTES -->
-                <div class="small text-uppercase fw-bold text-light mb-1" style="background:#1f8a4c; padding:4px 8px; border-radius:6px;">
-                    Cortes
-                </div>
-
-                <!-- Corte diario (ticket general del día) -->
-                <a href="/reportes/diario/ticket" target="_blank">🧾 Corte diario</a>
-
-                <!-- Corte por usuario (por ahora usará mismo controlador, luego lo afinamos solo para el usuario logueado) -->
-                <a href="/reportes/diario/usuario" target="_blank">👤 Corte por usuario</a>
-
-                <!-- Corte por producto (resumen de kilos vendidos por producto) -->
-                <a href="/reportes/productos/ticket" target="_blank">🍉 Por producto</a>
-
-
-                <!-- Corte de stock (para surtido de mercancía) -->
-                <a href="/reportes/stock/ticket" target="_blank">📦 Stock / surtido</a>
-
-                <!-- 📤 SECCIÓN: EXPORTAR -->
-                <div class="small text-uppercase fw-bold text-light mt-2 mb-1" style="background:#1f8a4c; padding:4px 8px; border-radius:6px;">
-                    Exportar
-                </div>
-
-                <a href="/reportes/pdf" target="_blank">📄 PDF</a>
-                <a href="/reportes/excel" target="_blank">📊 Excel</a>
-                <a href="#" id="waShare">💬 WhatsApp</a>
-            </div>
-
-            <div class="fab-button" id="fabBtn">
-                <i class="fas fa-share"></i>
-            </div>
-            </div>
-
-
-        <!-- =====================================================
-            CHART.JS
-        ====================================================== -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <!-- =====================================================
-            JS PRINCIPAL
-        ====================================================== -->
-        <script>
-        const dataEl = document.getElementById("reportes-data");
-
-        let ventasData      = dataEl.dataset.ventas    ? JSON.parse(dataEl.dataset.ventas)    : [];
-        let datosData       = dataEl.dataset.datos     ? JSON.parse(dataEl.dataset.datos)     : [];
-        let productosData   = dataEl.dataset.productos ? JSON.parse(dataEl.dataset.productos) : [];
-        let bestData        = dataEl.dataset.best      ? JSON.parse(dataEl.dataset.best)      : [];
-        let mermasData      = dataEl.dataset.mermas    ? JSON.parse(dataEl.dataset.mermas)    : [];
-
-        if (!Array.isArray(bestData)) bestData = [];
-        if (!Array.isArray(mermasData)) mermasData = [];
-
-        const fabBtn = document.getElementById("fabBtn");
-        const fabMenu = document.getElementById("fabMenu");
-
-        fabBtn.onclick = () => {
-            fabMenu.style.display =
-                fabMenu.style.display === "block" ? "none" : "block";
-        };
-
-        function buscar(inputId, tablaId) {
-            const input = document.getElementById(inputId);
-            const tabla = document.getElementById(tablaId);
-            if (!input || !tabla) return;
-
-            const filas = tabla.getElementsByTagName("tr");
-
-            input.addEventListener("keyup", () => {
-                const filtro = input.value.toLowerCase();
-                for (let i = 1; i < filas.length; i++) {
-                    const texto = filas[i].innerText.toLowerCase();
-                    filas[i].style.display = texto.includes(filtro) ? "" : "none";
-                }
-            });
-        }
-
-        buscar("searchVentas", "tablaVentas");
-        buscar("searchUtilidades", "tablaUtilidades");
-        buscar("searchStock", "tablaStock");
-
-        if (ventasData.length > 0 && document.getElementById("graficaVentas")) {
-            new Chart(document.getElementById("graficaVentas"), {
-                type: "bar",
-                data: {
-                    labels: ventasData.map(v => v.producto),
-                    datasets: [{
-                        label: "Cantidad Vendida",
-                        data: ventasData.map(v => v.cantidad),
-                        backgroundColor: "#1f8a4c"
-                    }]
-                }
-            });
-        }
-
-        if (bestData.length > 0 && document.getElementById("graficaBest")) {
-            const top10 = bestData.slice(0, 10);
-            new Chart(document.getElementById("graficaBest"), {
-                type: "bar",
-                data: {
-                    labels: top10.map(b => b.producto),
-                    datasets: [{
-                        label: "Total vendido",
-                        data: top10.map(b => b.total),
-                        backgroundColor: "#1f8a4c"
-                    }]
-                }
-            });
-        }
-
-        if (datosData.length > 0 && document.getElementById("graficaUtilidades")) {
-            new Chart(document.getElementById("graficaUtilidades"), {
-                type: "line",
-                data: {
-                    labels: datosData.map(d => d.producto),
-                    datasets: [{
-                        label: "Ganancias",
-                        data: datosData.map(d => d.ganancia),
-                        borderColor: "#1f8a4c",
-                        borderWidth: 3
-                    }]
-                }
-            });
-        }
-
-        if (productosData.length > 0 && document.getElementById("graficaStock")) {
-            new Chart(document.getElementById("graficaStock"), {
-                type: "bar",
-                data: {
-                    labels: productosData.map(p => p.nombre),
-                    datasets: [{
-                        label: "Stock",
-                        data: productosData.map(p => p.stock),
-                        backgroundColor: "#1f8a4c"
-                    }]
-                }
-            });
-        }
-
-        // ===========================
-        // GRÁFICA DE MERMAS
-        // ===========================
-        if (mermasData.length > 0 && document.getElementById("graficaMermas")) {
-            const porProducto = {};
-            mermasData.forEach(m => {
-                const key = m.producto || "Sin nombre";
-                porProducto[key] = (porProducto[key] || 0) + (m.cantidad || 0);
-            });
-
-            const labels = Object.keys(porProducto);
-            const valores = Object.values(porProducto);
-
-            new Chart(document.getElementById("graficaMermas"), {
-                type: "bar",
-                data: {
-                    labels,
-                    datasets: [{
-                        label: "Kilos en merma",
-                        data: valores,
-                        backgroundColor: "#e74c3c"
-                    }]
-                }
-            });
-        }
-
-        const waShare = document.getElementById("waShare");
-        if (waShare) {
-            const texto =
-                "Reporte Ahuacatl\n\n" +
-                "Ganancia del día: $" + dataEl.dataset.kpiDia + "\n" +
-                "Productos vendidos: " + dataEl.dataset.kpiProductos;
-
-            const url = "https://wa.me/?text=" + encodeURIComponent(texto);
-            waShare.setAttribute("href", url);
-            waShare.setAttribute("target", "_blank");
-        }
-
-    </script>
-
-
-    <script>
-        const linkMensaje = "/whatsapp/enviar?mensaje=" + encodeURIComponent(
-        "Reporte Ahuacatl\nGanancia: $" + dataEl.dataset.kpiDia
-        );
-        // ===============================
-        // COMPONER MENSAJE WHATSAPP
-        // ===============================
-        let msg = "📊 *REPORTE AHUACATL*\n\n";
-
-        msg += "🗓 Fecha: " + new Date().toLocaleDateString("es-MX") + "\n\n";
-
-        msg += "💰 *Ganancia del día:* $" + dataEl.dataset.kpiGanancias + "\n";
-        msg += "🛒 *Ventas del día:* $" + dataEl.dataset.kpiDia + "\n";
-        msg += "📦 *Productos vendidos:* " + dataEl.dataset.kpiProductos + " kg\n";
-        msg += "🚨 *Alertas de stock:* " + dataEl.dataset.kpiAlertas + "\n\n";
-
-        // ===============================
-        // PRODUCTOS MÁS VENDIDOS
-        // ===============================
-        msg += "🏆 *Top productos más vendidos:*\n";
-        (bestData || []).slice(0, 5).forEach((p, i) => {
-            msg += `${i + 1}. ${p.producto} — ${p.total} kg\n`;
+    <div class="row g-3 mb-4">
+      <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-label">ÚLTIMO PRECIO FRECUENTE</div><div id="sniimPrecioActual" class="metric-value text-success">$0.00</div></div></div>
+      <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-label">MÍNIMO DEL PERIODO</div><div id="sniimPrecioMinimo" class="metric-value text-primary">$0.00</div></div></div>
+      <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-label">MÁXIMO DEL PERIODO</div><div id="sniimPrecioMaximo" class="metric-value text-danger">$0.00</div></div></div>
+      <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-label">TENDENCIA RECIENTE</div><div id="sniimTendencia" class="metric-value text-secondary">Sin datos</div></div></div>
+    </div>
+
+    <div class="chart-wrapper-sniim"><canvas id="graficaSniim"></canvas></div>
+    <p class="text-muted small mt-3 mb-0">La vista lineal muestra mínimo, frecuente y máximo. La vista de rango representa la variación registrada, no apertura y cierre bursátiles.</p>
+  </section>
+
+  <section class="report-card mb-5">
+    <h2 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Mermas registradas</h2>
+    <% if (mermasLocal.length > 0) { %>
+      <div class="chart-wrapper"><canvas id="graficaMermas"></canvas></div>
+      <div class="table-responsive mt-3 mermas-table-wrapper">
+        <table class="table table-bordered table-hover align-middle" id="tablaMermas">
+          <thead class="table-danger"><tr><th>Producto</th><th>Cantidad</th><th>Motivo</th><th>Fecha</th><th>Registrado por</th></tr></thead>
+          <tbody>
+            <% mermasLocal.forEach(m => { %>
+              <tr><td><%= m.producto || m.nombre || 'Sin nombre' %></td><td><%= Number(m.cantidad || 0) %></td><td><%= m.motivo || 'Sin motivo' %></td><td><%= m.fecha || 'Sin fecha' %></td><td><%= m.usuario || 'Sistema' %></td></tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="text-center text-muted py-4"><i class="fas fa-info-circle fa-2x mb-2"></i><br>No hay registros de merma.</div>
+    <% } %>
+  </section>
+</div>
+
+<div class="fab-container">
+  <div class="fab-menu" id="fabMenu">
+    <div class="small text-uppercase fw-bold text-light mb-1 p-1 rounded" style="background:#1f8a4c">Cortes</div>
+    <a href="/reportes/diario/ticket" target="_blank" rel="noopener">🧾 Corte diario</a>
+    <a href="/reportes/diario/usuario" target="_blank" rel="noopener">👤 Corte por usuario</a>
+    <a href="/reportes/productos/ticket" target="_blank" rel="noopener">🍉 Por producto</a>
+    <a href="/reportes/stock/ticket" target="_blank" rel="noopener">📦 Stock / surtido</a>
+    <div class="small text-uppercase fw-bold text-light mt-2 mb-1 p-1 rounded" style="background:#1f8a4c">Exportar</div>
+    <a href="/reportes/pdf" target="_blank" rel="noopener">📄 PDF</a>
+    <a href="/reportes/excel" target="_blank" rel="noopener">📊 Excel</a>
+    <a href="#" id="waShare">💬 WhatsApp</a>
+  </div>
+  <button class="fab-button" id="fabBtn" type="button" aria-label="Abrir menú de reportes" aria-expanded="false"><i class="fas fa-share"></i></button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.0/dist/chartjs-chart-financial.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const leerJson = (id) => {
+    try { const el = document.getElementById(id); return el ? JSON.parse(el.textContent || '[]') : []; }
+    catch (error) { console.error(`JSON inválido en ${id}:`, error); return []; }
+  };
+
+  const ventasData = leerJson('ventas-json');
+  const datosData = leerJson('datos-json');
+  const productosData = leerJson('productos-json');
+  const bestData = leerJson('best-json');
+  const mermasData = leerJson('mermas-json');
+  const numero = (v) => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+  const texto = (v) => String(v ?? '').trim();
+  const normalizar = (v) => texto(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+
+  const fabBtn = document.getElementById('fabBtn');
+  const fabMenu = document.getElementById('fabMenu');
+  if (fabBtn && fabMenu) fabBtn.addEventListener('click', () => {
+    const abierto = fabMenu.style.display === 'block';
+    fabMenu.style.display = abierto ? 'none' : 'block';
+    fabBtn.setAttribute('aria-expanded', String(!abierto));
+  });
+
+  const waShare = document.getElementById('waShare');
+  if (waShare) waShare.addEventListener('click', (e) => {
+    e.preventDefault();
+    const mensaje = encodeURIComponent(`Reporte Ahuacatl: ${window.location.href}`);
+    window.open(`https://wa.me/?text=${mensaje}`, '_blank', 'noopener');
+  });
+
+  function buscar(inputId, tablaId) {
+    const input = document.getElementById(inputId), tabla = document.getElementById(tablaId);
+    if (!input || !tabla) return;
+    input.addEventListener('input', () => {
+      const filtro = normalizar(input.value);
+      tabla.querySelectorAll('tbody tr').forEach(fila => { fila.hidden = !normalizar(fila.innerText).includes(filtro); });
+    });
+  }
+  buscar('searchVentas','tablaVentas'); buscar('searchUtilidades','tablaUtilidades'); buscar('searchStock','tablaStock');
+
+  const crearChart = (id, config) => { const el = document.getElementById(id); if (!el || typeof Chart === 'undefined') return null; try { return new Chart(el, config); } catch(e) { console.error(`Error en ${id}:`,e); return null; } };
+
+  if (ventasData.length) {
+    const acc = new Map();
+    ventasData.forEach(v => { const p = texto(v.producto || v.nombre) || 'Sin nombre'; acc.set(p,(acc.get(p)||0)+numero(v.cantidad ?? v.cant)); });
+    crearChart('graficaVentas',{type:'bar',data:{labels:[...acc.keys()],datasets:[{label:'Total vendido (kg/pza)',data:[...acc.values()],backgroundColor:'#1f8a4c',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+  }
+
+  if (bestData.length) {
+    const top = bestData.slice(0,10);
+    crearChart('graficaBest',{type:'bar',data:{labels:top.map(b=>b.producto||b.nombre||'Sin nombre'),datasets:[{label:'Total vendido',data:top.map(b=>numero(b.total??b.cantidad)),backgroundColor:'#1f8a4c'}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{beginAtZero:true}}}});
+  }
+
+  if (datosData.length) crearChart('graficaUtilidades',{type:'line',data:{labels:datosData.map(d=>d.producto||'Sin nombre'),datasets:[{label:'Ganancias ($)',data:datosData.map(d=>numero(d.ganancia)),borderColor:'#1f8a4c',backgroundColor:'rgba(31,138,76,.12)',borderWidth:3,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false}});
+  if (productosData.length) crearChart('graficaStock',{type:'bar',data:{labels:productosData.map(p=>p.nombre||p.producto||'Sin nombre'),datasets:[{label:'Stock disponible',data:productosData.map(p=>numero(p.stock??p.existencias)),backgroundColor:'#1f8a4c'}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+
+  if (mermasData.length) {
+    const acc = new Map();
+    mermasData.forEach(m => { const p=texto(m.producto||m.nombre)||'Sin nombre'; acc.set(p,(acc.get(p)||0)+numero(m.cantidad)); });
+    crearChart('graficaMermas',{type:'bar',data:{labels:[...acc.keys()],datasets:[{label:'Cantidad en merma',data:[...acc.values()],backgroundColor:'#e74c3c'}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+  }
+
+  async function inicializarSniim() {
+    const $ = (id) => document.getElementById(id);
+    const producto=$('selectProductoSniim'), origen=$('selectOrigenSniim'), presentacion=$('selectPresentacionSniim'), tipo=$('tipoGraficoSniim'), canvas=$('graficaSniim'), estado=$('estadoCargaSniim'), alerta=$('alertaSniim');
+    if (!producto || !origen || !presentacion || !tipo || !canvas) return;
+    let catalogo = new Map(), chart = null;
+
+    const setEstado=(msg,clase)=>{ if(estado){estado.textContent=msg;estado.className=`badge ${clase}`;} };
+    const setAlerta=(msg='',clase='info')=>{if(!alerta)return; alerta.textContent=msg; alerta.className=msg?`alert alert-${clase} py-2`:'alert alert-info py-2 d-none';};
+    const fechaMs=(f)=>{ const s=texto(f); if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){const[d,m,a]=s.split('/').map(Number);return new Date(a,m-1,d,12).getTime();} return new Date(s).getTime(); };
+    const opcion=(sel,val,txt)=>{const o=document.createElement('option');o.value=val;o.textContent=txt;sel.appendChild(o);};
+
+    function construir(registros){
+      const mapa=new Map();
+      registros.forEach(r=>{
+        const p=texto(r.producto||r.nombre), x=fechaMs(r.fecha);
+        if(!p || !Number.isFinite(x)) return;
+        if(!mapa.has(p)) mapa.set(p,[]);
+        mapa.get(p).push({fecha:r.fecha,x,origen:texto(r.origen),presentacion:texto(r.presentacion),calidad:texto(r.calidad),min:numero(r.precioMinimo??r.minimo),max:numero(r.precioMaximo??r.maximo),freq:numero(r.precioFrecuente??r.frecuente??r.cierre)});
+      });
+      return mapa;
+    }
+
+    function llenarProductos(){
+      producto.replaceChildren();
+      const todos=[...catalogo.keys()].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+      const top=[];
+      bestData.slice(0,10).forEach(b=>{
+        const n=normalizar(b.producto||b.nombre); if(!n)return;
+        const match=todos.find(p=>normalizar(p)===n) || todos.find(p=>normalizar(p).includes(n)||n.includes(normalizar(p)));
+        if(match&&!top.includes(match))top.push(match);
+      });
+      const resto=todos.filter(p=>!top.includes(p));
+      if(top.length){const g=document.createElement('optgroup');g.label='Top 10 más vendidos';top.forEach(p=>opcion(g,p,p));producto.appendChild(g);}
+      if(resto.length){const g=document.createElement('optgroup');g.label='Todos los productos SNIIM';resto.forEach(p=>opcion(g,p,p));producto.appendChild(g);}
+      producto.disabled=!todos.length; producto.value=top[0]||resto[0]||'';
+    }
+
+    function llenarFiltros(){
+      const regs=catalogo.get(producto.value)||[];
+      origen.replaceChildren(); opcion(origen,'','Todos los orígenes');
+      presentacion.replaceChildren(); opcion(presentacion,'','Todas las presentaciones');
+      [...new Set(regs.map(r=>r.origen).filter(Boolean))].sort().forEach(v=>opcion(origen,v,v));
+      [...new Set(regs.map(r=>r.presentacion).filter(Boolean))].sort().forEach(v=>opcion(presentacion,v,v));
+      origen.disabled=!regs.length; presentacion.disabled=!regs.length;
+    }
+
+    function resumir(){
+      const regs=(catalogo.get(producto.value)||[]).filter(r=>(!origen.value||r.origen===origen.value)&&(!presentacion.value||r.presentacion===presentacion.value));
+      const grupos=new Map(); regs.forEach(r=>{if(!grupos.has(r.x))grupos.set(r.x,[]);grupos.get(r.x).push(r);});
+      const datos=[...grupos.entries()].map(([x,rs])=>{
+        const mins=rs.map(r=>r.min).filter(v=>v>0), maxs=rs.map(r=>r.max).filter(v=>v>0), fs=rs.map(r=>r.freq).filter(v=>v>0);
+        if(!mins.length&&!maxs.length&&!fs.length)return null;
+        const freq=fs.length?fs.reduce((a,b)=>a+b,0)/fs.length:0;
+        return{x:Number(x),min:mins.length?Math.min(...mins):freq,max:maxs.length?Math.max(...maxs):freq,freq,cotizaciones:rs.length};
+      }).filter(Boolean).sort((a,b)=>a.x-b.x);
+      return {datos,total:regs.length};
+    }
+
+    function indicadores(datos){
+      const actual=$('sniimPrecioActual'), min=$('sniimPrecioMinimo'), max=$('sniimPrecioMaximo'), tendencia=$('sniimTendencia');
+      if(!datos.length){actual.textContent=min.textContent=max.textContent='$0.00';tendencia.textContent='Sin datos';tendencia.className='metric-value text-secondary';return;}
+      const ultimo=datos.at(-1); actual.textContent=`$${ultimo.freq.toFixed(2)}`; min.textContent=`$${Math.min(...datos.map(d=>d.min)).toFixed(2)}`; max.textContent=`$${Math.max(...datos.map(d=>d.max)).toFixed(2)}`;
+      const ventana=datos.slice(-7); if(ventana.length<2||ventana[0].freq<=0){tendencia.textContent='Datos insuficientes';return;}
+      const cambio=((ventana.at(-1).freq-ventana[0].freq)/ventana[0].freq)*100;
+      if(cambio>2){tendencia.textContent=`Alza ${cambio.toFixed(1)}%`;tendencia.className='metric-value text-danger';}
+      else if(cambio<-2){tendencia.textContent=`Baja ${Math.abs(cambio).toFixed(1)}%`;tendencia.className='metric-value text-success';}
+      else {tendencia.textContent=`Estable ${cambio.toFixed(1)}%`;tendencia.className='metric-value text-primary';}
+    }
+
+    function render(){
+      setAlerta(); const {datos,total}=resumir(); indicadores(datos); if(chart){chart.destroy();chart=null;}
+      if(!datos.length){setAlerta('No hay registros para la combinación seleccionada.','warning');setEstado('Sin resultados','bg-warning text-dark');return;}
+      const common={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{type:'time',time:{unit:'day',tooltipFormat:'dd/MM/yyyy'},title:{display:true,text:'Fecha'}},y:{beginAtZero:false,title:{display:true,text:'Precio registrado'},ticks:{callback:v=>`$${Number(v).toFixed(2)}`}}}};
+      if(tipo.value==='candlestick'){
+        const velas=datos.map(d=>({x:d.x,o:d.freq,h:d.max,l:d.min,c:d.freq,min:d.min,max:d.max,freq:d.freq,cotizaciones:d.cotizaciones}));
+        chart=new Chart(canvas,{type:'candlestick',data:{datasets:[{label:`Rango SNIIM: ${producto.value}`,data:velas,color:{up:'#198754',down:'#dc3545',unchanged:'#6c757d'},borderColor:{up:'#198754',down:'#dc3545',unchanged:'#6c757d'}}]},options:{...common,plugins:{tooltip:{callbacks:{label:c=>[`Mínimo: $${c.raw.min.toFixed(2)}`,`Frecuente: $${c.raw.freq.toFixed(2)}`,`Máximo: $${c.raw.max.toFixed(2)}`,`Cotizaciones: ${c.raw.cotizaciones}`]}}}}});
+      } else {
+        chart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Precio mínimo',data:datos.map(d=>({x:d.x,y:d.min})),borderColor:'#0d6efd',pointRadius:1,tension:.25},{label:'Precio frecuente',data:datos.map(d=>({x:d.x,y:d.freq})),borderColor:'#198754',borderWidth:3,pointRadius:2,tension:.25},{label:'Precio máximo',data:datos.map(d=>({x:d.x,y:d.max})),borderColor:'#dc3545',pointRadius:1,tension:.25}]},options:common});
+      }
+      setEstado(`${total} registros`,'bg-success');
+    }
+
+    try {
+      setEstado('Cargando precios...','bg-primary');
+      const res=await fetch('/api/precios',{headers:{Accept:'application/json'}});
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const json=await res.json();
+      let registros=[];
+      if (Array.isArray(json)) {
+        registros = json;
+      } else if (json && Array.isArray(json.registros)) {
+        registros = json.registros;
+      } else if (json && Array.isArray(json.precios)) {
+        registros = json.precios;
+      } else if (json && Array.isArray(json.data)) {
+        registros = json.data;
+      } else if (json && json.datosGrafica && typeof json.datosGrafica === 'object') {
+        registros = Object.entries(json.datosGrafica).flatMap(([nombreProducto, valores]) => {
+          const lista = Array.isArray(valores)
+            ? valores
+            : (valores && Array.isArray(valores.registros) ? valores.registros : []);
+
+          return lista.map(registro => ({
+            ...registro,
+            producto: registro.producto || registro.nombre || nombreProducto
+          }));
         });
-        msg += "\n";
+      } else {
+        throw new Error('Formato de API no compatible');
+      }
 
-        // ===============================
-        // MERMAS
-        // ===============================
-        msg += "❌ *Mermas detectadas:*\n";
-        if (mermasData.length === 0) {
-            msg += "No hay mermas\n";
-        } else {
-            mermasData.slice(0, 5).forEach(m => {
-                msg += `• ${m.producto} — ${m.cantidad}kg (${m.motivo})\n`;
-            });
-        }
-        msg += "\n";
+      catalogo=construir(registros);
+      if(!catalogo.size)throw new Error('No se encontraron precios válidos');
+      llenarProductos(); llenarFiltros(); render();
+      producto.addEventListener('change',()=>{llenarFiltros();render();});
+      origen.addEventListener('change',render); presentacion.addEventListener('change',render); tipo.addEventListener('change',render);
+    } catch(error) {
+      console.error('Error SNIIM:',error); producto.replaceChildren(); opcion(producto,'','No fue posible cargar los productos'); producto.disabled=origen.disabled=presentacion.disabled=true; setAlerta(`No fue posible cargar SNIIM: ${error.message}`,'danger'); setEstado('Error de carga','bg-danger');
+    }
+  }
 
-        // ===============================
-        // COMPONER URL
-        // ===============================
-        const redirectUrl =
-            "/whatsapp/enviar?mensaje=" + encodeURIComponent(msg);
-
-        waShare.setAttribute("href", redirectUrl);
-        waShare.setAttribute("target", "_blank");
-
-
-        </script>
-
-</body>
-</html>
-
-
-
+  inicializarSniim();
+});
+</script>
 
 <%- include('layout/footer') %>

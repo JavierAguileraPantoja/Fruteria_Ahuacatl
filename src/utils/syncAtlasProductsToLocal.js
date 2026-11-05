@@ -1,93 +1,124 @@
 // src/utils/syncAtlasProductsToLocal.js
-// =======================================================
-//   Atlas → Local (Productos)
-//    Colección: "products"
-//    SIN tocar stock, lotes ni mermas
-//    SIN duplicados (usa id_global + nombre/categoría/unidad)
-// =======================================================
 
-const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
-const { atlasConnection, localConnection } = require("../databases/mongoPrincipal");
-
-// Esquema flexible apuntando a "products"
-const productSchema = new mongoose.Schema({}, { strict: false, collection: "products" });
-
-const ProductAtlas =
-  atlasConnection.models.ProductAtlas ||
-  atlasConnection.model("ProductAtlas", productSchema);
-
-const ProductLocal =
-  localConnection.models.ProductLocal ||
-  localConnection.model("ProductLocal", productSchema);
+const { ProductMongo, ProductMongoLocal } = require("../models/product");
+const { getEstadoInternet } = require("../databases/mongoPrincipal");
 
 async function syncAtlasProductsToLocal() {
+
   try {
-    console.log("🍎 Sync Productos Atlas → Local (solo catálogo, sin stock/lotes)…");
 
-    const atlasProducts = await ProductAtlas.find();
+    if (!getEstadoInternet()) {
+      console.log("⛔ Atlas → Local cancelado (offline)");
+      return;
+    }
 
-    for (const p of atlasProducts) {
-      const plain = p.toObject();
+    console.log(
+      "🌐 Sincronizando Productos Atlas → Local (Last Write Wins)..."
+    );
 
-      //  Asegurar id_global en ATLAS
-      if (!plain.id_global) {
-        plain.id_global = uuidv4();
-        p.id_global = plain.id_global;
-        await p.save();
-        console.log("🔑 Asignado id_global en Atlas a:", plain.nombre);
+    const productosAtlas = await ProductMongo.find();
+
+    let creados = 0;
+    let actualizados = 0;
+    let omitidos = 0;
+
+    for (const pAtlas of productosAtlas) {
+
+      if (!pAtlas.id_global) continue;
+
+      const pLocal = await ProductMongoLocal.findOne({
+        id_global: pAtlas.id_global
+      });
+
+      //------------------------------------
+      // NO EXISTE LOCALMENTE
+      //------------------------------------
+      if (!pLocal) {
+
+        const nuevo = pAtlas.toObject();
+
+        delete nuevo._id;
+
+        await ProductMongoLocal.create(nuevo);
+
+        creados++;
+
+        continue;
       }
 
-      const globalId = plain.id_global;
+      //------------------------------------
+      // LAST WRITE WINS
+      //------------------------------------
+      const fechaAtlas =
+        new Date(pAtlas.updatedAt || 0).getTime();
 
-      //  Campos que NO quiero sobrescribir desde Atlas
-      delete plain.stock;
-      delete plain.stock_precio_viejo;
-      delete plain.stock_precio_nuevo;
-      delete plain.precio_actual;
-      delete plain.mermas;
-      delete plain.precio_compra_pendiente;
-      delete plain.__v;
-      delete plain._id;
-      delete plain.createdAt;
-      delete plain.updatedAt;
-      delete plain._fromLocalSync;
+      const fechaLocal =
+        new Date(pLocal.updatedAt || 0).getTime();
 
-      // Buscar por id_global
-      let localDoc = await ProductLocal.findOne({ id_global: globalId });
+      if (fechaAtlas > fechaLocal) {
 
-      // Si no existe por id_global, buscar por llave lógica
-      if (!localDoc) {
-        localDoc = await ProductLocal.findOne({
-          nombre: p.nombre,
-          categoria: p.categoria,
-          unidad: p.unidad,
-        });
-      }
+        await ProductMongoLocal.updateOne(
+          {
+            id_global: pAtlas.id_global
+          },
+          {
+            $set: {
 
-      if (localDoc) {
-        // Asegurar mismo id_global
-        if (String(localDoc.id_global) !== String(globalId)) {
-          localDoc.id_global = globalId;
-        }
+              nombre: pAtlas.nombre,
+              categoria: pAtlas.categoria,
 
-        Object.assign(localDoc, plain);
-        await localDoc.save();
-        console.log("🔄 Actualizado catálogo Local:", p.nombre);
-      } else {
-        // Crear catálogo base en Local
-        await ProductLocal.updateOne(
-          { id_global: globalId },
-          { $set: plain },
-          { upsert: true }
+              precio_compra: pAtlas.precio_compra,
+              precio_venta: pAtlas.precio_venta,
+              precio_compra_pendiente:
+                pAtlas.precio_compra_pendiente,
+
+              stock: pAtlas.stock,
+
+              precio_actual: pAtlas.precio_actual,
+              precio_viejo: pAtlas.precio_viejo,
+              precio_nuevo: pAtlas.precio_nuevo,
+
+              stock_precio_viejo:
+                pAtlas.stock_precio_viejo,
+
+              stock_precio_nuevo:
+                pAtlas.stock_precio_nuevo,
+
+              unidad: pAtlas.unidad,
+
+              imagen: pAtlas.imagen,
+              imagenes: pAtlas.imagenes || [],
+
+              mermas: pAtlas.mermas || [],
+
+              creadoPor: pAtlas.creadoPor,
+              creadoEn: pAtlas.creadoEn,
+
+              updatedAt: pAtlas.updatedAt
+
+            }
+          }
         );
-        console.log("➕ Creado catálogo Local:", p.nombre);
+
+        actualizados++;
+
+      } else {
+
+        omitidos++;
       }
     }
 
-    console.log("🟢 Productos Atlas → Local sincronizados correctamente.");
+    console.log(
+      `🟢 Atlas → Local COMPLETADO | Creados: ${creados} | Actualizados: ${actualizados} | Omitidos: ${omitidos}`
+    );
+
   } catch (err) {
-    console.error("❌ Error en syncAtlasProductsToLocal:", err.message);
+
+    console.error(
+      "❌ Error en syncAtlasProductsToLocal:",
+      err.message
+    );
+
   }
 }
 

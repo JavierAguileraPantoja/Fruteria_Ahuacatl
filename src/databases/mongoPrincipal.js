@@ -17,14 +17,14 @@ async function hayInternet() {
 // Conexión Atlas
 // ==============================
 const atlasConnection = mongoose.createConnection(atlasURI, {
-  serverSelectionTimeoutMS: 5000
+  serverSelectionTimeoutMS: 5000,
 });
 
 // ==============================
 // Conexión Mongo LOCAL (Docker con AUTH)
 // ==============================
 const localConnection = mongoose.createConnection(localURI, {
-  serverSelectionTimeoutMS: 3000
+  serverSelectionTimeoutMS: 3000,
 });
 
 // ==============================
@@ -72,10 +72,13 @@ setInterval(async () => {
 })();
 
 // ==============================
-// Exportar conexiones
+// Exportar conexiones y auxiliaries de estado
 // ==============================
 module.exports = {
   atlasConnection,
   localConnection,
-  getEstadoInternet: () => estadoInternet
+  getEstadoInternet: () => estadoInternet,
+  // 🛡️ Funciones para verificar disponibilidad en tiempo real
+  esAtlasListo: () => atlasConnection.readyState === 1,
+  esLocalListo: () => localConnection.readyState === 1,
 };

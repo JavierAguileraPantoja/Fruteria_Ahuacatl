@@ -347,3 +347,8 @@ esta fue la lalve por esta vez.
 Todas las claves se agregan y debería de uncionar
 
 ![image-20260610153735526](C:\Users\javie\AppData\Roaming\Typora\typora-user-images\image-20260610153735526.png)
+
+# verificacion de la bases de datos 
+estas bases de datos siguen teniendo fallas en su sincronizacion ahor avamos a verificar y analisar su funcionamiento.
+
+primero vamos a a poner aguacate , uva verda y zanahoria con 20 kg 

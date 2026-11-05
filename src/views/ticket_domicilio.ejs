@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket - <%= modalidad.toUpperCase() %></title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -13,16 +14,19 @@
             font-size: 12px; 
             line-height: 1.2;
         }
-        .ticket { padding: 3mm; width: 58mm; }
+        .ticket { padding: 2mm; width: 58mm; }
         .centrado { text-align: center; }
         .bold { font-weight: bold; }
         .separador { border-top: 1px dashed #000; margin: 5px 0; }
-        .items { width: 100%; }
-        .direccion { 
+        .items { width: 100%; border-collapse: collapse; }
+        .items td { padding: 2px 0; }
+        .box-info { 
             background: #eee; 
-            padding: 5px; 
-            font-size: 13px; 
+            padding: 4px; 
+            font-size: 11px; 
             border: 1px solid #000;
+            margin-top: 3px;
+            word-break: break-word;
         }
         @media print { 
             .no-print { display: none; } 
@@ -32,46 +36,79 @@
 </head>
 <body onload="window.print();">
     <div class="ticket">
-        <div class="centrado bold">
-            *** AHUACATL ***<br>
-            PEDIDO A DOMICILIO
-        </div>
-        <div class="separador"></div>
-
-        <div class="bold">CLIENTE:</div>
-        <%= venta.clienteNombre %><br>
-        <%= venta.clienteTelefono %>
         
-        <div class="separador"></div>
-        <div class="bold">DIRECCIÓN DE ENVÍO:</div>
-        <div class="direccion">
-            <%= venta.notas || 'Dirección no especificada' %>
+        <!-- ENCABEZADO DINÁMICO SEGÚN MODALIDAD DE VENTA -->
+        <div class="centrado bold">
+            *** FRUTERÍA AHUACATL ***<br>
+            <% if (modalidad === 'domicilio') { %>
+                🚚 PEDIDO A DOMICILIO
+            <% } else if (modalidad === 'ruta') { %>
+                🚛 VENTA EN CAMIONETA / RUTA
+            <% } else { %>
+                🏪 VENTA EN MOSTRADOR
+            <% } %>
         </div>
+
         <div class="separador"></div>
 
-        <div class="bold">PEDIDO:</div>
+        <!-- DATOS DEL CLIENTE -->
+        <div class="bold">CLIENTE:</div>
+        <%= venta.clienteNombre || 'Cliente General' %><br>
+        Tel: <%= venta.clienteTelefono || 'N/A' %>
+
+        <!-- BLOQUE ESPECÍFICO PARA DOMICILIO -->
+        <% if (modalidad === 'domicilio') { %>
+            <div class="separador"></div>
+            <div class="bold">DIRECCIÓN DE ENVÍO:</div>
+            <div class="box-info bold">
+                <%= venta.clienteDireccion || venta.notas || 'Dirección no especificada' %>
+            </div>
+        <% } %>
+
+        <!-- BLOQUE ESPECÍFICO PARA VENTA EN CAMIONETA/RUTA -->
+        <% if (modalidad === 'ruta') { %>
+            <div class="separador"></div>
+            <div class="bold">PUNTO / NOTA DE RUTA:</div>
+            <div class="box-info">
+                <%= venta.notas || 'Entrega directa en unidad de reparto' %>
+            </div>
+        <% } %>
+
+        <div class="separador"></div>
+
+        <!-- DETALLE DEL PEDIDO -->
+        <div class="bold">DETALLE COMPRA:</div>
         <table class="items">
-            <% venta.items.forEach(item => { %>
+            <% if (venta.items && venta.items.length > 0) { %>
+                <% venta.items.forEach(item => { %>
+                    <tr>
+                        <td valign="top">[ ] <%= item.cantidad %> <%= item.unidad %></td>
+                        <td align="right" valign="top"><%= item.nombre %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
                 <tr>
-                    <td>[ ] <%= item.cantidad %> <%= item.unidad %></td>
-                    <td align="right"><%= item.nombre %></td>
+                    <td colspan="2">Sin artículos registrados</td>
                 </tr>
-            <% }) %>
+            <% } %>
         </table>
 
         <div class="separador"></div>
+
+        <!-- TOTAL Y DATOS DE CIERRE -->
         <div class="total centrado bold" style="font-size: 14px;">
-            TOTAL A COBRAR: $<%= venta.total %>
+            TOTAL: $<%= Number(venta.total || 0).toFixed(2) %>
         </div>
         
         <div class="centrado" style="margin-top: 10px; font-size: 10px;">
-            Vendedor: <%= venta.creadoBy %><br>
-            <%= new Date(venta.creadoEn).toLocaleString() %>
+            Atendió: <%= venta.creadoBy || venta.creadoPor || 'Vendedor' %><br>
+            <%= new Date(venta.creadoEn || Date.now()).toLocaleString('es-MX') %>
         </div>
     </div>
 
+    <!-- BOTONES DE NAVEGACIÓN (NO IMPRESOS) -->
     <div class="no-print" style="margin-top: 20px; text-align: center;">
-        <button onclick="window.print()">Re-imprimir</button>
+        <button onclick="window.print()">🖨️ Re-imprimir</button>
         <a href="/ventas">Volver a Ventas</a>
     </div>
 </body>

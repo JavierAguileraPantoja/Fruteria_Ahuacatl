@@ -1,5 +1,26 @@
+# Variables de entorno
 .env
+
+# Docker local
 docker-compose.yml
-/src/data/*.sqlite 
-# Librerías (Render las instala solo)
+
+# SQLite local
+/src/data/*.sqlite
+
+# Dependencias
 node_modules/
+
+# Mongo Local Docker
+db-data/
+
+# Archivos de Mongo Shell
+.mongodb/
+
+# Archivos de diagnóstico Mongo
+diagnostic.data/
+
+# Uploads temporales
+src/Uploads/
+
+# Logs
+*.log

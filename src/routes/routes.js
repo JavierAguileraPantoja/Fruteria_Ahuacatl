@@ -7,6 +7,8 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const fs = require("fs");
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Utils
 const multer = require("multer");
@@ -46,16 +48,28 @@ const {
 
 const reportes = require("../models/reportesController");
 
-// =======================================================
-//  MULTER PARA SUBIDA DE IMÁGENES
-// =======================================================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) =>
-    cb(null, path.join(__dirname, "..", "Uploads")),
-  filename: (req, file, cb) =>
-    cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname)
+// Configuración para el almacen online de las imagenes 
+// 2. CONFIGURAR CLOUDINARY
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+// 3. CONFIGURAR STORAGE PARA CLOUDINARY
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'fruteria_ahuacatl', // Nombre de carpeta en tu cuenta de Cloudinary
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+  },
+});
+
 const upload = multer({ storage }).single("image");
+
+
+
+
 
 //Registro de clientes
 
@@ -138,7 +152,7 @@ router.post("/add", isAdmin, upload, async (req, res) => {
     const User = getUserModel();
     const hashedPassword = await User.encryptPassword(req.body.password);
 
-    const imageUrl = req.file ? req.file.filename : "default.png";
+    const imageUrl = req.file ? req.file.path : "default.png";
 
     const user = new User({
       name: req.body.name,
@@ -177,7 +191,7 @@ router.post("/update/:id", isAdmin, upload, async (req, res) => {
   try {
     const User = getUserModel();
     const id = req.params.id;
-    const new_image = req.file ? req.file.filename : req.body.old_image;
+    const new_image = req.file ? req.file.path : req.body.old_image;
 
     if (req.file && req.body.old_image) {
       try {
@@ -328,21 +342,18 @@ function determinarPrecioBackend(precioBase, cantidad, tipoCliente) {
 
 
 // =======================================================
-//   ZONA CRÍTICA 
+//  ZONA CRÍTICA: REGISTRO DE VENTA (CON DIRECCIÓN)
 // =======================================================
-//  Toda la lógica de ventas , con inicialización correcta
-//  NO se borró nada mio
-//  NO se tocó sincronización
-//  Solo corregí inicialización de lotes
-
 router.post("/ventas", isVendedor, async (req, res) => {
   try {
-    let { tipoCliente, clienteNombre, clienteTelefono, carrito } = req.body;
+    // 1. Recibimos clienteDireccion desde req.body
+    let { tipoCliente, clienteNombre, clienteTelefono, clienteDireccion, carrito } = req.body;
 
     let items = [];
     try {
       items = JSON.parse(carrito || "[]");
     } catch {}
+    console.log("🛒 ITEMS RECIBIDOS DEL CARRITO:", JSON.stringify(items, null, 2));
 
     if (!items.length) {
       req.session.message = {
@@ -403,16 +414,22 @@ router.post("/ventas", isVendedor, async (req, res) => {
       const p = mapaProductos[i.productId];
       const cantidad = parseFloat(i.cantidad);
 
-      const basePrice =
-        p.precio_actual && p.precio_actual > 0
-          ? p.precio_actual
-          : p.precio_venta;
+      const precioEnviadoItem = 
+        i.precioUnitario ?? 
+        i.precio ?? 
+        i.precioVenta ?? 
+        i.precio_unitario ?? 
+        i.precioCalculado ?? 
+        i.unitPrice;
 
-      const precioUnitario = determinarPrecioBackend(
-        basePrice,
-        cantidad,
-        tipoCliente
-      );
+      let precioUnitario;
+
+      if (precioEnviadoItem !== undefined && precioEnviadoItem !== null && !isNaN(parseFloat(precioEnviadoItem))) {
+        precioUnitario = parseFloat(precioEnviadoItem);
+      } else {
+        const basePrice = p.precio_actual && p.precio_actual > 0 ? p.precio_actual : p.precio_venta;
+        precioUnitario = determinarPrecioBackend(basePrice, cantidad, tipoCliente);
+      }
 
       const subtotal = precioUnitario * cantidad;
       total += subtotal;
@@ -426,13 +443,9 @@ router.post("/ventas", isVendedor, async (req, res) => {
         subtotal
       };
     });
-
-
-    // ============================================================
-    // 👤 NUEVO: REGISTRO/ACTUALIZACIÓN DE CLIENTE (TU ESTILO)
-    // ============================================================
+    
+    // REGISTRO/ACTUALIZACIÓN DE CLIENTE
     if (clienteTelefono) {
-        // Importamos tu modelo dinámico (asegúrate de tener creado src/models/client.js)
         const { getClientModel } = require("../models/client");
         const Client = getClientModel(); 
 
@@ -440,22 +453,19 @@ router.post("/ventas", isVendedor, async (req, res) => {
             { phone: clienteTelefono }, 
             { 
                 name: clienteNombre || "Cliente General", 
-                $inc: { totalSpent: total }, // Sumamos el gasto al histórico del cliente
+                $inc: { totalSpent: total },
                 lastPurchase: new Date() 
             }, 
-            { upsert: true } // Si no existe, lo crea automáticamente
+            { upsert: true }
         );
         console.log("✅ Cliente procesado en la base de datos.");
     }    
-    // ============================================================
-    //  BLOQUE OFICIAL — FIFO + SQLite + Mongo Local
-    // ============================================================
 
+    // BLOQUE OFICIAL — FIFO + SQLite + Mongo Local
     for (let item of itemsProcesados) {
       const p = mapaProductos[item.productId.toString()];
       let cantidad = item.cantidad;
 
-      //Inicialización correcta de lotes
       if (
         (p.stock_precio_viejo == null && p.stock_precio_nuevo == null) ||
         (p.stock > 0 && (p.stock_precio_viejo + p.stock_precio_nuevo) === 0)
@@ -473,11 +483,9 @@ router.post("/ventas", isVendedor, async (req, res) => {
           p.precio_nuevo = p.precio_actual;
       }
 
-      // Nunca permitir null
       if (p.stock_precio_viejo == null) p.stock_precio_viejo = 0;
       if (p.stock_precio_nuevo == null) p.stock_precio_nuevo = 0;
 
-      // FIFO
       if (p.stock_precio_viejo > 0) {
         const desdeViejo = Math.min(p.stock_precio_viejo, cantidad);
         p.stock_precio_viejo -= desdeViejo;
@@ -490,12 +498,8 @@ router.post("/ventas", isVendedor, async (req, res) => {
         cantidad -= desdeNuevo;
       }
 
-      // Calcular stock final
-      p.stock =
-        (p.stock_precio_viejo || 0) +
-        (p.stock_precio_nuevo || 0);
+      p.stock = (p.stock_precio_viejo || 0) + (p.stock_precio_nuevo || 0);
 
-      // Si se acabó la parte vieja → actualizar precios
       if (p.stock_precio_viejo <= 0 && p.stock_precio_nuevo > 0) {
         p.precio_actual = p.precio_nuevo;
         p.precio_viejo = p.precio_nuevo;
@@ -506,29 +510,16 @@ router.post("/ventas", isVendedor, async (req, res) => {
         }
       }
       
-      // ============================================================
-      // ACTUALIZAR SQLITE (USANDO EL NUEVO MOTOR NATIVO)
-      // ============================================================
       try {
-        // En lugar de SQL manual largo, usamos la función que ya creamos en el modelo
         await ProductSQLite.upsert(p.toObject()); 
-
         console.log("📦 Bodega SQLite actualizada nativamente:", p.nombre, p.stock);
-
       } catch (err) {
         console.log("❌ Error SQLite (UPSERT Nativo):", err.message);
       }
 
-      // ============================================================
-      // GUARDAR PRODUCTO EN LA BD PRINCIPAL (Atlas o Local)
-      // ============================================================
       await p.save();
 
-      // ============================================================
-      // ESPEJO EN MONGO LOCAL (solo ONLINE)
-      // ============================================================
       if (online) {
-        // FORZAR actualización real en Mongo Local
         try {
           await ProductMongoLocalFix.updateOne(
             { id_global: p.id_global },
@@ -553,30 +544,25 @@ router.post("/ventas", isVendedor, async (req, res) => {
         } catch (err) {
           console.log("❌ Error actualizando LOCAL:", err.message);
         }
-
       }
     }
 
-
-    // ============================================================
-    // GUARDAR VENTA (Atlas / Local)
-    // ============================================================
+    // GUARDAR VENTA (Guardamos clienteDireccion)
     const venta = new Venta({
       tipoCliente,
       clienteNombre,
       clienteTelefono,
+      clienteDireccion: clienteDireccion || "Venta en mostrador",
       items: itemsProcesados,
       total,
       estado: "impresa",
-      creadoPor: req.user.name||req.user.email,
+      creadoPor: req.user.name || req.user.email,
       creadoEn: new Date()
     });
 
     await venta.save();
 
-    // ============================================================
     // COPIA EN SQLITE
-    // ============================================================
     try {
       const vSQLite = await VentaSQLite.create({
         tipoCliente,
@@ -584,7 +570,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
         clienteTelefono,
         total,
         estado: "impresa",
-        creadoPor: req.user.nombre,
+        creadoPor: req.user.nombre || req.user.name,
         creadoEn: new Date()
       });
 
