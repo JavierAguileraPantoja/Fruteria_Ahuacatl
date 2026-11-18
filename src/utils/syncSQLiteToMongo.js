@@ -17,6 +17,11 @@ async function syncSQLiteToMongo() {
 
     for (const u of users) {
       const json = typeof u.toJSON === "function" ? u.toJSON() : u;
+      if (json.email === "zombietest2@ahuacatl.com") {
+        console.log("🧪 SQLITE JSON:", json);
+      }
+
+
 
       // =======================================================
       // 🛡️ WHITELIST: Solo campos permitidos
@@ -27,9 +32,11 @@ async function syncSQLiteToMongo() {
         phone: json.phone || "",
         image: json.image || "default.png",
         role: json.role || "vendedor",
-        password: json.password, // Ya viene hasheado
+        password: json.password,
         created: json.created || new Date(),
         updatedAt: json.updatedAt || json.fecha_actualizacion || new Date(),
+
+        activo: json.activo !== false
       };
 
       // Limpieza de campos nulos o indefinidos

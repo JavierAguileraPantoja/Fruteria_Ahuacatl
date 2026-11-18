@@ -5,6 +5,12 @@ const dns = require("dns");
 const atlasURI = process.env.MONGO_ATLAS_URI;
 const localURI = process.env.MONGO_LOCAL_URI;
 
+console.log("Atlas URI cargada:", !!atlasURI);
+console.log("Local URI cargada:", !!localURI);
+
+console.log("Atlas URI inicio:", atlasURI?.substring(0, 30));
+console.log("Local URI inicio:", localURI?.substring(0, 30));
+
 let estadoInternet = false;
 
 async function hayInternet() {
@@ -24,7 +30,7 @@ const atlasConnection = mongoose.createConnection(atlasURI, {
 // Conexión Mongo LOCAL (Docker con AUTH)
 // ==============================
 const localConnection = mongoose.createConnection(localURI, {
-  serverSelectionTimeoutMS: 3000,
+  serverSelectionTimeoutMS: 15000,
 });
 
 // ==============================

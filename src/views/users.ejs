@@ -42,7 +42,7 @@
                                         <tr>
                                             <td><%= index + 1 %></td>
                                             <td>
-                                                <img src="/Uploads/<%= row.image %>" width="70" class="rounded-circle shadow-sm">
+                                                <img src="<%= row.image && row.image.startsWith('http') ? row.image: '/Uploads/' + row.image %>" width="70" class="rounded-circle shadow-sm">
                                             </td>
                                             <td class="fw-semibold"><%= row.name %></td>
                                             <td><%= row.email %></td>

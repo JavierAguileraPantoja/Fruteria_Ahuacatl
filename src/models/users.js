@@ -6,6 +6,7 @@
 
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
+
 const {
   atlasConnection,
   localConnection,
@@ -13,22 +14,62 @@ const {
 } = require("../databases/mongoPrincipal");
 
 // ---------------------------------------
-//  Esquema único compartido (CORREGIDO)
+//  Esquema único compartido
 // ---------------------------------------
 const UserSchema = new mongoose.Schema({
-  // Cambiamos required a false para que registros viejos o incompletos no bloqueen el SYNC
-  name: { type: String, required: false, default: "Usuario sin nombre" }, 
-  email: { type: String, required: true }, // unique lo controla Atlas
-  phone: { type: String, required: false, default: "0000000000" },
-  image: { type: String, required: false, default: "default.png" }, 
-  password: { type: String, required: true },
+  name: {
+    type: String,
+    required: false,
+    default: "Usuario sin nombre"
+  },
+
+  email: {
+    type: String,
+    required: true
+  },
+
+  phone: {
+    type: String,
+    required: false,
+    default: "0000000000"
+  },
+
+  image: {
+    type: String,
+    required: false,
+    default: "default.png"
+  },
+
+  password: {
+    type: String,
+    required: true
+  },
+
   role: {
     type: String,
-    // AGREGAMOS "cleaner" a la lista para que Atlas lo acepte
-    enum: ["administrador", "dueno", "vendedor", "bodeguero", "cleaner"], 
+    enum: [
+      "administrador",
+      "dueno",
+      "vendedor",
+      "bodeguero",
+      "cleaner"
+    ],
     default: "vendedor"
   },
-  created: { type: Date, default: Date.now }
+
+  // ✅ NUEVO CAMPO
+  activo: {
+    type: Boolean,
+    default: true
+  },
+
+  created: {
+    type: Date,
+    default: Date.now
+  }
+
+}, {
+  timestamps: true
 });
 
 // ---------------------------------------
@@ -47,7 +88,8 @@ UserSchema.methods.comparePassword = async function (password) {
 //  Modelos Atlas y Local
 // ---------------------------------------
 const UserAtlas =
-  atlasConnection.models.User || atlasConnection.model("User", UserSchema);
+  atlasConnection.models.User ||
+  atlasConnection.model("User", UserSchema);
 
 const UserLocal =
   localConnection.models.User ||
@@ -73,4 +115,3 @@ module.exports = {
   UserLocal,
   getUserModel
 };
-

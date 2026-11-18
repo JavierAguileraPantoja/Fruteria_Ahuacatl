@@ -16,9 +16,18 @@ async function syncUsersLocalToAtlas() {
 
       // Si no existe en Atlas → CREARLO
       if (!existe) {
-        await UserAtlas.create(u.toObject());
-        nuevos++;
+        console.log(`Usuario no encontrado en atlas, no se recreará: ${u.email}`);
+        continue;
       } else {
+        if (u.email === "zombietest2@ahuacatl.com") {
+          console.log(
+            "🧟 LOCAL → ATLAS:",
+            {
+              email: u.email,
+              activoLocal: u.activo !== false
+            }
+          );
+        }
         // Si YA existe, lo actualizamos para que Atlas sepa si cambió de nombre, rol, o si fue "eliminado" lógicamente
         await UserAtlas.updateOne(
           { email: u.email },

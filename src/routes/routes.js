@@ -116,10 +116,17 @@ router.get("/profile", isAuthenticated, (req, res) => {
 // =======================================================
 //  CRUD USUARIOS
 // =======================================================
+// =======================================================
+//  CRUD USUARIOS
+// =======================================================
 router.get("/users_list", isAdmin, async (req, res) => {
   try {
     const User = getUserModel();
-    const users = await User.find();
+
+    // Solo usuarios activos
+    const users = await User.find({
+      activo: { $ne: false }
+    });
 
     res.render("users", {
       title: "Lista de Usuarios",
@@ -129,16 +136,22 @@ router.get("/users_list", isAdmin, async (req, res) => {
     });
 
     req.session.message = null;
+
   } catch (err) {
-    console.log(err);
+    console.error("❌ Error cargando usuarios:", err);
+
     res.render("users", {
       title: "Lista de Usuarios",
       users: [],
       user: req.user,
-      message: { type: "danger", message: "Error al cargar usuarios" }
+      message: {
+        type: "danger",
+        message: "Error al cargar usuarios"
+      }
     });
   }
 });
+
 
 router.get("/add", isAdmin, (req, res) => {
   res.render("add_users", {
@@ -223,28 +236,75 @@ router.post("/update/:id", isAdmin, upload, async (req, res) => {
 
 router.get("/delete/:id", isAdmin, async (req, res) => {
   try {
+
     const User = getUserModel();
 
-    const result = await User.findByIdAndDelete(req.params.id);
+    console.log("\n==============================");
+    console.log("🗑️ INICIO DELETE USUARIO");
+    console.log("==============================");
 
-    if (result && result.image !== "default.png") {
-      try {
-        fs.unlinkSync(path.join(__dirname, "..", "Uploads", result.image));
-      } catch {}
+    console.log("🗑️ ID recibido:", req.params.id);
+    console.log("🗑️ Modelo utilizado:", User.modelName);
+
+    const antes = await User.findById(req.params.id);
+
+    console.log(
+      "🗑️ Usuario encontrado antes:",
+      antes
+        ? {
+            email: antes.email,
+            name: antes.name,
+            activo: antes.activo
+          }
+        : null
+    );
+
+    const result = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        activo: false
+      },
+      {
+        new: true
+      }
+    );
+
+    console.log(
+      "🗑️ Resultado después del update:",
+      result
+        ? {
+            email: result.email,
+            name: result.name,
+            activo: result.activo
+          }
+        : null
+    );
+
+    console.log("==============================");
+    console.log("🗑️ FIN DELETE USUARIO");
+    console.log("==============================\n");
+
+    if (!result) {
+      req.session.message = {
+        type: "danger",
+        message: "Usuario no encontrado."
+      };
+
+      return res.redirect("/users_list");
     }
 
     req.session.message = {
       type: "success",
-      message: "Usuario eliminado correctamente."
+      message: "Usuario desactivado correctamente."
     };
 
     res.redirect("/users_list");
+
   } catch (err) {
-    console.log(err);
+    console.error("❌ Error desactivando usuario:", err);
     res.redirect("/users_list");
   }
 });
-
 
 // =======================================================
 //  GESTIÓN DE CLIENTES

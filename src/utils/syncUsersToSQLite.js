@@ -17,7 +17,18 @@ async function syncUsersToSQLite() {
     await UserSQLite.destroy({ where: {} });
 
     for (const u of usuariosAtlas) {
+      if (u.email === "zombietest2@ahuacatl.com") {
+        console.log(
+          "🧟 ATLAS ANTES DE SQLITE:",
+          {
+            email: u.email,
+            activo: u.activo,
+            updatedAt: u.updatedAt
+          }
+        );
+      }
       await UserSQLite.create({
+        
         name: u.name,
         email: u.email,
         phone: u.phone || "",
@@ -27,6 +38,17 @@ async function syncUsersToSQLite() {
         created: u.created || new Date(),
         activo: u.activo !== false // Registramos si el usuario está activo o borrado lógicamente
       });
+      if (u.email === "zombietest2@ahuacatl.com") {
+
+        const verificacion = await UserSQLite.findOne({
+          where: { email: u.email }
+        });
+
+        console.log(
+          "🧟 SQLITE DESPUÉS DE INSERTAR:",
+          verificacion.toJSON()
+        );
+      }
     }
 
     // =======================================================
