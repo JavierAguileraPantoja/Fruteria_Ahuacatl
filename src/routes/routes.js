@@ -581,7 +581,7 @@ router.post("/ventas", isVendedor, async (req, res) => {
       console.log("🌐 ONLINE:", online);
       console.log("🌐 RENDER:", process.env.RENDER);
       console.log("🔎 localConnection readyState:", localConnection.readyState);
-      if (online) {
+      if (online && localConnection.readyState === 1) {
         try {
           await ProductMongoLocalFix.updateOne(
             { id_global: p.id_global },
