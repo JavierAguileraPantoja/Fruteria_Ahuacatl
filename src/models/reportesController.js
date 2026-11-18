@@ -558,11 +558,25 @@ exports.ticketReporteDiario = async (req, res) => {
 
     const emailUsuario = req.user ? req.user.email : null;
 
+    console.log(
+      "👤 Usuario:",
+      req.user.name
+    );
+
+    console.log(
+      "📧 Email:",
+      req.user.email
+    );
+
     // Ventas SOLO del usuario actual
     const ventasNormalizadas = await cargarVentasRango(
       inicioDate,
       finDate,
       emailUsuario
+    );
+    console.log(
+      "📊 Ventas encontradas:",
+      ventasNormalizadas.length
     );
 
     // Totales
