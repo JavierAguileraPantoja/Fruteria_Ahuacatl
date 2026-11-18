@@ -551,7 +551,7 @@ exports.verReportes = async (req, res) => {
 //    GET /reportes/diario/ticket
 // ======================================================================
 exports.ticketReporteDiario = async (req, res) => {
-  console.log(" Entre a ticketReporteDiario");
+  
   try {
     const { inicio, fin } = obtenerRango(req, "hoy");
     const inicioDate = inicio.toDate();
@@ -562,15 +562,7 @@ exports.ticketReporteDiario = async (req, res) => {
         ? (req.user.name || req.user.email)
         : null;
 
-    console.log(
-      "👤 Usuario:",
-      req.user.name
-    );
-
-    console.log(
-      "📧 Email:",
-      req.user.email
-    );
+    
 
     // Ventas SOLO del usuario actual
     const ventasNormalizadas = await cargarVentasRango(
@@ -578,10 +570,7 @@ exports.ticketReporteDiario = async (req, res) => {
       finDate,
       emailUsuario
     );
-    console.log(
-      "📊 Ventas encontradas:",
-      ventasNormalizadas.length
-    );
+    
 
     // Totales
     const totalVentas = ventasNormalizadas.reduce(
