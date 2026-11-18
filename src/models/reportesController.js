@@ -557,7 +557,10 @@ exports.ticketReporteDiario = async (req, res) => {
     const inicioDate = inicio.toDate();
     const finDate = fin.toDate();
 
-    const emailUsuario = req.user ? req.user.email : null;
+    const emailUsuario =
+      req.user
+        ? (req.user.name || req.user.email)
+        : null;
 
     console.log(
       "👤 Usuario:",
