@@ -578,7 +578,8 @@ router.post("/ventas", isVendedor, async (req, res) => {
       }
 
       await p.save();
-
+      console.log("🌐 ONLINE:", online);
+      console.log("🌐 RENDER:", process.env.RENDER);
       if (online) {
         try {
           await ProductMongoLocalFix.updateOne(
