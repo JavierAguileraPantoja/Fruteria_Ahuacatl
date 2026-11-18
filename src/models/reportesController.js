@@ -551,6 +551,7 @@ exports.verReportes = async (req, res) => {
 //    GET /reportes/diario/ticket
 // ======================================================================
 exports.ticketReporteDiario = async (req, res) => {
+  console.log(" Entre a ticketReporteDiario");
   try {
     const { inicio, fin } = obtenerRango(req, "hoy");
     const inicioDate = inicio.toDate();
