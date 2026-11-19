@@ -10,7 +10,8 @@ const mongoose = require("mongoose");
 const {
   atlasConnection,
   localConnection,
-  getEstadoInternet
+  getEstadoInternet,
+  esAtlasListo
 } = require("../databases/mongoPrincipal");
 
 // ---------------------------------------
@@ -99,7 +100,9 @@ const UserLocal =
 // Selector automático según internet
 // ---------------------------------------
 function getUserModel() {
-  const online = getEstadoInternet();
+  const online =
+    getEstadoInternet() &&
+    esAtlasListo();
 
   if (online) {
     console.log("📡 MODELO USUARIO: Atlas (ONLINE)");

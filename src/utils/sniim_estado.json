@@ -1,10 +1,10 @@
 {
-  "ultimaFechaSNIIM": "2026-11-10",
-  "ultimaActualizacion": "2026-11-11T00:30:17.312Z",
-  "totalRegistros": 24708,
+  "ultimaFechaSNIIM": "2026-11-18",
+  "ultimaActualizacion": "2026-11-19T02:31:07.049Z",
+  "totalRegistros": 24993,
   "estado": "ok",
-  "ultimaEjecucionCompleta": "2026-11-11T00:30:17.312Z",
-  "registrosNuevosUltimaEjecucion": 24708,
+  "ultimaEjecucionCompleta": "2026-11-19T02:31:07.051Z",
+  "registrosNuevosUltimaEjecucion": 24993,
   "versionPipeline": "2.0",
   "pruebaSistema": true,
   "fechaPrueba": "2026-11-04T21:38:05.140Z"

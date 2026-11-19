@@ -37,6 +37,12 @@ const localConnection = mongoose.createConnection(localURI, {
 // Eventos conexión Atlas
 // ==============================
 atlasConnection.on("connected", () => {
+  setTimeout(() => {
+    console.log(
+      "Atlas readyState:",
+      atlasConnection.readyState
+    );
+  }, 15000);
   console.log("🟢 Atlas conectado como BD principal");
 });
 atlasConnection.on("error", (err) => {

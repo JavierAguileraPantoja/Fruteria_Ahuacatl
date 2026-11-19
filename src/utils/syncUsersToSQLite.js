@@ -4,10 +4,18 @@
 const { UserAtlas } = require("../models/users");
 const UserSQLite = require("../models/UserSQLite");
 const { UserLocal } = require("../databases/mongoSecundario");
+const {esAtlasListo} = require("../databases/mongoPrincipal");
 
 async function syncUsersToSQLite() {
   try {
     console.log("🔁 Sync Usuarios → SQLite + Local…");
+
+    if (!esAtlasListo()) {
+      console.log(
+        "⚠️ Sync Usuarios omitido: Atlas no disponible."
+      );
+      return;
+    }
 
     const usuariosAtlas = await UserAtlas.find();
 

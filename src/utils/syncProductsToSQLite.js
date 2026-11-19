@@ -4,12 +4,18 @@
 // ======================================================================
 
 const { ProductMongo, ProductSQLite } = require("../models/product");
-const { getEstadoInternet } = require("../databases/mongoPrincipal");
+const {getEstadoInternet, esAtlasListo } = require("../databases/mongoPrincipal");
 
 async function syncProductsToSQLite(isOnlineParam = null) {
   try {
     const isOnline = isOnlineParam ?? getEstadoInternet();
-    if (!isOnline) return;
+
+    if (!isOnline || !esAtlasListo()) {
+      console.log(
+        "⚠️ Sync Productos omitido: Atlas no disponible."
+      );
+      return;
+    }
 
     console.log("📦 Evaluando Catálogo Atlas → SQLite (Last-Write-Wins)...");
 
