@@ -249928,5 +249928,2815 @@
     "precioMinimo": 132,
     "precioMaximo": 137,
     "precioFrecuente": 135
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Aguacate Hass",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 31,
+    "precioMaximo": 35,
+    "precioFrecuente": 33
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Aguacate Hass",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 31,
+    "precioMaximo": 35,
+    "precioFrecuente": 33
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Aguacate Hass",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 31,
+    "precioMaximo": 35,
+    "precioFrecuente": 33
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Aguacate Hass",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 31,
+    "precioMaximo": 35,
+    "precioFrecuente": 33
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Aguacate Hass",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 33,
+    "precioMaximo": 37,
+    "precioFrecuente": 35
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Caja de 19 kg.",
+    "origen": "Colima",
+    "precioMinimo": 378,
+    "precioMaximo": 382,
+    "precioFrecuente": 380
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 15 kg.",
+    "origen": "Michoacán",
+    "precioMinimo": 228,
+    "precioMaximo": 232,
+    "precioFrecuente": 230
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Caja de 19 kg.",
+    "origen": "Colima",
+    "precioMinimo": 378,
+    "precioMaximo": 382,
+    "precioFrecuente": 380
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 15 kg.",
+    "origen": "Michoacán",
+    "precioMinimo": 228,
+    "precioMaximo": 232,
+    "precioFrecuente": 230
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Caja de 19 kg.",
+    "origen": "Colima",
+    "precioMinimo": 378,
+    "precioMaximo": 382,
+    "precioFrecuente": 380
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 15 kg.",
+    "origen": "Michoacán",
+    "precioMinimo": 228,
+    "precioMaximo": 232,
+    "precioFrecuente": 230
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Caja de 19 kg.",
+    "origen": "Colima",
+    "precioMinimo": 378,
+    "precioMaximo": 382,
+    "precioFrecuente": 380
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 15 kg.",
+    "origen": "Michoacán",
+    "precioMinimo": 228,
+    "precioMaximo": 232,
+    "precioFrecuente": 230
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Caja de 19 kg.",
+    "origen": "Colima",
+    "precioMinimo": 348,
+    "precioMaximo": 352,
+    "precioFrecuente": 350
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Limón c/semilla # 5",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 15 kg.",
+    "origen": "Michoacán",
+    "precioMinimo": 198,
+    "precioMaximo": 205,
+    "precioFrecuente": 200
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 458,
+    "precioMaximo": 462,
+    "precioFrecuente": 460
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 848,
+    "precioMaximo": 852,
+    "precioFrecuente": 850
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 458,
+    "precioMaximo": 462,
+    "precioFrecuente": 460
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 848,
+    "precioMaximo": 852,
+    "precioFrecuente": 850
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 458,
+    "precioMaximo": 462,
+    "precioFrecuente": 460
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 848,
+    "precioMaximo": 852,
+    "precioFrecuente": 850
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 458,
+    "precioMaximo": 462,
+    "precioFrecuente": 460
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 848,
+    "precioMaximo": 852,
+    "precioFrecuente": 850
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 463,
+    "precioMaximo": 467,
+    "precioFrecuente": 465
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Manzana Golden Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 853,
+    "precioMaximo": 857,
+    "precioFrecuente": 855
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 548,
+    "precioMaximo": 552,
+    "precioFrecuente": 550
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 648,
+    "precioMaximo": 652,
+    "precioFrecuente": 650
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 518,
+    "precioMaximo": 522,
+    "precioFrecuente": 520
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 698,
+    "precioMaximo": 702,
+    "precioFrecuente": 700
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 518,
+    "precioMaximo": 522,
+    "precioFrecuente": 520
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 698,
+    "precioMaximo": 702,
+    "precioFrecuente": 700
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 518,
+    "precioMaximo": 522,
+    "precioFrecuente": 520
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 698,
+    "precioMaximo": 702,
+    "precioFrecuente": 700
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Chihuahua",
+    "precioMinimo": 528,
+    "precioMaximo": 532,
+    "precioFrecuente": 530
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Manzana Red Delicious",
+    "calidad": "Primera",
+    "presentacion": "Caja de 18 kg.",
+    "origen": "Importación",
+    "precioMinimo": 698,
+    "precioMaximo": 702,
+    "precioFrecuente": 700
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Naranja March chica",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Veracruz",
+    "precioMinimo": 9,
+    "precioMaximo": 13,
+    "precioFrecuente": 11
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Naranja March chica",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Veracruz",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Naranja March chica",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Veracruz",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Naranja March chica",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Veracruz",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Naranja March chica",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Nuevo León",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Papaya Maradol",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Papaya Maradol",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 18.5,
+    "precioMaximo": 23.5,
+    "precioFrecuente": 21.5
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Papaya Maradol",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 18.5,
+    "precioMaximo": 23.5,
+    "precioFrecuente": 21.5
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Papaya Maradol",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 18.5,
+    "precioMaximo": 23.5,
+    "precioFrecuente": 21.5
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Papaya Maradol",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 16,
+    "precioMaximo": 20,
+    "precioFrecuente": 18
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Piña mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Oaxaca",
+    "precioMinimo": 16.5,
+    "precioMaximo": 20.5,
+    "precioFrecuente": 18.5
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Piña mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Oaxaca",
+    "precioMinimo": 13.5,
+    "precioMaximo": 17.5,
+    "precioFrecuente": 15.5
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Piña mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Oaxaca",
+    "precioMinimo": 13.5,
+    "precioMaximo": 17.5,
+    "precioFrecuente": 15.5
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Piña mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Oaxaca",
+    "precioMinimo": 13.5,
+    "precioMaximo": 17.5,
+    "precioFrecuente": 15.5
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Piña mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Oaxaca",
+    "precioMinimo": 13.5,
+    "precioMaximo": 17.5,
+    "precioFrecuente": 15.5
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Plátano Tabasco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tabasco",
+    "precioMinimo": 9,
+    "precioMaximo": 13,
+    "precioFrecuente": 11
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Plátano Tabasco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tabasco",
+    "precioMinimo": 9.5,
+    "precioMaximo": 13.5,
+    "precioFrecuente": 11.5
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Plátano Tabasco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tabasco",
+    "precioMinimo": 9.5,
+    "precioMaximo": 13.5,
+    "precioFrecuente": 11.5
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Plátano Tabasco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tabasco",
+    "precioMinimo": 9.5,
+    "precioMaximo": 13.5,
+    "precioFrecuente": 11.5
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Plátano Tabasco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tabasco",
+    "precioMinimo": 10,
+    "precioMaximo": 14,
+    "precioFrecuente": 12
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Toronja Roja",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Michoacán",
+    "precioMinimo": 12,
+    "precioMaximo": 16,
+    "precioFrecuente": 14
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Toronja Roja",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tamaulipas",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Toronja Roja",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tamaulipas",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Toronja Roja",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tamaulipas",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Toronja Roja",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Tamaulipas",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Guayaba",
+    "calidad": "Primera",
+    "presentacion": "Caja de 10 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Guayaba",
+    "calidad": "Primera",
+    "presentacion": "Caja de 10 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Guayaba",
+    "calidad": "Primera",
+    "presentacion": "Caja de 10 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Guayaba",
+    "calidad": "Primera",
+    "presentacion": "Caja de 10 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Guayaba",
+    "calidad": "Primera",
+    "presentacion": "Caja de 10 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 158,
+    "precioMaximo": 162,
+    "precioFrecuente": 160
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Tuna",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 298,
+    "precioMaximo": 302,
+    "precioFrecuente": 300
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Uva Globo",
+    "calidad": "Primera",
+    "presentacion": "Caja de 8 kg.",
+    "origen": "Importación",
+    "precioMinimo": 548,
+    "precioMaximo": 552,
+    "precioFrecuente": 550
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Uva Globo",
+    "calidad": "Primera",
+    "presentacion": "Caja de 8 kg.",
+    "origen": "Importación",
+    "precioMinimo": 548,
+    "precioMaximo": 552,
+    "precioFrecuente": 550
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Uva Globo",
+    "calidad": "Primera",
+    "presentacion": "Caja de 8 kg.",
+    "origen": "Importación",
+    "precioMinimo": 548,
+    "precioMaximo": 552,
+    "precioFrecuente": 550
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Uva Globo",
+    "calidad": "Primera",
+    "presentacion": "Caja de 8 kg.",
+    "origen": "Importación",
+    "precioMinimo": 558,
+    "precioMaximo": 562,
+    "precioFrecuente": 560
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Uva Superior",
+    "calidad": "Primera",
+    "presentacion": "Caja de 8 kg.",
+    "origen": "Importación",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Ajo Morado",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Ajo Morado",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 88,
+    "precioMaximo": 92,
+    "precioFrecuente": 90
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Ajo Morado",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 88,
+    "precioMaximo": 92,
+    "precioFrecuente": 90
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Ajo Morado",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 88,
+    "precioMaximo": 92,
+    "precioFrecuente": 90
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Ajo Morado",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 88,
+    "precioMaximo": 92,
+    "precioFrecuente": 90
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Apio",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 278,
+    "precioMaximo": 282,
+    "precioFrecuente": 280
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Apio",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 278,
+    "precioMaximo": 282,
+    "precioFrecuente": 280
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Apio",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 278,
+    "precioMaximo": 282,
+    "precioFrecuente": 280
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Apio",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 278,
+    "precioMaximo": 282,
+    "precioFrecuente": 280
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Apio",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 288,
+    "precioMaximo": 292,
+    "precioFrecuente": 290
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Brócoli",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 10,
+    "precioMaximo": 14,
+    "precioFrecuente": 12
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Brócoli",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 8,
+    "precioMaximo": 12,
+    "precioFrecuente": 10
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Brócoli",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 8,
+    "precioMaximo": 12,
+    "precioFrecuente": 10
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Brócoli",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 8,
+    "precioMaximo": 12,
+    "precioFrecuente": 10
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Brócoli",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 9,
+    "precioMaximo": 13,
+    "precioFrecuente": 11
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 50,
+    "precioMaximo": 54,
+    "precioFrecuente": 52
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 33,
+    "precioMaximo": 37,
+    "precioFrecuente": 35
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 50,
+    "precioMaximo": 54,
+    "precioFrecuente": 52
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 35,
+    "precioMaximo": 39,
+    "precioFrecuente": 37
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 50,
+    "precioMaximo": 54,
+    "precioFrecuente": 52
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 35,
+    "precioMaximo": 39,
+    "precioFrecuente": 37
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 50,
+    "precioMaximo": 54,
+    "precioFrecuente": 52
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 35,
+    "precioMaximo": 39,
+    "precioFrecuente": 37
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 50,
+    "precioMaximo": 54,
+    "precioFrecuente": 52
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Cacahuate",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 35,
+    "precioMaximo": 39,
+    "precioFrecuente": 37
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Calabacita Italiana",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Jalisco",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Calabacita Italiana",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Jalisco",
+    "precioMinimo": 188,
+    "precioMaximo": 205,
+    "precioFrecuente": 200
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Calabacita Italiana",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Jalisco",
+    "precioMinimo": 188,
+    "precioMaximo": 205,
+    "precioFrecuente": 200
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Calabacita Italiana",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Jalisco",
+    "precioMinimo": 188,
+    "precioMaximo": 205,
+    "precioFrecuente": 200
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Calabacita Italiana",
+    "calidad": "Primera",
+    "presentacion": "Caja de 15 kg.",
+    "origen": "Jalisco",
+    "precioMinimo": 188,
+    "precioMaximo": 192,
+    "precioFrecuente": 190
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Cebolla Bola grande",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Cebolla Bola grande",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 11,
+    "precioMaximo": 15,
+    "precioFrecuente": 13
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Cebolla Bola grande",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 11,
+    "precioMaximo": 15,
+    "precioFrecuente": 13
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Cebolla Bola grande",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 11,
+    "precioMaximo": 15,
+    "precioFrecuente": 13
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Cebolla Bola grande",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Col mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 8,
+    "precioMaximo": 12,
+    "precioFrecuente": 10
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Col mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Col mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Col mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Col mediana",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Coliflor mediana",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Coliflor mediana",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Coliflor mediana",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Coliflor mediana",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 13,
+    "precioMaximo": 17,
+    "precioFrecuente": 15
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Coliflor mediana",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 14,
+    "precioMaximo": 18,
+    "precioFrecuente": 16
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chayote",
+    "calidad": "Primera",
+    "presentacion": "Caja de 20 kg.",
+    "origen": "Veracruz",
+    "precioMinimo": 248,
+    "precioMaximo": 252,
+    "precioFrecuente": 250
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chayote",
+    "calidad": "Primera",
+    "presentacion": "Caja de 20 kg.",
+    "origen": "Veracruz",
+    "precioMinimo": 248,
+    "precioMaximo": 252,
+    "precioFrecuente": 250
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chayote",
+    "calidad": "Primera",
+    "presentacion": "Caja de 20 kg.",
+    "origen": "Veracruz",
+    "precioMinimo": 248,
+    "precioMaximo": 252,
+    "precioFrecuente": 250
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chayote",
+    "calidad": "Primera",
+    "presentacion": "Caja de 20 kg.",
+    "origen": "Veracruz",
+    "precioMinimo": 248,
+    "precioMaximo": 252,
+    "precioFrecuente": 250
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chayote",
+    "calidad": "Primera",
+    "presentacion": "Caja de 20 kg.",
+    "origen": "Veracruz",
+    "precioMinimo": 238,
+    "precioMaximo": 242,
+    "precioFrecuente": 240
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chícharo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Morelos",
+    "precioMinimo": 48,
+    "precioMaximo": 52,
+    "precioFrecuente": 50
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chícharo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Morelos",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chícharo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Morelos",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chícharo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Morelos",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chícharo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Morelos",
+    "precioMinimo": 41,
+    "precioMaximo": 45,
+    "precioFrecuente": 43
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Anaheim",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 33,
+    "precioMaximo": 37,
+    "precioFrecuente": 35
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Anaheim",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Anaheim",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Anaheim",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Anaheim",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 38,
+    "precioMaximo": 42,
+    "precioFrecuente": 40
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Caloro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Caloro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Caloro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Caloro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Caloro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 30,
+    "precioMaximo": 34,
+    "precioFrecuente": 32
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Chilaca",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Chilaca",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Chilaca",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Chilaca",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Chilaca",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Húngaro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 36,
+    "precioMaximo": 40,
+    "precioFrecuente": 38
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Húngaro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Húngaro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Húngaro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Húngaro",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Jalapeño",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 20,
+    "precioMaximo": 24,
+    "precioFrecuente": 22
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Jalapeño",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Jalapeño",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Jalapeño",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Jalapeño",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Pimiento morrón",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 33,
+    "precioMaximo": 37,
+    "precioFrecuente": 35
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Pimiento morrón",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 36,
+    "precioMaximo": 40,
+    "precioFrecuente": 38
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Pimiento morrón",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 36,
+    "precioMaximo": 40,
+    "precioFrecuente": 38
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Pimiento morrón",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 36,
+    "precioMaximo": 40,
+    "precioFrecuente": 38
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Pimiento morrón",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 33,
+    "precioMaximo": 37,
+    "precioFrecuente": 35
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Poblano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 43,
+    "precioMaximo": 47,
+    "precioFrecuente": 45
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Poblano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 30,
+    "precioMaximo": 34,
+    "precioFrecuente": 32
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Poblano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 30,
+    "precioMaximo": 34,
+    "precioFrecuente": 32
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Poblano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 30,
+    "precioMaximo": 34,
+    "precioFrecuente": 32
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Poblano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Serrano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 30,
+    "precioMaximo": 34,
+    "precioFrecuente": 32
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Serrano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Serrano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Serrano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Serrano",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Ejote",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Jalisco",
+    "precioMinimo": 28,
+    "precioMaximo": 32,
+    "precioFrecuente": 30
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Ejote",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Jalisco",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Ejote",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Jalisco",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Ejote",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Jalisco",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Ejote",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Jalisco",
+    "precioMinimo": 24,
+    "precioMaximo": 28,
+    "precioFrecuente": 26
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Elote",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 5,
+    "precioMaximo": 9,
+    "precioFrecuente": 7
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Elote",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 5,
+    "precioMaximo": 9,
+    "precioFrecuente": 7
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Elote",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 5,
+    "precioMaximo": 9,
+    "precioFrecuente": 7
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Elote",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 5,
+    "precioMaximo": 9,
+    "precioFrecuente": 7
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Elote",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 5,
+    "precioMaximo": 9,
+    "precioFrecuente": 7
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Jícama",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 14,
+    "precioMaximo": 18,
+    "precioFrecuente": 16
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Jícama",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Jícama",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Jícama",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Jícama",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guanajuato",
+    "precioMinimo": 16,
+    "precioMaximo": 20,
+    "precioFrecuente": 18
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Lechuga Orejona sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 7,
+    "precioMaximo": 11,
+    "precioFrecuente": 9
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Lechuga Orejona sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Lechuga Orejona sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Lechuga Orejona sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Lechuga Orejona sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Lechuga Romanita sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 7,
+    "precioMaximo": 11,
+    "precioFrecuente": 9
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Lechuga Romanita sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Lechuga Romanita sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Lechuga Romanita sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Lechuga Romanita sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Pieza",
+    "origen": "Aguascalientes",
+    "precioMinimo": 6,
+    "precioMaximo": 10,
+    "precioFrecuente": 8
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Melón Cantaloupe sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Coahuila",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Melón Cantaloupe sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Coahuila",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Melón Cantaloupe sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Coahuila",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Melón Cantaloupe sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Coahuila",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Melón Cantaloupe sin clasificación",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Coahuila",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Nopal grande",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Nopal grande",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Nopal grande",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Nopal grande",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Nopal grande",
+    "calidad": "Primera",
+    "presentacion": "Caja de 25 kg.",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Papa Alpha",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Distrito Federal",
+    "precioMinimo": 18,
+    "precioMaximo": 22,
+    "precioFrecuente": 20
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Papa Alpha",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Distrito Federal",
+    "precioMinimo": 20,
+    "precioMaximo": 24,
+    "precioFrecuente": 22
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Papa Alpha",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Distrito Federal",
+    "precioMinimo": 20,
+    "precioMaximo": 24,
+    "precioFrecuente": 22
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Papa Alpha",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Distrito Federal",
+    "precioMinimo": 20,
+    "precioMaximo": 24,
+    "precioFrecuente": 22
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Papa Alpha",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Distrito Federal",
+    "precioMinimo": 21,
+    "precioMaximo": 25,
+    "precioFrecuente": 23
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Pepino",
+    "calidad": "Primera",
+    "presentacion": "Caja de 24 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Pepino",
+    "calidad": "Primera",
+    "presentacion": "Caja de 24 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Pepino",
+    "calidad": "Primera",
+    "presentacion": "Caja de 24 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Pepino",
+    "calidad": "Primera",
+    "presentacion": "Caja de 24 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Pepino",
+    "calidad": "Primera",
+    "presentacion": "Caja de 24 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Sandía Sangría",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guerrero",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Sandía Sangría",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guerrero",
+    "precioMinimo": 16,
+    "precioMaximo": 20,
+    "precioFrecuente": 18
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Sandía Sangría",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guerrero",
+    "precioMinimo": 16,
+    "precioMaximo": 20,
+    "precioFrecuente": 18
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Sandía Sangría",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guerrero",
+    "precioMinimo": 16,
+    "precioMaximo": 20,
+    "precioFrecuente": 18
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Sandía Sangría",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Guerrero",
+    "precioMinimo": 15,
+    "precioMaximo": 19,
+    "precioFrecuente": 17
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Tomate Bola",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 648,
+    "precioMaximo": 652,
+    "precioFrecuente": 650
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Tomate Bola",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Tomate Bola",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Tomate Bola",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Tomate Bola",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 498,
+    "precioMaximo": 502,
+    "precioFrecuente": 500
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 32 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 998,
+    "precioMaximo": 1,
+    "precioFrecuente": 1
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 32 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 798,
+    "precioMaximo": 802,
+    "precioFrecuente": 800
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 32 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 798,
+    "precioMaximo": 802,
+    "precioFrecuente": 800
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 32 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 798,
+    "precioMaximo": 802,
+    "precioFrecuente": 800
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 14 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 398,
+    "precioMaximo": 402,
+    "precioFrecuente": 400
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Tomate Saladette",
+    "calidad": "Primera",
+    "presentacion": "Caja de 32 kg.",
+    "origen": "Sinaloa",
+    "precioMinimo": 798,
+    "precioMaximo": 802,
+    "precioFrecuente": 800
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Tomate Verde",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 38,
+    "precioMaximo": 42,
+    "precioFrecuente": 40
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Tomate Verde",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Tomate Verde",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Tomate Verde",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 23,
+    "precioMaximo": 27,
+    "precioFrecuente": 25
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Tomate Verde",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Sinaloa",
+    "precioMinimo": 26,
+    "precioMaximo": 30,
+    "precioFrecuente": 28
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Zanahoria leña",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Zanahoria leña",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Zanahoria leña",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Zanahoria leña",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Zanahoria leña",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Zanahoria mediana",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Zanahoria mediana",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 138,
+    "precioMaximo": 142,
+    "precioFrecuente": 140
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Zanahoria mediana",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 138,
+    "precioMaximo": 142,
+    "precioFrecuente": 140
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Zanahoria mediana",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 138,
+    "precioMaximo": 142,
+    "precioFrecuente": 140
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Zanahoria mediana",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 138,
+    "precioMaximo": 142,
+    "precioFrecuente": 140
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Zanahoria polvo",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Zanahoria polvo",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Zanahoria polvo",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Zanahoria polvo",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Zanahoria polvo",
+    "calidad": "Primera",
+    "presentacion": "Arpilla de 20 kg.",
+    "origen": "Zacatecas",
+    "precioMinimo": 98,
+    "precioMaximo": 102,
+    "precioFrecuente": 100
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile ancho",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile ancho",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile ancho",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile ancho",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile ancho",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 118,
+    "precioMaximo": 122,
+    "precioFrecuente": 120
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 198,
+    "precioMaximo": 202,
+    "precioFrecuente": 200
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 123,
+    "precioMaximo": 127,
+    "precioFrecuente": 125
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 178,
+    "precioMaximo": 182,
+    "precioFrecuente": 180
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 123,
+    "precioMaximo": 127,
+    "precioFrecuente": 125
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 178,
+    "precioMaximo": 182,
+    "precioFrecuente": 180
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 123,
+    "precioMaximo": 127,
+    "precioFrecuente": 125
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 178,
+    "precioMaximo": 182,
+    "precioFrecuente": 180
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Importación",
+    "precioMinimo": 123,
+    "precioMaximo": 127,
+    "precioFrecuente": 125
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile de Árbol seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Zacatecas",
+    "precioMinimo": 183,
+    "precioMaximo": 187,
+    "precioFrecuente": 185
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Guajillo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Guajillo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Guajillo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Guajillo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Guajillo",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 126,
+    "precioMaximo": 130,
+    "precioFrecuente": 128
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Pasilla",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 158,
+    "precioMaximo": 162,
+    "precioFrecuente": 160
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Pasilla",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Pasilla",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Pasilla",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Pasilla",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 148,
+    "precioMaximo": 152,
+    "precioFrecuente": 150
+  },
+  {
+    "fecha": "19/11/2026",
+    "producto": "Chile Puya seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 132,
+    "precioMaximo": 137,
+    "precioFrecuente": 135
+  },
+  {
+    "fecha": "20/11/2026",
+    "producto": "Chile Puya seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 132,
+    "precioMaximo": 137,
+    "precioFrecuente": 135
+  },
+  {
+    "fecha": "23/11/2026",
+    "producto": "Chile Puya seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 132,
+    "precioMaximo": 137,
+    "precioFrecuente": 135
+  },
+  {
+    "fecha": "24/11/2026",
+    "producto": "Chile Puya seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 132,
+    "precioMaximo": 137,
+    "precioFrecuente": 135
+  },
+  {
+    "fecha": "25/11/2026",
+    "producto": "Chile Puya seco",
+    "calidad": "Primera",
+    "presentacion": "Kilogramo",
+    "origen": "Aguascalientes",
+    "precioMinimo": 128,
+    "precioMaximo": 132,
+    "precioFrecuente": 130
   }
 ]

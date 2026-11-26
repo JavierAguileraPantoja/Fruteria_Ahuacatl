@@ -51,7 +51,7 @@
   <div class="center">
      <img src="/Uploads/logo.png" style="width:120px; margin-bottom:5px;">
     <div class="bold">FRUTERÍA AHUACATL</div>
-    <div>REPORTE DIARIO</div>
+    <div><%= tipoReporte || "REPORTE DIARIO" %></div>
   </div>
 
   <div class="line"></div>
@@ -83,9 +83,30 @@
   <div class="line"></div>
 
   <div>
-    Total ventas:       $ <span class="right"><%= (totalVentas || 0).toFixed(2) %></span><br>
-    Artículos vendidos: <span class="right"><%= totalArticulos || 0 %></span><br>
-    Ganancia del día:   $ <span class="right"><%= (gananciaDia || 0).toFixed(2) %></span>
+    <div>
+      Total ventas:
+      $ <span class="right"><%= (totalVentas || 0).toFixed(2) %></span>
+      <br>
+
+      Artículos vendidos:
+      <span class="right"><%= totalArticulos || 0 %></span>
+      <br>
+
+      Ganancia del día:
+      $ <span class="right"><%= (gananciaDia || 0).toFixed(2) %></span>
+      <br>
+
+      Tickets emitidos:
+      <span class="right"><%= ticketsEmitidos || 0 %></span>
+      <br>
+
+      Clientes atendidos:
+      <span class="right"><%= clientesAtendidos || 0 %></span>
+      <br>
+
+      Dinero esperado en caja:
+      $ <span class="right"><%= (dineroEsperado || 0).toFixed(2) %></span>
+    </div>
   </div>
 
   <div class="line"></div>
@@ -103,6 +124,23 @@
   <% } %>
 
   <div class="line"></div>
+  <% if (typeof resumenUsuarios !== 'undefined' && resumenUsuarios.length) { %>
+
+    <div class="bold">
+      Ventas por vendedor:
+    </div>
+
+    <% resumenUsuarios.forEach(v => { %>
+      <div>
+        <%= v.usuario %>
+        - $ <%= (v.ventas || 0).toFixed(2) %>
+        (<%= v.tickets || 0 %> tickets)
+      </div>
+    <% }) %>
+
+    <div class="line"></div>
+
+  <% } %>
 
   <div class="center small">
     Gracias por su trabajo<br>

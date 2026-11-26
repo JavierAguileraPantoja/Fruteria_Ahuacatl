@@ -15,6 +15,8 @@ const {
   VentaDetalleSQLite
 } = require("./venta");
 const { getProductModel } = require("./product");
+//Recien agregado
+const { getUserModel } = require("./users");
 
 // -----------------------------------------------------
 // 🛠 Normalizar fecha YYYY-MM-DD
@@ -545,72 +547,256 @@ exports.verReportes = async (req, res) => {
     res.send("Error generando reportes.");
   }
 };
+// Recien agregado
 
+exports.seleccionarUsuarioCorte =
+  async (req, res) => {
+
+  try {
+
+    const User =
+      getUserModel();
+
+    const vendedores =
+      await User.find({
+        role: {
+          $in: [
+            "vendedor",
+            "administrador",
+            "dueno"
+          ]
+        },
+        activo: { $ne: false }
+      })
+      .sort({ name: 1 });
+    res.render(
+      "seleccionar_usuario_corte",
+      {
+        user: req.user,
+        vendedores
+      }
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.send(
+      "Error cargando vendedores."
+    );
+  }
+};
 // ======================================================================
-// 🧾 CORTE / TICKET DIARIO (POR USUARIO ACTUAL)
-//    GET /reportes/diario/ticket
+// 🧾 CORTE DIARIO GENERAL
 // ======================================================================
 exports.ticketReporteDiario = async (req, res) => {
-  
+
   try {
-    const { inicio, fin } = obtenerRango(req, "hoy");
+
+    const { inicio, fin } =
+      obtenerRango(req, "hoy");
+
     const inicioDate = inicio.toDate();
     const finDate = fin.toDate();
 
-    const emailUsuario =
-      req.user
-        ? (req.user.name || req.user.email)
-        : null;
+    // TODAS LAS VENTAS
+    const ventasNormalizadas =
+      await cargarVentasRango(
+        inicioDate,
+        finDate,
+        null
+      );
 
-    
+    const totalVentas =
+      ventasNormalizadas.reduce(
+        (acc, v) => acc + (v.total || 0),
+        0
+      );
 
-    // Ventas SOLO del usuario actual
-    const ventasNormalizadas = await cargarVentasRango(
-      inicioDate,
-      finDate,
-      emailUsuario
+    let totalArticulos = 0;
+
+    ventasNormalizadas.forEach(v => {
+      (v.items || []).forEach(i => {
+        totalArticulos += i.cantidad;
+      });
+    });
+
+    const gananciaDia =
+      totalVentas * 0.3;
+
+    const agrupados =
+      agruparPorProducto(
+        ventasNormalizadas
+      );
+
+    const productosDestacados =
+      agrupados
+        .slice(0, 10)
+        .map(p => ({
+          nombre: p.producto,
+          cantidad: p.unidades
+        }));
+
+    // RESUMEN POR VENDEDOR
+    const vendedores = {};
+
+    ventasNormalizadas.forEach(v => {
+
+      const usuario =
+        v.creadoPor || "Sin usuario";
+
+      if (!vendedores[usuario]) {
+        vendedores[usuario] = {
+          ventas: 0,
+          tickets: 0
+        };
+      }
+
+      vendedores[usuario].ventas +=
+        v.total || 0;
+
+      vendedores[usuario].tickets++;
+    });
+    const ticketsEmitidos =
+      ventasNormalizadas.length;
+
+    const clientesAtendidos =
+      new Set(
+        ventasNormalizadas.map(
+          v => v.clienteNombre || "Mostrador"
+        )
+      ).size;
+
+    const dineroEsperado =
+      totalVentas;
+
+    res.render(
+      "ticket_reporteDiary",
+      {
+        tipoReporte: "CORTE DIARIO",
+        user: req.user,
+        fechaCorte: new Date(),
+        horaCorte: new Date(),
+
+        totalVentas,
+        totalArticulos,
+        gananciaDia,
+        ticketsEmitidos,
+        clientesAtendidos,
+        dineroEsperado,
+
+        productosDestacados,
+
+        resumenUsuarios:
+          Object.entries(vendedores)
+            .map(([usuario, datos]) => ({
+              usuario,
+              ...datos
+            }))
+            .sort(
+              (a, b) =>
+                b.ventas - a.ventas
+            )
+      }
     );
-    
 
-    // Totales
+  } catch (err) {
+
+    console.error(
+      "❌ Error en ticketReporteDiario:",
+      err
+    );
+
+    res.send(
+      "Error generando ticket de reporte diario."
+    );
+  }
+};
+//========================================
+// Corte por Usuario
+//=============================================
+exports.reporteDiarioUsuario = async (req, res) => {
+  try {
+
+    const { inicio, fin } = obtenerRango(req, "hoy");
+
+    const inicioDate = inicio.toDate();
+    const finDate = fin.toDate();
+
+    const usuario =
+      req.query.usuario ||
+      req.user.name;
+
+    const ventasNormalizadas =
+      await cargarVentasRango(
+        inicioDate,
+        finDate,
+        usuario
+      );
+
+      const ticketsEmitidos =
+        ventasNormalizadas.length;
+
+      const clientesAtendidos =
+        new Set(
+          ventasNormalizadas.map(
+            v => v.clienteNombre || "Mostrador"
+          )
+        ).size;
+
     const totalVentas = ventasNormalizadas.reduce(
       (acc, v) => acc + (v.total || 0),
       0
     );
 
     let totalArticulos = 0;
+    const dineroEsperado = totalVentas;
+
     ventasNormalizadas.forEach((v) => {
       (v.items || []).forEach((i) => {
         totalArticulos += i.cantidad;
       });
     });
 
-    // Ganancia (aprox 30% de margen global)
-    const gananciaDia = totalVentas * 0.3;
+    const agrupados =
+      agruparPorProducto(
+        ventasNormalizadas
+      );
 
-    // Productos destacados (por kilos)
-    const agrupados = agruparPorProducto(ventasNormalizadas);
-    const productosDestacados = agrupados.slice(0, 10).map((p) => ({
-      nombre: p.producto,
-      cantidad: p.unidades
-    }));
+    const productosDestacados =
+      agrupados.slice(0, 10).map((p) => ({
+        nombre: p.producto,
+        cantidad: p.unidades
+      }));
 
     res.render("ticket_reporteDiary", {
-      user: req.user,
+      tipoReporte: "CORTE DE CAJA DEL VENDEDOR",
+      user: { name: usuario },
       fechaCorte: new Date(),
       horaCorte: new Date(),
 
       totalVentas,
       totalArticulos,
-      gananciaDia,
+      ticketsEmitidos,
+      clientesAtendidos,
+      dineroEsperado,
+      gananciaDia: totalVentas * 0.3,
+      
       productosDestacados
     });
+
   } catch (err) {
-    console.error("❌ Error en ticketReporteDiario:", err);
-    res.send("Error generando ticket de reporte diario.");
+
+    console.error(
+      "❌ Error en reporteDiarioUsuario:",
+      err
+    );
+
+    res.send(
+      "Error generando reporte por usuario."
+    );
   }
 };
-
 // ======================================================================
 // 📄 CSV REPORTE DIARIO (POR USUARIO)
 //    GET /reportes/diario/csv
@@ -915,11 +1101,7 @@ exports.generarExcel = async (req, res) => {
 // 🔁 RUTAS AUXILIARES (usan la misma vista 'reportes')
 // ======================================================================
 
-// /reportes/diario/usuario
-exports.reporteDiarioUsuario = async (req, res) => {
-  req.query.periodo = "hoy";
-  return exports.ticketReporteDiario(req, res);
-};
+
 
 // /reportes/diario
 exports.reporteDiario = async (req, res) => {
@@ -947,3 +1129,4 @@ exports.utilidades = async (req, res) => {
 exports.stock = async (req, res) => {
   return exports.verReportes(req, res);
 };
+

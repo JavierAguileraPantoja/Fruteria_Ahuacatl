@@ -23,30 +23,41 @@ async function hayInternet() {
 // Conexión Atlas
 // ==============================
 const atlasConnection = mongoose.createConnection(atlasURI, {
-  serverSelectionTimeoutMS: 5000,
+  serverSelectionTimeoutMS: 30000,
+  connectTimeoutMS:30000,
+  socketTimeoutMS:30000
 });
 
 // ==============================
 // Conexión Mongo LOCAL (Docker con AUTH)
 // ==============================
 const localConnection = mongoose.createConnection(localURI, {
-  serverSelectionTimeoutMS: 15000,
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS:10000,
 });
 
 // ==============================
 // Eventos conexión Atlas
 // ==============================
+
+atlasConnection.on("connecting", () => {
+  console.log("⏳ Atlas conectando...");
+});
+
+atlasConnection.on("open", () => {
+  console.log("✅ Atlas OPEN");
+});
+
 atlasConnection.on("connected", () => {
-  setTimeout(() => {
-    console.log(
-      "Atlas readyState:",
-      atlasConnection.readyState
-    );
-  }, 15000);
   console.log("🟢 Atlas conectado como BD principal");
 });
+
+atlasConnection.on("disconnected", () => {
+  console.log("🔴 Atlas disconnected");
+});
+
 atlasConnection.on("error", (err) => {
-  console.log("🔴 Atlas desconectado:", err.message);
+  console.log("🔴 Atlas error:", err.message);
 });
 
 // ==============================

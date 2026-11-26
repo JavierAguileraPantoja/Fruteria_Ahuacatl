@@ -1,0 +1,120 @@
+<%- include('layout/header') %>
+
+<div class="container mt-4">
+
+  <div class="card shadow">
+
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">
+        👤 Corte de Caja 
+      </h4>
+    </div>
+
+    <div class="card-body">
+
+      <form
+        action="/reportes/diario/usuario"
+        method="GET">
+
+        <div class="mb-3">
+
+          <label class="form-label">
+            Seleccione responsable de Ventas
+          </label>
+
+          <select
+            class="form-select"
+            name="usuario"
+            required>
+
+            <% vendedores.forEach(v => { %>
+
+              <option value="<%= v.name %>">
+                <%= v.name %>
+              </option>
+
+            <% }) %>
+
+          </select>
+          <div class="mb-3">
+
+            <label class="form-label">
+              Periodo
+            </label>
+
+            <select
+              class="form-select"
+              name="periodo">
+
+              <option value="hoy" selected>
+                Hoy
+              </option>
+
+              <option value="semana">
+                Semana
+              </option>
+
+              <option value="mes">
+                Mes
+              </option>
+
+              <option value="anio">
+                Año
+              </option>
+
+              <option value="rango">
+                Rango personalizado
+              </option>
+
+            </select>
+
+          </div>
+          <div class="row">
+
+            <div class="col-md-6">
+
+              <label class="form-label">
+                Desde
+              </label>
+
+              <input
+                type="date"
+                class="form-control"
+                name="desde">
+
+            </div>
+
+            <div class="col-md-6">
+
+              <label class="form-label">
+                Hasta
+              </label>
+
+              <input
+                type="date"
+                class="form-control"
+                name="hasta">
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-success">
+
+          Generar Corte
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<%- include('layout/footer') %>

@@ -740,7 +740,7 @@ router.get("/reportes/diario/csv",    isAdmin, reportes.csvReporteDiario);
 
 router.get("/reportes/diario",            isAdmin, reportes.reporteDiario);
 
-router.get("/reportes/diario/usuario", isAuthenticated, reportes.reporteDiarioUsuario);
+router.get("/reportes/diario/usuario", isAdmin, reportes.reporteDiarioUsuario);
 
 router.get("/reportes/semanal",           isAdmin, reportes.reporteSemanal);
 router.get("/reportes/producto-mas-vendido", isAdmin, reportes.productoMasVendido);
@@ -789,7 +789,14 @@ router.get("/fix/missing-product/:id_global", async (req, res) => {
     res.send("Error: " + err.message);
   }
 });
-
+//========================================================================================
+// seleccionar_usuario_corte
+//========================================================================================
+router.get(
+  "/reportes/diario/seleccionar",
+  isAdmin,
+  reportes.seleccionarUsuarioCorte
+);
 
 
 
