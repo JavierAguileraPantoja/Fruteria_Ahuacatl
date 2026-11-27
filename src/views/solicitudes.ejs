@@ -1,0 +1,293 @@
+<%- include('layout/header') %>
+
+<div class="container mt-4">
+
+  <div class="row">
+
+    <!-- FORMULARIO -->
+
+    <div class="col-md-4">
+
+      <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            💰 Nueva Solicitud
+          </h5>
+        </div>
+
+        <div class="card-body">
+
+          <form action="/solicitudes" method="POST">
+
+            <div class="mb-3">
+              <label class="form-label">
+                Categoría
+              </label>
+
+              <select
+                name="categoria"
+                class="form-select"
+                required>
+
+                <option value="Combustible">
+                  Combustible
+                </option>
+
+                <option value="Mantenimiento">
+                  Mantenimiento
+                </option>
+
+                <option value="Herramientas">
+                  Herramientas
+                </option>
+
+                <option value="Limpieza">
+                  Limpieza
+                </option>
+
+                <option value="Papeleria">
+                  Papelería
+                </option>
+
+                <option value="Empaque">
+                  Empaque
+                </option>
+
+                <option value="Mercancia">
+                  Mercancía
+                </option>
+
+                <option value="Servicios">
+                  Servicios
+                </option>
+
+                <option value="Otros">
+                  Otros
+                </option>
+
+              </select>
+            </div>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Concepto
+              </label>
+
+              <input
+                type="text"
+                name="concepto"
+                class="form-control"
+                required>
+
+            </div>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Monto estimado
+              </label>
+
+              <input
+                type="number"
+                name="montoEstimado"
+                step="0.01"
+                min="0"
+                class="form-control"
+                required>
+
+            </div>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Justificación
+              </label>
+
+              <textarea
+                class="form-control"
+                name="justificacion"
+                rows="3"></textarea>
+
+            </div>
+
+            <button
+              class="btn btn-success w-100"
+              type="submit">
+
+              Crear solicitud
+
+            </button>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TABLA -->
+
+    <div class="col-md-8">
+
+      <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+          <h5 class="mb-0">
+
+            📋 Solicitudes Registradas
+
+          </h5>
+
+        </div>
+
+        <div class="card-body">
+
+          <% if (
+            solicitudes &&
+            solicitudes.length
+          ) { %>
+
+          <div class="table-responsive">
+
+            <table
+              class="table table-hover">
+
+              <thead>
+
+                <tr>
+
+                  <th>Fecha</th>
+
+                  <th>Solicitante</th>
+
+                  <th>Categoría</th>
+
+                  <th>Concepto</th>
+
+                  <th>Monto</th>
+
+                  <th>Estado</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <% solicitudes.forEach(s => { %>
+
+                <tr>
+
+                  <td>
+                    <%= new Date(
+                      s.createdAt
+                    ).toLocaleDateString() %>
+                  </td>
+
+                  <td>
+                    <%= s.solicitanteNombre %>
+                  </td>
+
+                  <td>
+                    <%= s.categoria %>
+                  </td>
+
+                  <td>
+                    <%= s.concepto %>
+                  </td>
+
+                  <td>
+                    $<%= Number(
+                      s.montoEstimado || 0
+                    ).toFixed(2) %>
+                  </td>
+
+                  <td>
+
+                    <% if (
+                      s.estado === "pendiente"
+                    ) { %>
+
+                      <span class="badge bg-warning text-dark">
+                        Pendiente
+                      </span>
+
+                    <% } %>
+
+                    <% if (
+                      s.estado === "aprobada"
+                    ) { %>
+
+                      <span class="badge bg-success">
+                        Aprobada
+                      </span>
+
+                    <% } %>
+
+                    <% if (
+                      s.estado === "rechazada"
+                    ) { %>
+
+                      <span class="badge bg-danger">
+                        Rechazada
+                      </span>
+
+                    <% } %>
+
+                    <% if (
+                      s.estado === "comprada"
+                    ) { %>
+
+                      <span class="badge bg-info">
+                        Comprada
+                      </span>
+
+                    <% } %>
+
+                    <% if (
+                      s.estado === "comprobada"
+                    ) { %>
+
+                      <span class="badge bg-primary">
+                        Comprobada
+                      </span>
+
+                    <% } %>
+
+                  </td>
+
+                </tr>
+
+                <% }) %>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <% } else { %>
+
+            <div class="text-center text-muted">
+
+              No existen solicitudes registradas.
+
+            </div>
+
+          <% } %>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<%- include('layout/footer') %>

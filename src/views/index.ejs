@@ -19,7 +19,7 @@
     <div class="row justify-content-center g-4">
 
         <!-- ===================== -->
-        <!--  ADMIN: USUARIOS -->
+        <!-- ADMIN: USUARIOS -->
         <!-- ===================== -->
         <% if (user.role === 'administrador') { %>
         <div class="col-12 col-md-6 col-lg-4">
@@ -36,9 +36,40 @@
         <% } %>
 
         <!-- ===================== -->
-        <!-- ADMIN + BODEGUERO: PRODUCTOS -->
+        <!-- ADMIN + BODEGUERO + VENDEDOR: SOLICITUDES -->
         <!-- ===================== -->
-        <% if ( user.role === 'bodeguero') { %>
+        <% if (user.role === 'administrador' || user.role === 'bodeguero' || user.role === 'vendedor') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/solicitudes" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-money-check-alt fa-3x text-info mb-3"></i>
+                        <h5 class="fw-bold text-dark">Solicitudes</h5>
+                        <p class="text-muted small">Gestiona las necesidades de tu proceso.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+        <% if (user.role === 'administrador' || user.role === 'vendedor') { %>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/clientes" class="text-decoration-none">
+                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
+                    <div class="card-body">
+                        <i class="fas fa-user-friends fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Clientes</h5>
+                        <p class="text-muted small">Consulta los clientes registrados.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% } %>
+
+        <!-- ===================== -->
+        <!-- ADMIN + BODEGUERO + VENDEDOR: PRODUCTOS -->
+        <!-- ===================== -->
+        <% if (user.role === 'administrador' || user.role === 'bodeguero' || user.role === 'vendedor') { %>
         <div class="col-12 col-md-6 col-lg-4">
             <a href="/productos" class="text-decoration-none">
                 <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
@@ -64,22 +95,13 @@
                         <h5 class="fw-bold text-dark">Punto de Venta</h5>
                         <p class="text-muted small">Realiza ventas y aplica descuentos.</p>
                     </div>
-                    <a href="/productos" class="text-decoration-none">
-                <div class="card text-center shadow-sm border-0 h-100 bg-light card-hover">
-                    <div class="card-body">
-                        <i class="fas fa-apple-alt fa-3x text-success mb-3"></i>
-                        <h5 class="fw-bold text-dark">Productos</h5>
-                        <p class="text-muted small">Gestiona frutas, verduras y precios.</p>
-                    </div>
-                </div>
-            </a>
                 </div>
             </a>
         </div>
         <% } %>
 
         <!-- ===================== -->
-        <!-- SOLO ADMIN: REPORTES -->
+        <!-- ADMIN: REPORTES -->
         <!-- ===================== -->
         <% if (user.role === 'administrador') { %>
         <div class="col-12 col-md-6 col-lg-4">
@@ -101,7 +123,7 @@
 <!-- Estilos personalizados -->
 <style>
     body {
-        background-color: #f7f9f7; /* Fondo suave tipo frutería */
+        background-color: #f7f9f7;
     }
     .card-hover {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;

@@ -48,6 +48,10 @@ const {
 
 const reportes = require("../models/reportesController");
 
+
+const solicitudesManager =
+  require("../utils/solicitudesManager");
+
 // Configuración para el almacen online de las imagenes 
 // 2. CONFIGURAR CLOUDINARY
 cloudinary.config({
@@ -316,7 +320,7 @@ router.get("/clientes", isAdmin, async (req, res) => {
     const Client = getClientModel();
 
     // Buscamos todos los clientes y los ordenamos por nombre
-    const clients = await Client.find().sort({ name: 1 });
+    const clients = await Client.find().sort({ _id: 1 });
 
     res.render("clientes", {
       title: "Lista de Clientes",
@@ -331,6 +335,54 @@ router.get("/clientes", isAdmin, async (req, res) => {
     res.redirect("/");
   }
 });
+
+// 1. CREAR CLIENTE
+router.post("/clientes/crear", isAdmin, async (req, res) => {
+  try {
+    const { getClientModel } = require("../models/client");
+    const Client = getClientModel();
+    const { name, phone, address, type } = req.body;
+
+    await Client.create({ name, phone, address, type });
+    req.session.message = { type: "success", message: "Cliente registrado correctamente." };
+  } catch (err) {
+    console.error("❌ Error creando cliente:", err);
+    req.session.message = { type: "danger", message: "Error al registrar el cliente." };
+  }
+  res.redirect("/clientes");
+});
+
+// 2. EDITAR CLIENTE
+router.post("/clientes/:id/editar", isAdmin, async (req, res) => {
+  try {
+    const { getClientModel } = require("../models/client");
+    const Client = getClientModel();
+    const { name, phone, address, type } = req.body;
+
+    await Client.findByIdAndUpdate(req.params.id, { name, phone, address, type });
+    req.session.message = { type: "success", message: "Cliente actualizado correctamente." };
+  } catch (err) {
+    console.error("❌ Error editando cliente:", err);
+    req.session.message = { type: "danger", message: "Error al actualizar el cliente." };
+  }
+  res.redirect("/clientes");
+});
+
+// 3. ELIMINAR CLIENTE
+router.post("/clientes/:id/eliminar", isAdmin, async (req, res) => {
+  try {
+    const { getClientModel } = require("../models/client");
+    const Client = getClientModel();
+
+    await Client.findByIdAndDelete(req.params.id);
+    req.session.message = { type: "success", message: "Cliente eliminado correctamente." };
+  } catch (err) {
+    console.error("❌ Error eliminando cliente:", err);
+    req.session.message = { type: "danger", message: "Error al eliminar el cliente." };
+  }
+  res.redirect("/clientes");
+});
+
 // =======================================================
 //  AUTENTICACIÓN
 // =======================================================
@@ -678,6 +730,90 @@ router.get("/ventas/ticket/:id", isVendedor, async (req, res) => {
 // PRODUCTOS (importamos el router ya final)
 // =======================================================
 router.use("/", require("./products"));
+
+
+
+
+//==========================================================
+// SOLICITUDES DE COMPRA
+//===========================================================
+router.get("/solicitudes", isAuthenticated,async (req, res) => {
+    try {
+      let solicitudes;
+      if (req.user.role === "administrador" || req.user.role === "dueno") {
+        solicitudes =
+          await solicitudesManager
+            .obtenerSolicitudes();
+      } else {
+        solicitudes = await solicitudesManager
+            .obtenerMisSolicitudes(
+              req.user._id
+            );
+      }
+      res.render("solicitudes",{
+        title:"Solicitudes de Compra", 
+        user: req.user,solicitudes
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      res.send("Error cargando solicitudes.");
+    }
+  }
+);
+
+//==========================================================
+// CREAR SOLICITUD DE COMPRA
+//===========================================================
+router.post("/solicitudes", isAuthenticated, async (req, res) => {
+
+  try {
+
+    const {
+      categoria,
+      concepto,
+      montoEstimado,
+      justificacion
+    } = req.body;
+
+    await solicitudesManager.crearSolicitud(
+      req.user,
+      {
+        categoria,
+        concepto,
+        montoEstimado,
+        justificacion
+      }
+    );
+
+    req.session.message = {
+      type: "success",
+      message: "Solicitud creada correctamente."
+    };
+
+    res.redirect("/solicitudes");
+
+  } catch (error) {
+
+    console.error(
+      "❌ Error creando solicitud:",
+      error
+    );
+
+    req.session.message = {
+      type: "danger",
+      message: "Error creando la solicitud."
+    };
+
+    res.redirect("/solicitudes");
+
+  }
+
+});
+
+
+
+
 
 // REPORTES
 router.get("/reportes", isAdmin, async (req, res) => {

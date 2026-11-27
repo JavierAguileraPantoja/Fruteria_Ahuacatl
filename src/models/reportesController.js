@@ -594,7 +594,7 @@ exports.ticketReporteDiario = async (req, res) => {
   try {
 
     const { inicio, fin } =
-      obtenerRango(req, "hoy");
+      obtenerRango(req);
 
     const inicioDate = inicio.toDate();
     const finDate = fin.toDate();
@@ -718,7 +718,7 @@ exports.ticketReporteDiario = async (req, res) => {
 exports.reporteDiarioUsuario = async (req, res) => {
   try {
 
-    const { inicio, fin } = obtenerRango(req, "hoy");
+    const { inicio, fin } = obtenerRango(req);
 
     const inicioDate = inicio.toDate();
     const finDate = fin.toDate();
@@ -768,6 +768,22 @@ exports.reporteDiarioUsuario = async (req, res) => {
         nombre: p.producto,
         cantidad: p.unidades
       }));
+
+    console.log("================================");
+    console.log("Usuario seleccionado:", usuario);
+    console.log("Inicio:", inicioDate);
+    console.log("Fin:", finDate);
+    console.log("Ventas encontradas:", ventasNormalizadas.length);
+
+    ventasNormalizadas.slice(0, 5).forEach(v => {
+      console.log(
+        "Venta:",
+        v.creadoPor,
+        v.total
+      );
+    });
+
+    console.log("================================");  
 
     res.render("ticket_reporteDiary", {
       tipoReporte: "CORTE DE CAJA DEL VENDEDOR",

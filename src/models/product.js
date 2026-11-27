@@ -30,6 +30,13 @@ const productSchema = new mongoose.Schema(
     categoria: { type: String, required: true },
     precio_compra: { type: Number, default: 0 },
     precio_venta: { type: Number, default: 0 },
+    
+    // Nuevos campos de precios
+    margen_mayoreo: { type: Number, default: 5 },
+    precio_rancho: { type: Number, default: 0 },
+    precio_fruteria: { type: Number, default: 0 },
+    precio_super: { type: Number, default: 0 },
+
     precio_compra_pendiente: { type: Number, default: 0 },
     stock: { type: Number, default: 0 },
     unidad: { type: String, default: "kg" },
@@ -176,6 +183,7 @@ const dbPath = path.join(__dirname, "..", "data", "bodega.sqlite");
 const SQLiteDB = new sqlite3.Database(dbPath);
 
 SQLiteDB.serialize(() => {
+  // 1. Crear tabla (si es nueva)
   SQLiteDB.run(`
     CREATE TABLE IF NOT EXISTS productos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -184,6 +192,10 @@ SQLiteDB.serialize(() => {
       categoria TEXT,
       precio_compra REAL,
       precio_venta REAL,
+      margen_mayoreo REAL DEFAULT 5,
+      precio_rancho REAL DEFAULT 0,
+      precio_fruteria REAL DEFAULT 0,
+      precio_super REAL DEFAULT 0,
       precio_compra_pendiente REAL,
       stock REAL,
       unidad TEXT,
@@ -191,6 +203,20 @@ SQLiteDB.serialize(() => {
       fecha_actualizacion TEXT
     )
   `);
+
+  // 2. Migración automática (agrega columnas si la tabla ya existía)
+  const columnasNuevas = [
+    "margen_mayoreo REAL DEFAULT 5",
+    "precio_rancho REAL DEFAULT 0",
+    "precio_fruteria REAL DEFAULT 0",
+    "precio_super REAL DEFAULT 0"
+  ];
+
+  columnasNuevas.forEach((col) => {
+    SQLiteDB.run(`ALTER TABLE productos ADD COLUMN ${col}`, (err) => {
+      // Si la columna ya existe, SQLite lanza error. Lo ignoramos.
+    });
+  });
 });
 
 const ProductSQLite = {
@@ -242,15 +268,20 @@ const ProductSQLite = {
         INSERT INTO productos (
           id_global, nombre, categoria,
           precio_compra, precio_venta,
+          margen_mayoreo, precio_rancho, precio_fruteria, precio_super,
           precio_compra_pendiente, stock,
           unidad, imagen, fecha_actualizacion
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id_global) DO UPDATE SET
           nombre = excluded.nombre,
           categoria = excluded.categoria,
           precio_compra = excluded.precio_compra,
           precio_venta = excluded.precio_venta,
+          margen_mayoreo = excluded.margen_mayoreo,
+          precio_rancho = excluded.precio_rancho,
+          precio_fruteria = excluded.precio_fruteria,
+          precio_super = excluded.precio_super,
           precio_compra_pendiente = excluded.precio_compra_pendiente,
           stock = excluded.stock,
           unidad = excluded.unidad,
@@ -263,6 +294,10 @@ const ProductSQLite = {
           item.categoria,
           item.precio_compra,
           item.precio_venta,
+          item.margen_mayoreo || 5,
+          item.precio_rancho || 0,
+          item.precio_fruteria || 0,
+          item.precio_super || 0,
           item.precio_compra_pendiente,
           item.stock,
           item.unidad,
